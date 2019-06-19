@@ -1,0 +1,136 @@
+        .fl{
+            float: left;
+        }
+        .pd20 {
+            padding: 20px;
+        }
+
+        .pdl20 {
+            padding-left: 20px;
+        }
+        .mgt20 {
+            margin-top: 20px;
+        }
+        .mgr10{
+            margin-right: 20px;
+        }
+        .btn-upload {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-upload input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .layui-form-item .fileNameBox {
+            margin-right: 0;
+        }
+
+        .queryResultBox {
+            display: none;
+        }
+        .queryResultBox1 {
+            display: none;
+        }
+        .queryResultBox4 {
+            display: none;
+        }
+        .operationLayer{
+            display: none;
+        }
+        .operationLayer .layui-form-item{
+            padding-right: 80px;
+        }
+        .operationLayer .layui-form-item .layui-form-label{
+            width: 200px;
+        }
+        .operationLayer .layui-form-item .layui-input{
+            width: 70%;
+        }
+        .operationLayer .imgBox{
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .operationLayer .imgBox dd{
+            width: 100px;            
+            margin:10px 60px 10px 0;
+            height: 160px;  
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .operationLayer .imgBox img{
+            width: 100px;
+            height: 160px;  
+            cursor: pointer;
+        }
+        .operationLayer .recordstateBox{
+            margin-left: 110px;
+            min-height: 36px;
+        }
+        .operationLayer .recordstateBox select{
+            width: 100%;
+            height: 38px;
+            line-height: 1.3;
+            line-height: 38px\9;
+            border-width: 1px;
+            border-style: solid;
+            background-color: #fff;
+            border-radius: 2px;
+        }
+        .layui-btn{
+            background-color: #373C64;
+        }
+        .layui-btn-del{
+            background-color: #FAAF19;
+        }
+        .layui-elem-quote{
+            border-left-color: #373C64;
+        }
+        .layui-laypage .layui-laypage-curr .layui-laypage-em{
+             background-color: #373C64;
+        }
+        .layui-layer-btn .layui-layer-btn0{
+            border-color: #373C64 !important;
+            background-color: #373C64 !important;
+        }
+        .fuzzy_search {
+            overflow: hidden;
+        }
+        .search{
+            overflow: hidden;
+        }
+        .fuzzy_search input{
+            width: 200px; 
+            display: inline;
+        }
+        .fuzzy_search button{
+           margin-left: -1px
+        }
+        .viewDetails{
+            display: none;
+        }
+        .financeSubsidiary {
+            overflow: hidden;
+        }
+        .financeSubsidiary  li{
+           width: 250px;
+           height: 45px;
+           margin-left: 20px;
+           text-align: center;
+           line-height: 45px;
+           overflow: hidden;
+           text-overflow:ellipsis;
+           white-space: nowrap;
+        }
+        

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="dpm-announce" />
+        <module name="dpm-anps" />
+        <module name="dpm-collect-web" />
+        <module name="dpm-common" />
+        <module name="dpm-config" />
+        <module name="dpm-doc" />
+        <module name="dpm-dpc" />
+        <module name="dpm-fssc" />
+        <module name="dpm-hranswers" />
+        <module name="dpm-login" />
+        <module name="dpm-lsp" />
+        <module name="dpm-main" />
+        <module name="dpm-management" />
+        <module name="dpm-news" />
+        <module name="dpm-projecttools" />
+        <module name="dpm-sdk" />
+        <module name="dpm-sync" />
+        <module name="dpm-tongxunlu" />
+        <module name="dpm-uums" />
+        <module name="dpm-vms" />
+        <module name="dpm-vpp" />
+        <module name="dpm-web" />
+        <module name="dpm-wfs" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

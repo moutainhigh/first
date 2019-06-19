@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="dpm-main" namespace="/dpm-main" extends="foss-default">
+		<!-- 模块主页面 -->
+		<interceptors>
+			<interceptor name="checkUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor" />
+		</interceptors>
+		
+		<!-- 首页改版-->
+		<action name="mainPage_*" method="{1}" 
+			class="mainPageAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 首页滚动广告-->
+		<action name="rollAd_*" method="{1}" 
+			class="rollAdAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">4997152</param>
+			</interceptor-ref>
+			
+			
+			
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		
+		<!-- 首页提示 -->
+		<action name="messagePoint_*" class="messagePointAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action> 
+		
+		<!-- 全国打卡 -->
+		<action name="punchClockGlobal_*" class="punchClockGlobalAction" method="{1}">
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+			<interceptor-ref name="checkUrlInterceptor"></interceptor-ref>
+			
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 全国自动打卡监控 -->
+		<action name="autoPunchClockMonitorGlobal_*" class="autoPunchClockMonitorGlobalAction" method="{1}">
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+			<interceptor-ref name="checkUrlInterceptor"></interceptor-ref>
+			
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+	</package>
+</struts>

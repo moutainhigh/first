@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="reportApp">
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<head>
+    <meta charset="UTF-8">
+    <title>问题反馈处理</title>
+    <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/report.css">
+    <script type="text/javascript" src="../lib/angular/angular.min.js"></script>
+    <script type="text/javascript" src="../js/reportController03.js"></script>
+    <script type="text/javascript" src="../lib/My97DatePicker/WdatePicker.js">   
+    </script>
+</head>
+<body ng-controller="reportCtl">
+	<div class="header">
+		<div class="w990">
+			<div class="head-nav">
+				<ul>
+					<li ng-click="searchData(1)"><a href="#">意见反馈</a></li>
+					<li ng-click="appDetailList()"><a href="#">应用详情</a></li>
+					<li ng-if="uid==265564"><a href="" id="menu-track">德邦欢行 <i class="fa fa-angle-down fa-lg"></i></a>
+						<ul>
+					        <li ng-click="recordList()"><a href="#">欢行备案</a></li>
+					        <li ng-click="upPhone()"><a href="#">欢行手机号</a></li>
+					        <li ng-click="account()"><a href="#">欢行对账</a></li>
+					        <li ng-click="approver()"><a href="#">修改审批人</a></li>
+					        <li ng-click="point()"><a href="#">提示推送</a></li>
+					        <li ng-click="openmsg()"><a href="#">开启/关闭验证</a></li>
+					        <li><a href="/dpm/didirecord/orderCallBack.html?">欢行订单回调</a></li>
+					    </ul>
+					</li>
+					<li ng-if="uid==265564"><a href="#" id="menu-track">模块推送 <i class="fa fa-angle-down fa-lg"></i></a>
+						<ul>
+					        <li ng-click="goToWorkflowTip()"><a href="#">工作流及其他</a></li>
+					    </ul>
+					</li>
+					<!-- <li><a href="" id="menu-track">应用详情<i class="ico_triangle"></i></a>
+                <ul>
+                  <li ng-click="appDetailList()"><a href="#">应用列表</a></li> test.html?userId={{uid}}
+                  <li ng-click="appDetailAdd()"><a href="#">详情添加</a> </li>
+                </ul>
+             </li>   -->
+					<!-- <li><a href=".jsp" id="menu-send">班车图片</a></li>     -->
+				</ul>
+			</div>
+			<a href="" class="btn-default btn-loginout" ng-click="logout()">注销</a>
+			<div class="head-uid">
+				<i class="fa fa-user fa-2x"></i> <span>{{uid}}</span>
+			</div>
+		</div>
+	</div>
+	<!--左边列表-->
+	<div class="dp-nav-list">
+		<form role="form" class="form-horizontal">
+			<div class="form-group">
+				<label class="control-label col-sm-3">工号:</label>
+				<div class="col-sm-8">
+					<input type="text" class="form-control" id="userId"
+						ng-model="sch.userId" placeholder="请输入工号">
+				</div>
+			</div>
+			<div class="container form-button-div">
+				<button class="btn btn-success col-sm-2 form-button-search" ng-click="searchAction()">搜索</button>
+				<!-- <button class="btn form-button-reset" ng-click="resetAction()">重置</button> -->
+			</div>
+		</form>
+	</div>
+
+
+	<!-- 右边列表 -->
+	<div class="dp-panel">
+		<!--展示列表-->
+		<div class="dp-panel-list">
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th>工号</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tr ng-repeat="item in recoders">
+					<td class="td-width-60 td-empcode-style" style="text-align: center;"><span>{{item.userId}}</span></td>
+					<td class="td-width-80" style="text-align: center;">
+			           <button ng-if="item.state=='off'" class="btn btn-success font-13" ng-click="updateState('on')">开启</button>
+			           <button ng-if="item.state=='on'"  class="btn btn-success font-13" ng-click="updateState('off')">关闭</button>
+			        </td>
+				</tr>
+			</table>
+		</div>
+
+	</div>
+
+
+</body>
+</html>

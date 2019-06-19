@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.main.server.dao.mainPage">
+
+   <resultMap type="com.deppon.dpm.module.main.shared.domain.NoticeCenterEntity"
+		id="ncMap">
+		<result property="id" column="id" />
+		<result property="type" column="type" />
+		<result property="typeName" column="typename"/>
+		<result property="status" column="status"/>
+	</resultMap>
+	
+	<resultMap type="com.deppon.dpm.module.main.shared.domain.NoticeDetailEntity"
+		id="ndMap">
+		<result property="id" column="id" />
+		<result property="type" column="notice_type" />
+		<result property="noticeId" column="notice_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="title" column="n_title" />
+		<result property="content" column="n_content"/>
+		<result property="creatorName" column="creator_name"/>
+		<result property="userId" column="userId" />
+		<result property="isread" column="isread"/>
+		<result property="insertTime" column="insert_time"/>
+		<result property="updateTime" column="update_time"/>
+	</resultMap>
+	
+	<resultMap type="com.deppon.dpm.module.main.shared.domain.NoticeCenterIsTop"
+		id="isTopMap">
+		<result property="id" column="id" />
+		<result property="type" column="type" />
+		<result property="createTime" column="create_time"/>
+		<result property="userId" column="userId" />
+		<result property="isTop" column="isTop" />
+		<result property="updateTime" column="update_time"/>
+	</resultMap>
+	
+	<!-- 获取所有通知类型 -->
+	<select id="getType" resultMap="ncMap">
+	    SELECT * FROM notice_center_type where status = 'on'
+	</select>
+	
+	<!-- 更改通知类型状态 -->
+	<update id="updateType" parameterType="map">
+	    UPDATE notice_center_type SET status = #{status}
+        WHERE type = #{type}
+	</update>
+	
+	<!-- 添加通知类型 -->
+	<insert id="addType" parameterType="map">
+	    INSERT INTO notice_center_type (type, typename, status)
+	    VALUES
+	    (
+	     #{type}, 
+	     #{typename},
+	     #{status}
+	     )
+	</insert>
+	
+	<!-- 删除通知类型 -->
+	<delete id="delType" parameterType="map">
+	    DELETE FROM notice_center_type 
+	    WHERE typename = #{typename} AND type = #{type}
+	</delete>
+	
+	<!-- 查询是否存在该条通知 -->
+	<select id="getNoticeDetail" parameterType="map" resultMap="ndMap">
+	    SELECT * FROM notice_center_detail
+	    WHERE notice_id = #{noticeId}
+	    AND notice_type = #{type}
+	    AND userId = #{userId}
+	    LIMIT 1
+	</select>
+	
+	<!-- 添加未读通知 -->
+	<insert id="addNoticeDetail" parameterType="map">
+	    INSERT INTO notice_center_detail (
+	    notice_type,
+	    notice_id,
+	    create_time,
+	    n_title,
+	    n_content,
+	    creator_name,
+	    userId,
+	    isread,
+	    insert_time,
+	    update_time
+	    )
+	    VALUES
+	    (
+	    #{type},
+	    #{noticeId},
+	    #{createTime},
+	    #{title},
+	    #{content},
+	    #{creatorName},
+	    #{userId},
+	    '0',
+	    NOW(),
+	    NOW()
+	    )
+	</insert>
+	
+	<!-- 添加未读通知 -->
+<!-- 	<insert id="addNoticeDetail" parameterType="map">
+	    INSERT INTO notice_center_detail_ (
+	    notice_type,
+	    notice_id,
+	    create_time,
+	    n_title,
+	    n_content,
+	    creator_name,
+	    userId,
+	    isread,
+	    insert_time,
+	    update_time
+	    )
+	    VALUES
+	    (
+	    #{type},
+	    #{noticeId},
+	    #{createTime},
+	    #{title},
+	    #{content},
+	    #{creatorName},
+	    #{userId},
+	    '0',
+	    NOW(),
+	    NOW()
+	    )
+	</insert> -->
+
+    <!-- 更改未读状态 -->
+    <update id="updateIsread" parameterType="map">
+	    UPDATE notice_center_detail
+	    SET
+	    isread = '1',
+	    update_time = NOW()
+	    WHERE 1=1
+	    
+		
+	    <if test="type != null">
+	    and  notice_type = #{type}
+	    </if>
+	    <if test="userId != null">
+	    AND userId = #{userId}
+	    </if>
+	    <if test="noticeId != null">	
+	    and notice_id = #{noticeId}
+	    </if>
+    </update>	
+    
+    <!-- 查询卡片编号 -->
+    <select id="getShowCard" resultType="string">
+        SELECT cardnum FROM mainpage_card 
+        WHERE 
+        <!-- cardnum NOT IN 
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+	    (
+	    #{item} 
+	    )
+	    </foreach>
+        AND --> 
+        status = 'on'
+        ORDER BY cardorder
+    </select>
+    
+    <!-- 添加未读通知 -->
+	<insert id="insertNoticeIsTop" parameterType="map">
+	    INSERT INTO notice_center_isTop (
+	    type,
+	    create_time,
+	    userId,
+	    isTop
+	    )
+	    VALUES
+	    (
+	    #{type},
+	    NOW(),
+	    #{userId},
+	    #{isTop}
+	    )
+	</insert>
+	
+	  <!-- 查询通知列表的顺序 -->
+	<select id="selectNoticeIsTop" parameterType="String" resultMap="isTopMap">
+	   select 
+	    type,
+	    create_time,
+	    userId,
+	    isTop
+	    from 
+	    notice_center_isTop
+	    where 
+	     userId=#{userId}
+	     order by isTop desc,update_time desc
+	   
+	    
+	</select>
+	
+	<!-- 更改列表是否置顶 -->
+	<update id="updateNoticeIsTop" parameterType="map">
+	    UPDATE notice_center_isTop SET isTop = #{isTop},
+	    update_time = #{updateTime}
+        WHERE type = #{type}
+        and userId=#{userId}
+        
+	</update>
+	
+	<!-- 更改卡片开启状态-->
+	<update id="updateCardStatus" parameterType="map">
+	    UPDATE mainpage_card SET status = #{status}
+        WHERE cardnum = #{type}
+	</update>
+	
+	
+	<!-- 获取通知中心首页最新未读的 -->
+	<select id="getNoticeCenter" parameterType="map" resultMap="ndMap">
+	    SELECT * FROM notice_center_detail
+	    
+	    WHERE 
+	    1=1
+	    
+	    <if test="type != null">
+	    and  notice_type = #{type}
+	    </if>
+	    <if test="userId != null">
+	    AND userId = #{userId}
+	    </if>
+	    <if test="noticeId != null">	
+	    and notice_id = #{noticeId}
+	    </if>
+	    <if test="isRead != null">	
+	    and isRead = #{isRead}
+	    </if>
+	    order by insert_time desc 
+	    limit 1
+	</select>
+	
+	<!-- 获取通知中心首页最新未读的 -->
+	<select id="getNoticeDetailList" parameterType="map" resultMap="ndMap">
+	    SELECT * FROM notice_center_detail
+	    
+	    WHERE 
+	    1=1
+	    
+	    <if test="type != null">
+	    and  notice_type = #{type}
+	    </if>
+	    <if test="userId != null">
+	    AND userId = #{userId}
+	    </if>
+	    <if test="noticeId != null">	
+	    and notice_id = #{noticeId}
+	    </if>
+	    <if test="isRead != null">	
+	    and isRead = #{isRead}
+	    </if>
+	    order by insert_time desc 
+	</select>
+	
+	<!-- 获取通知中心首页每天最新未读的 -->
+	<select id="getNoticeTodayList" parameterType="map" resultMap="ndMap">
+	    SELECT * FROM notice_center_detail
+	    
+	    WHERE 
+	     to_days(insert_time) = to_days(now())
+	    
+	    <if test="type != null">
+	    and  notice_type = #{type}
+	    </if>
+	    <if test="userId != null">
+	    AND userId = #{userId}
+	    </if>
+	    
+	    <if test="isRead != null">	
+	    and isRead = #{isRead}
+	    </if>
+	    
+	</select>
+    
+
+</mapper>

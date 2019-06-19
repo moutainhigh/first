@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.main.server.dao.impl.AutoPunchClockMonitorGlobalDao">
+	
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.AutoPunchClockMonitorEntity">
+		INSERT INTO auto_punch_clock_monitor_global (
+			id,
+			emp_code,
+			STATUS,
+			error_msg,
+			os_type,
+			phone_model,
+			os_version,
+			app_version,
+			longitude,
+			latitude,
+			<if test="within != null">
+				within,
+			</if>
+			<if test="auto != null">
+				auto,
+			</if>
+			network,
+			ip,
+			create_time
+		)
+		VALUES
+			(
+				NULL,
+				#{empCode},
+				#{status},
+				#{errorMsg},
+				#{osType},
+				#{phoneModel},
+				#{osVersion},
+				#{appVersion},
+				#{longitude},
+				#{latitude},
+				<if test="within != null">
+					#{within},
+				</if>
+				<if test="auto != null">
+					#{auto},
+				</if>
+				#{network},
+				#{ip},
+				NOW()
+			)
+	</insert>
+	
+	<select id="queryByPage" parameterType="string" resultType="com.deppon.dpm.module.common.shared.domain.AutoPunchClockMonitorEntity">
+			SELECT
+			id,
+			emp_code empCode,
+			status,
+			error_msg errorMsg,
+			os_type osType,
+			phone_model phoneModel,
+			os_version osVersion,
+			app_version appVersion,
+			longitude,
+			latitude,
+			within,
+			auto,
+			network,
+			ip,
+			create_time createTime
+		FROM
+			auto_punch_clock_monitor_global
+		WHERE emp_code = #{empCode}
+		ORDER BY
+			create_time DESC
+	</select>
+	
+	<select id="queryCount" resultType="long">
+		SELECT count(*) FROM auto_punch_clock_monitor_global where emp_code = #{empCode}
+	</select>
+</mapper>

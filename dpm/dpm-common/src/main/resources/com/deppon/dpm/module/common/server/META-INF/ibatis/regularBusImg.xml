@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.RegularBusImgDao" >
+	
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.RegularBusImgEntity">
+		INSERT INTO bus_img_info (
+			id,
+			type,
+			img_url,
+			update_time,
+			create_time
+		)
+		VALUES
+			(
+				NULL,
+				#{type},
+				#{imgUrl},
+				#{updateTime},
+				#{createTime}
+			)
+	</insert>
+	
+	<select id="queryTotalCount" resultType="long">
+		SELECT count(1) from bus_img_info
+	</select>
+	
+	<select id="pageQuery" resultType="com.deppon.dpm.module.common.shared.domain.RegularBusImgEntity">
+		SELECT id,type,img_url imgUrl,create_time createTime,update_time updateTime from bus_img_info
+	</select>
+	
+	<select id="queryBusImgs" resultType="com.deppon.dpm.module.common.shared.domain.RegularBusImgEntity">
+		select id,type,img_url imgUrl from bus_img_info where type in (0,1)
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		delete from bus_img_info where id = #{id}
+	</delete>
+</mapper>

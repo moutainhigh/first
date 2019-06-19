@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.monitorCountInfo">
+	<insert id="insert"
+		parameterType="com.deppon.dpm.module.common.shared.domain.MonitorCountInfoEntity">
+		INSERT INTO
+			COLLECT_COUNTINFO(USERID,START_TIME,END_TIME,TYPE,JOB_NAME,JOB_GROUPS)
+		values(#{userId,jdbcType=VARCHAR},#{startTime,jdbcType=TIMESTAMP}
+			,#{endTime,jdbcType=TIMESTAMP},#{type,jdbcType=INTEGER},#{jobName,jdbcType=VARCHAR},#{jobGroups,jdbcType=VARCHAR})
+	</insert>
+	
+	
+	<insert id="checkInsert" parameterType="map">
+		INSERT INTO
+			COLLECT_COUNTINFO(USERID,START_TIME,END_TIME,TYPE,IDENTIFIER,CHECKNUM)
+		values(#{userId,jdbcType=VARCHAR},#{startDt,jdbcType=TIMESTAMP}
+			,#{endDt,jdbcType=TIMESTAMP},#{type,jdbcType=INTEGER}
+			,#{billNo,jdbcType=VARCHAR},#{count,jdbcType=INTEGER})
+	</insert>
+	
+	<select id="queryCountInfo" parameterType="string"
+		resultType="int">
+		select count(*) from COLLECT_COUNTINFO where IDENTIFIER =#{billNo,jdbcType=VARCHAR}
+	</select>
+	
+</mapper>

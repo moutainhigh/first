@@ -1,0 +1,938 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+	<constant name="struts.multipart.maxSize" value="32000000" />
+
+	<!-- 指定国际化资源文件的baseName为uploadFile -->
+	<constant name="struts.custom.i18n.resources" value="uploadFile" />
+
+	<package name="dpm" extends="struts-default" namespace="/dpm">
+
+
+		<result-types>
+			<result-type name="json"
+				class="com.deppon.foss.framework.server.web.result.json.JSONResult">
+				<!-- zxy 20140820 设置json返回编码 -->
+				<param name="setDefaultEncoding">utf-8</param>
+			</result-type>
+		</result-types>
+
+		<interceptors>
+			<interceptor name="personlyPicInterceptor"
+				class="com.deppon.dpm.tongxunlu.server.util.PersonlyPicInterceptor">
+			</interceptor>
+			<interceptor name="checkUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor" />
+			<interceptor name="wfscheckUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.WfsCheckUrlInterceptor" />
+			<interceptor name="myinterceptor"
+				class="com.deppon.dpm.tongxunlu.server.action.MyInterceptor"></interceptor>
+			<!-- <interceptor name="checkBand7Interceptor" class="com.deppon.dpm.login.server.interceptor.CheckBand7Interceptor"/> -->
+		</interceptors>
+		<action name="synStocktaskingInfo" method="synStocktaskingInfo"
+			class="synStocktasking">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 工作流Start -->
+		<action name="DWFSWork_*" method="{1}"
+			class="dwfsWorkInfoAction">
+	 		<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="wfscheckUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="toWorkItemsListAction" method="workItemsList"
+			class="toWorkItemsListAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="workflowListAll" method="workflowListAll"
+			class="toWorkItemsListAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="wfscheckUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="toWFS_*" method="{1}" class="toWorkItemsListAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="wfscheckUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="dLspWfs_*" method="{1}" class="dLspWorkInfoAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="wfscheckUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" /> 
+		</action>
+		<action name="fsscWfs_*" method="{1}" class="fsscWorkInfoAction">
+			 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="wfscheckUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" /> 
+		</action>
+		<action name="nhrWfs_*" method="{1}" class="nhrWorkInfoAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="wfscheckUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		
+		<action name="crmWfs_*" method="{1}" class="crmWorkInfoAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="wfscheckUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="dppmWfs_*" method="{1}" class="com.deppon.dpm.module.wfs.server.action.DppmWorkInfoAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="acmsWfs_*" method="{1}" class="com.deppon.dpm.module.wfs.server.action.AcmsWorkInfoAction">
+            <interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" /> 
+        </action>
+		<!-- 商铺租贷和场地租赁/转租工作流 -->
+        <action name="network_*" method="{1}"
+            class="com.deppon.dpm.module.wfs.server.action.NetworkPlanAction">
+            <interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+        </action>
+        <action name="comWfs_*" method="{1}" 
+            class="com.deppon.dpm.module.wfs.server.action.FileDownLoadAction">
+             <interceptor-ref name="defaultStack" />
+            <!-- <interceptor-ref name="checkUrlInterceptor" /> -->
+            <interceptor-ref name="myinterceptor" />
+        </action>
+        <!-- 工作流End -->
+		
+
+		<action name="tongxunlu_getAllUser" method="getAllUser" class="tongxunlu">
+		</action>
+		<action name="tongxunlu_pushUser" method="pushUser" class="tongxunlu">
+		</action>
+		<!-- <action name="tongxunlu_seeVersion" method="seeVersion" class="tongxunlu">
+		    <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action> -->
+
+		<action name="tongxunlu_*" method="{1}" class="tongxunlu">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="tongxunlu_dealEmpleaderConfig" method="dealEmpleaderConfig" class="tongxunlu">
+			<interceptor-ref name="defaultStack" />
+		</action>
+		
+		<!-- 常用联系人 -->
+		<action name="myFavorites_*" method="{1}" 
+			class="com.deppon.dpm.tongxunlu.server.action.MyFavoritesAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 常用联系人 -->
+		
+		<!--外部联系人  start-->
+		<action name="outPerson_*" method="{1}" 
+			class="com.deppon.dpm.tongxunlu.server.action.OutPersonAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 外部联系人  end-->
+
+		<action name="jpush_*" method="{1}"
+			class="com.deppon.dpm.tongxunlu.server.action.JpushAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="dlpfile_*" method="{1}"
+			class="com.deppon.dpm.dlpfile.server.action.DlpfileAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<param name="savePath">/upload</param>
+		</action>
+
+		<action name="login_login" method="login" class="loginAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="login_getGustureStatusByEmpCode" method="getGustureStatusByEmpCode"
+			class="loginAction" />
+		<action name="login_getSmsStatusByEmpCode" method="getSmsStatusByEmpCode"
+			class="loginAction" />
+		<action name="login_getCas" method="getCas" class="loginAction" />
+		<action name="login_validateGesturePassword" method="validateGesturePassword"
+			class="loginAction" />
+		<action name="login_validSms" method="validSms"
+			class="loginAction" />
+			
+
+		<action name="login_*" method="{1}" class="loginAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<!-- <result name="success" type="json"/> -->
+			<!-- <result name="error" type="json" /> -->
+		</action>
+		<action name="sdk_*" method="{1}"
+			class="com.deppon.dmp.module.sdk.server.action.UserAction">
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="ws_*" method="{1}"
+			class="com.deppon.dmp.module.sdk.server.action.WsAction">
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>	
+		<!--******************268087 开始**************************** -->
+		<!-- 固定资产 by 268087 开始 -->
+		<action name="fixedassets_*" method="{1}" class="fixedassets">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="stock_*" method="{1}" class="assetStockAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 固定资产盘点 End -->
+		<action name="synStocktaskingInfo" method="synStocktaskingInfo"
+			class="synStocktasking">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 固定资产 by 268087 结束 -->
+		
+		<!-- 物资异常反馈开始 by 275050  -->
+	    <action name="appMaterialException_*" method="{1}" class="appMaterialException">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 物资异常反馈结束 by 275050  -->
+		
+		
+		<!--班车 站点管理 by 268087 开始 -->
+		<action name="busSite_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.BusSiteAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!--班车 站点管理 by 268087 结束 -->
+		<!-- 工程 工程验收 by 268087 开始 -->
+		<action name="procCheckWork_*" method="{1}" 
+			class="com.deppon.dpm.module.management.server.action.ProcCheckWorkAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" /> 
+		</action>
+		<!-- 工程 工程验收 by 268087 结束 -->
+		<!-- 工程验收消息通知结束 -->
+		<!-- 收发室 by 268087 开始 -->
+		<action name="sendParcelWork_*" method="{1}" class="com.deppon.dpm.module.management.server.action.SendParcelWorkAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 收发室 by 268087 结束 -->
+		<!-- 工程维修 by 268087 开始 -->
+		<action name="procManWork_*" method="{1}" class="com.deppon.dpm.module.management.server.action.ProcManWorkAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 工程维修 by 268087 结束 -->
+		<!-- 预订管理 by 268087 开始 -->
+		<action name="reserveManWork_*" method="{1}" class="com.deppon.dpm.module.management.server.action.ReserveManWorkAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 预订管理 by 268087 结束 -->
+		<!-- 拼车活动管理 by 268087 开始 -->
+		<action name="serveOrigWork_*" method="{1}" class="com.deppon.dpm.module.management.server.action.ServeOrigWorkAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 拼车活动管理 by 268087 结束 -->
+		<!--******************268087 结束**************************** -->	
+		<action name="itReport_*" method="{1}" class="itReportAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 意见反馈start -->
+		<!-- <action name="exportExcel" method="execute"
+			class="com.deppon.dpm.login.server.action.FeedbackAction">
+			<result name="success" type="stream">
+				<param name="contentType">application/octet-stream;charset=UTF-8</param>
+				<param name="inputName">inputStream</param>
+				<param name="contentDisposition">
+					attachment;filename=${displayName}
+				</param>
+				<param name="bufferSize">512</param>
+			</result>
+		</action> -->
+		<action name="feedback_*" method="{1}"
+			class="feedbackAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">1048576</param>
+			</interceptor-ref>
+		</action>
+		<!-- 意见反馈end -->
+		<!-- 约吧 -->
+		<action name="bootyCall_*" method="{1}"
+			class="com.deppon.dpm.tongxunlu.server.action.BootyCallAction">
+			<!-- <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" /> -->
+		</action>
+		<!-- 约吧 -->
+
+		<!-- 数据监控 -->
+		<action name="datamonitor" method="dataMonitor"
+			class="com.deppon.dpm.tongxunlu.server.action.TongxunluAction">
+			<interceptor-ref name="defaultStack" />
+			<!-- <interceptor-ref name="checkUrlInterceptor" /> -->
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		
+		<!-- 通讯录查询 -->
+		<action name="search" method="search"
+			class="com.deppon.dpm.tongxunlu.server.action.TongxunluAction">
+			<interceptor-ref name="defaultStack" />
+			<!-- <interceptor-ref name="checkUrlInterceptor" /> -->
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		
+		<!-- 功能访问监控 -->
+		<action name="funcAccessMonitor" method="functionAccessMonitor" 
+			class="com.deppon.dpm.tongxunlu.server.action.FunctionAccessAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<action name="datamonitor_*" method="{1}" 
+			class="com.deppon.dpm.tongxunlu.server.action.FunctionAccessAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		
+		<!-- 提供外部接口 -->
+		<action name="external_*" method="{1}" 
+			class="com.deppon.dpm.tongxunlu.server.action.ExternalMethodAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		
+		<!-- 工程验收合格和扣分-->
+		<action name="ProcCheckScoreAction_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ProcCheckScoreAction">
+		    <interceptor-ref name="defaultStack" />
+		    <interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		
+		
+		
+		<!-- 收发室所有接口  袁中华上-->
+		<action name="SendParcelSendAction_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.SendParcelSendAction">
+		   <interceptor-ref name="defaultStack" />
+		    <interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+
+		<!-- 我的任务 -->
+		<!-- <action name="task_*" method="{1}"
+			class="com.deppon.dpm.uums.server.action.TaskAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action> -->
+
+		<!-- 消息推送中心 -->
+		<action name="tpush_*" method="{1}"
+			class="com.deppon.dpm.uums.server.action.TPushAction">
+		</action>
+
+		<action name="checkNet" method="checkNet"
+			class="com.deppon.dpm.module.common.server.action.CheckNetAction">
+		</action>
+
+		<!-- IT上报评价提交 -->
+		<action name="report_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.AppraiseAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 数据监控 -->
+		<action name="recordCount" method="recordCount"
+			class="com.deppon.dpm.module.common.server.action.MonitorCountInfo">
+		</action>
+		<action name="recordPunchCount" method="recordPunchCount"
+			class="com.deppon.dpm.module.common.server.action.MonitorCountInfo">
+		</action>
+		<action name="dppm_*" method="{1}"
+			class="com.deppon.dpm.module.projecttools.server.action.DppmQueryAction">
+			 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />  
+		</action>
+		<action name="dppmCollect_*" method="{1}" class="dppmCollectAction">
+			 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />  
+		</action>
+		<action name="tasklog_*" method="{1}" class="com.deppon.dpm.module.projecttools.server.action.TaskLogAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />  
+		</action>
+		<action name="dppmtask_*" method="{1}" class="com.deppon.dpm.module.projecttools.server.action.DppmTaskAction">
+            <interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+        </action>
+        <action name="dppmreport_*" method="{1}" class="com.deppon.dpm.module.projecttools.server.action.DppmReportAction">
+            <interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+        </action>
+        <action name="dppmgrade_*" method="{1}" class="com.deppon.dpm.module.projecttools.server.action.ProjectGradeAction">
+            <interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+        </action>
+        <action name="dppmcommon_*" method="{1}" class="com.deppon.dpm.module.projecttools.server.action.CommonAction">
+            <interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+        </action>
+        <action name="dppmyear_*" method="{1}" class="com.deppon.dpm.module.projecttools.server.action.YearPlanAction">
+            <interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+        </action>
+        <!-- 项目管理资源计划 -->
+        <action name="dppmresplan_*" method="{1}" class="com.deppon.dpm.module.projecttools.server.action.DppmResourcesPlanAction">
+            <interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+        </action>
+		<!-- JFeng配置文件 -->
+		<!-- <action name="fssc_*" method="{1}" class="com.deppon.dpm.module.fssc.server.action.ThingBeforeApplyAction"> 
+			<interceptor-ref name="defaultStack" /> <interceptor-ref name="checkUrlInterceptor" 
+			/> <interceptor-ref name="myinterceptor" /> </action> <action name="getFeedBack" 
+			class="feedbackAction" method="getFeedBack"> </action> -->
+
+		<action name="fssc_*" method="{1}"
+			class="com.deppon.dpm.module.fssc.server.action.ThingBeforeApplyAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+
+		<action name="sso_*" method="{1}"
+			class="com.deppon.dpm.module.fssc.server.action.TravelAdvanceApplyAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!--班车管理action -->
+		<action name="busManager_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.BusManagerAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 工程勘测详情action -->
+			<action name="procMsg_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ProcSurveyDetailsAction">
+			 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" /> 
+		</action>
+		
+	<!-- 5分保存-->
+		<action name="ProcScoringAction_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ProcScoringAction">
+		 	<interceptor-ref name="defaultStack" />
+		    <interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+
+		<!-- 班车站点显示action -->
+		<action name="bussiteview_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.BusSiteViewAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+
+		<!-- 班车消息显示 -->
+		<action name="busMessage_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.BusMessageByFindAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+
+		<!-- 异常信息的查询、新增，评价建议的回复、删除，开线建议统计、新增 -->
+		<action name="busMsgAssNews_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.BusMsgAssNewsAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!--工程管理界面显示接口 -->
+		<action name="projectManagerFindMsgs_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ProjectManagerFindMsgAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+		</action>
+		
+		<!--工程验收界面显示接口 -->
+		<action name="procCheckFindScoreShow_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ProcCheckFindScoreShowAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+		</action>
+		
+		 <!--收发室签收接口 -->
+		<action name="mailReceiveSendFunction_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.MailReceiveSendFunctionAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+		</action>
+		
+		 <!--工程维修权限接口接口  xieyidong-->
+		<action name="procMaintainRightControlAction_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ProcMaintainRightControlAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+		</action>
+			<!--预定管理羽毛球和瑜伽室接口接口  xieyidong-->
+		<action name="reserveManageQueryListInfoAction_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ReserveManageQueryListInfoAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+		</action>
+		
+		<!--拼车地址查询  xieyidong-->
+		<action name="serveMonitoringOrAddressAction_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ServeMonitoringOrAddressAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+		</action>
+		<!--工程勘测  xieyidong-->
+		<action name="procSurveySubmitSaveClientAction_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ProcSurveySubmitSaveClientAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" />
+		</action>
+		
+		
+		<!-- 个人头像 -->
+		<action name="upload" class="perSonlyPicAction" method="upload">
+		</action>
+		<!-- 个人头像 -->
+		
+		<!-- 地理位置获取部门  start-->
+		<action name="mapAddress_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.MapAddressAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 地理位置获取部门  end -->
+       
+        <!-- 工程巡检评分详细显示start -->
+			<action name="procScoreMessage_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ProcScoreMessageAction">
+			<interceptor-ref name="defaultStack" />
+            <interceptor-ref name="checkUrlInterceptor" />
+            <interceptor-ref name="myinterceptor" /> 
+            </action>
+		<!-- 工程巡检评分详细显示end -->
+		<!-- 资讯排序 -->
+		<action name="info_*" method="{1}" class="infoAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 资讯排序 -->	
+		<!-- 工程验收消息通知结束 -->
+		<!-- 查询推送的任务信息 start -->
+		<action name="task_*" method="{1}" class="com.deppon.dpm.module.management.server.action.ProcRecordAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 查询推送的任务信息 end -->
+		<!-- 悬赏start -->
+		<action name="awardAction_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.AwardAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		<!-- 悬赏end -->
+		
+		 <!--工程验收初次检查action --> 
+		<action name="procVerify_*" method="{1}"
+		class="com.deppon.dpm.module.management.server.action.ProcCheckVerifyAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		
+		<!-- 收发室 首页未签收 分页查询  sky start 王亚男 -->
+		<action name="sendParcel_*" method="{1}" 
+		class="com.deppon.dpm.module.management.server.action.SendParcelAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 收发室 首页未签收 分页查询  sky end -->
+		
+		<!-- 维修提交  sky start 王亚男 -->
+		<action name="tainSubmit_*" method="{1}" 
+		class="com.deppon.dpm.module.management.server.action.ProcMaintainSubmintAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!--  维修提交   sky end -->
+		
+		<!-- 预定场地  sky start 王亚男 -->
+		<action name="reserveSubmit_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ReserveSubmitAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!--  预定场地   sky end -->
+		
+		<!-- 工程维修信息显示 cs 曹嵩 start -->
+		<action name="proMainList_*" method="{1}" 
+		class="com.deppon.dpm.module.management.server.action.ProcMaintenanceInfoListAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 工程维修信息显示 cs 曹嵩 end -->
+		
+		<!-- 预订管理取消预订和提前结束 start cs曹嵩-->
+		<action name="reserveManaCancel_*" method="{1}" 
+		class="com.deppon.dpm.module.management.server.action.ReserveManageCancelAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 预订管理取消预订和提前结束 end cs曹嵩-->
+		
+		<!-- 拼车保存 start wyn -->
+		<action name="serveSubmit_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ServeOriginatorsMessageAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 拼车保存 end wyn -->
+		
+		<!-- 用户信息 start wyn -->
+		<action name="userInfo_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.UserAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- 用户信息 end wyn -->
+
+			<!-- 收发室消息推送 start ccf -->
+		<action name="sendNews_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.SendParcelNewsAction">
+			 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" /> 
+		</action>
+		
+		<!-- ccf 拼车吧action -->
+          <action name="serPhoto_*" method="{1}"
+			class="com.deppon.dpm.module.management.server.action.ServePhotoAction">
+			 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />  
+		</action>
+		<!--  收发室消息推送 end ccf -->
+			
+		<!-- 拼车查询列表和详情  stats -->
+		<action name="query_*" method="{1}" class="com.deppon.dpm.module.management.server.action.QueryPcInfoAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- end -->
+		
+		<!-- 勘测列表显示 zyf -->
+		<action name="procSurvey_*" method="{1}"  class="com.deppon.dpm.module.management.server.action.ProcSurveyCheckAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+		</action>
+		<!-- end -->
+		
+		<!-- AndroidH5资源文件数量记录  start-->
+		<action name="h5ApplyFile_*"  method="{1}"
+				class="com.deppon.dpm.module.common.server.action.H5ApplyFileCompareAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- AndroidH5资源文件数量记录  end-->
+		
+		<!-- app permission manage  start-->
+		<action name="appPermissionPc_*"  method="{1}"
+				class="com.deppon.dpm.module.common.server.action.AppPermissionPcAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- app permission manage  end-->
+
+		<!-- app permission manage  start-->
+		<action name="locationPermissionPc_*"  method="{1}"
+				class="com.deppon.dpm.module.common.server.action.LocationPermissionPcAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- app permission manage  end-->
+
+		<!-- AutoPunchGlobalAddress permission manage  start-->
+		<action name="autoPunchGlobalAddress_*"  method="{1}"
+				class="com.deppon.dpm.module.common.server.action.AutoPunchGlobalAddressAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- AutoPunchGlobalAddress permission manage  end-->
+
+		
+		<!-- hot line manage  start-->
+		<action name="hotLinePc_*"  method="{1}"
+				class="com.deppon.dpm.module.common.server.action.HotLinePcAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- hot line manage  end-->
+		
+		<!-- out source user manage  start-->
+		<action name="outSourceUserManagerPc_*"  method="{1}"
+				class="com.deppon.dpm.module.common.server.action.OutSourceUserManagerPcAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- out source user manage  end-->
+		
+		<!-- NAZA接口调用信息监控 -->
+		<action name="nazaInvokeMonitor_*" method="{1}" 
+			class="com.deppon.dpm.module.common.server.action.NazaInvokeMonitorAction">
+			<interceptor-ref name="defaultStack" />
+			<!-- <interceptor-ref name="checkUrlInterceptor" /> -->
+		</action>
+		
+		<!-- 用户绑定mac信息 -->
+		<action name="empBindMac_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.EmpBindMacAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+
+		<!-- 获取所有有效的本地推送配置信息 -->
+		<action name="nativePushCfg_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.NativePushCfgPcAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 自动打卡监控 -->
+		<action name="autoPunchClockMonitor_save" method="save"
+			class="com.deppon.dpm.module.common.server.action.AutoPunchClockMonitorAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 用户模块异常监控 -->
+		<action name="userFuncMonitor_save" method="save" class="userFuncMonitorAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 用户操作轨迹监控 -->
+		<action name="userOperationMonitor_save" method="save" class="userOperationMonitorAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 登录后保存登录信息监控 -->
+		<action name="loginInfoMonitor_save" method="saveLoginInfo" class="loginInfoMonitorAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 加解密 -->
+		<action name="dlpNewFile_dlp" method="dlpFile" class="dlpNewFileAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 登录后保存登陆手机信息监控 -->
+		<action name="loginInfoMonitor_mobile" method="saveMobileInfo" class="loginInfoMonitorAction">
+			<interceptor-ref name="defaultStack" />
+			<!-- <interceptor-ref name="checkUrlInterceptor" /> -->
+		</action>
+		
+		<!-- 登录后或退出登录绑定注册id关系 -->
+		<action name="jPushRegistBindAction_*" method="{1}" class="jPushRegistBindAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 用户使用app时长监控 -->
+		<action name="appToUseTimeMonitorAction_*" method="{1}" class="appToUseTimeMonitorAction">
+			<interceptor-ref name="defaultStack" />
+			<!-- <interceptor-ref name="checkUrlInterceptor" /> -->
+		</action>
+		
+		<!-- 计步器 -->
+		<action name="userStepCountAction_*" method="{1}" class="userStepCountAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 班车图片 -->
+		<action name="regularBusImgAction_*" class="regularBusImgAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 各模块加载时长监控 -->
+		<action name="appLoadTimeMonitor" class="appLoadTimeMonitorAction" method="save">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 来电显示 -->
+		<action name="queryCIDVersion" class="cIDAction" method="queryCID">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		<!-- 来电显示 -->
+		<action name="queryUserInfoByNo" class="cIDAction" method="queryUserInfoByNo">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 消息中心 -->
+		<action name="msgCentre_*" class="msgCentreAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		
+		<!-- 副总呼叫监控 -->
+		<action name="leaderCallMonitor" class="leaderCallMonitorAction" method="save">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		<!-- 访客机 -->
+		<action name="visitor_*" class="visitorAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+		</action>
+		<action name="jPushAPI_*" class="jPushNewAction" method="{1}"></action>
+		<!-- 给智能门店提供的接口 -->
+		<action name="query_*" class="com.deppon.dpm.tongxunlu.server.action.SelectAllDeptAction" method="{1}" >	
+		 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+	</package>
+	
+	<package name="foss-default" extends="framework-default">
+		<result-types>
+			<result-type name="json"
+				class="com.deppon.foss.framework.server.web.result.json.JSONResult" />
+			<result-type name="jsonerror"
+				class="com.deppon.foss.framework.server.web.result.json.JsonErrorResult" />
+			<result-type name="jsontree"
+				class="com.deppon.foss.framework.server.web.result.json.JSONTreeResult" />
+			<result-type name="jsperror"
+				class="com.deppon.foss.framework.server.web.result.JSPErrorResult" />
+		</result-types>
+		<interceptors>
+			<interceptor name="error"
+				class="com.deppon.foss.framework.server.web.interceptor.ExceptionInterceptor" />
+			<interceptor name="webLog"
+				class="com.deppon.foss.framework.server.web.interceptor.LogInterceptor" />
+			<interceptor name="module"
+				class="com.deppon.foss.framework.server.deploy.struts.ModuleInterceptor" />
+			<interceptor name="security"
+				class="com.deppon.foss.framework.server.web.interceptor.SecurityInterceptor" />
+			<interceptor name="json"
+				class="com.deppon.foss.framework.server.web.interceptor.JSONInterceptor" />
+
+			<interceptor-stack name="fossStack">
+				<interceptor-ref name="error" />
+				<interceptor-ref name="webLog" />
+				<interceptor-ref name="module" />
+				<interceptor-ref name="security" />
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="json" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="fossStack" />
+
+		<global-results>
+			<result name="jspError" type="jsperror">../login/index.action</result>
+			<result name="jsonError" type="jsonerror"></result>
+			<result name="jspLogin" type="redirect">../login/index.action</result>
+			<result name="jsonLogin" type="jsonerror"></result>
+		</global-results>
+	</package>
+</struts>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sso>
+	<application id="sourceApp" url="http://localhost:8084/hbhk-mydpap-web/"
+		homePage="index.action" ssoTokenStore="com.deppon.foss.framework.server.sso.impl.TokenMapStore"
+		ssoUserStore="com.deppon.foss.framework.server.sso.impl.SSOUserSessionStore" />
+	<application id="targetApp" url="http://localhost:8085/hbhk-sso-web/"
+		homePage="index.action" ssoTokenStore="com.deppon.foss.framework.server.sso.impl.TokenMapStore"
+		ssoUserStore="com.deppon.foss.framework.server.sso.impl.SSOUserSessionStore" />
+</sso>

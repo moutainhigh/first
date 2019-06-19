@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>DEMO</title>
+    <link rel="stylesheet" type="text/css" href="/dpm/scripts/vue/iview.css">
+</head>
+<body>
+<div id="app" data-options="region:'center',title:' 当前位置-->> '">
+    <div class="content_box">
+        <div class="search_head">
+              <div>
+                   年份：
+                   <i-select v-model="chooseYear" style="width:150px">
+                        <i-option v-for="item in yearList" :value="item.val" :key="item.val">{{ item.label }}</i-option>
+                  </i-select>
+              </div>
+              <div>
+                   月份：
+                   <i-select v-model="chooseMon" style="width:150px">
+                        <i-option v-for="item in 12" :value="item" :key="item">{{ item}}</i-option>
+                  </i-select>
+              </div>
+              <div>
+                  <i-button type="primary" @click='search'>查询</i-button>
+              </div>
+              
+         </div>  
+         <div class="show_table">
+              <div class="show_first">
+                   <div>排班时间：{{showYear}}年{{showMon}}月</div>
+                   <div>
+                       <i-button type="success" size='small' @click='updateState'>{{updateFlag?"完成":"修改"}}</i-button>
+                   </div>
+              </div>
+              <div class="show_sec">
+                   <div class="left_show">
+                       <div class="index_num">
+                            序号
+                       </div> 
+                   </div>
+                   <div class="time_div">
+                        <div class="time_list" v-for='item,index in listData'>
+                               <div>
+                                  {{item.week}}
+                               </div>
+                               <div>
+                                   {{item.day}}   
+                               </div>
+                               <div style="border-bottom: none;" :class="updateFlag?'updataState':''" @click='updateItem(item)'>
+                                   {{item.state}}
+                               </div>
+                        </div>
+                   </div>
+              </div>
+         </div>
+    </div>
+</div>
+<script type="text/javascript" src="/dpm/scripts/vue/jquery.min.js"></script>
+<script type="text/javascript" src="/dpm/scripts/vue/vue.min.js"></script>
+<script type="text/javascript" src="/dpm/scripts/vue/iview.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            // 年份
+            yearList:[],
+            // 选择的年
+            chooseYear:0,
+            // 展示的年
+            showYear:0,
+            // 年份
+            monthList:[],
+            // 选择的月份
+            chooseMon:0,
+            // 展示的月
+            showMon:0,
+            // 数据源
+            listData:[],
+            // 当前是否处于修改状态 true=>处于修改状态
+            updateFlag:false,
+            // 用户信息
+            userId:'',
+            sessionId:'',
+            casCookie:'',
+
+            // 请求地址 
+            requestUrl:'http://192.168.68.117:8080/dpm/dpmManage/',
+
+        },
+        mounted(){
+           this.handleTime();
+        },
+        methods: {
+
+             
+            // 处理页面初始化
+            handleTime(){
+                 // 从URL截取用户信息
+                 /* this.userId = this.GetQueryString("userId");
+                 this.sessionId = this.GetQueryString("sessionId");
+                 this.casCookie = this.GetQueryString("casCookie"); */
+                 
+                 /* console.log(this.userId , this.sessionId , this.casCookie) */
+                  
+                 var date=new Date;
+                 // 处理默认年 还有年份的列表 今年+明年
+                 var year=date.getFullYear(); 
+                 this.chooseYear=year;
+                 this.yearList=[{val:year,label:year},{val:year+1,label:year+1}];
+                 // 处理默认当前月
+                 this.chooseMon = date.getMonth()+1;
+                 // 处理页面展示月份及年份
+                 this.showYear=this.chooseYear;
+                 this.showMon  =this.chooseMon;
+                 // 处理数据源
+                 this.getListData(this.chooseYear,this.chooseMon)
+            },
+            // 点击查询按钮
+            search(){
+                 // 处理页面展示月份及年份
+                 this.showYear=this.chooseYear;
+                 this.showMon  =this.chooseMon;
+                 // 处理数据
+                 this.getListData(this.chooseYear,this.chooseMon);
+            },
+            // 点击修改按钮
+            updateState(){
+                this.updateFlag = !this.updateFlag;
+            },
+            // 修改状态
+            updateItem(item){
+                console.log(item)
+
+               if(!this.updateFlag){
+                  return false;
+               }
+               
+               var isrest = 1;
+               if(item.state == '休'){
+                    isrest=0;
+               }
+               
+
+               var that=this;
+               /* let url = this.requestUrl+ 'calendar_updateSchedule.action?userId=' +this.userId + '&sessionId=' + this.sessionId + '&casCookie=' + this.casCookie + '&calendar.calDate=' + this.chooseYear+'-'+this.chooseMon+'-'+item.day + '&calendar.isrest='+isrest; */
+               let url = this.requestUrl+ 'updateSchedule.action?calendar.calDate=' + this.chooseYear+'-'+this.chooseMon+'-'+item.day + '&calendar.isrest='+isrest;
+
+               $.ajax({
+                    url: url,
+                    type: 'GET', //GET
+                    async: true,    //或false,是否异步
+                    data: {},
+                    timeout: 20000,       //超时时间
+                    dataType: 'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+                    success: function (data, textStatus, jqXHR) {
+                         console.log(data)
+                         if(data.errorCode==0){
+                             if(item.state == '休'){
+                                    item.state = '标'
+                             }else{
+                                    item.state = '休'
+                             }
+                             that.$Message.success('修改成功');
+                         }else{
+                             that.$Message.error('修改失败');
+                         }
+                    },
+                    error: function (xhr, textStatus) {
+
+                    }
+                })
+            },
+            //计算数据源
+            getListData(year,month){
+               var that=this;
+               var date=new Date;
+               // 计算天数
+               var dayNum=that.getMonNum(year,month);
+               // 获取排版信息
+               /* let url = this.requestUrl+ 'calendar_getSchedule.action?userId=' +this.userId + '&sessionId=' + this.sessionId + '&casCookie=' + this.casCookie + '&caldate='+ this.chooseYear + '-' + this.chooseMon; */
+               let url = this.requestUrl+ 'getSchedule.action?caldate='+ this.chooseYear + '-' + this.chooseMon;
+               $.ajax({
+                    url: url,
+                    type: 'POST', //GET
+                    async: true,    //或false,是否异步
+                    data: {},
+                    timeout: 20000,       //超时时间
+                    dataType: 'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+                    success: function (data, textStatus, jqXHR) {
+                         console.log(data)
+                         if(data.errorCode==0){
+                              // 处理排版信息
+                              var arr=[];
+                              for(let n=0;n<data.data.length;n++){
+                                   console.log(data.data[n].calDate.split("-")[2]);
+                                   var xiuDayNum = Number(data.data[n].calDate.split("-")[2])
+                                   arr.push(xiuDayNum)
+                              }
+                              
+                              that.listData=[];
+                              for(let i=0;i<dayNum;i++){
+                                // 今天休息
+                                var restFlag = false;
+                                for(let j=0;j<arr.length;j++){
+                                       if(arr[j] == (i+1)){
+                                           restFlag=true;
+                                       }
+                                }
+                                
+                                if(restFlag){
+                                    // 休息
+                                    var obj = {
+                                        day:i+1,
+                                        week:that.getWeek(that.chooseYear,month,i+1),
+                                        state:'休'
+                                    }
+
+                                }else{
+                                    // 上班
+                                    var obj = {
+                                        day:i+1,
+                                        week:that.getWeek(that.chooseYear,month,i+1),
+                                        state:'标'
+                                    }
+                                }
+                                
+                                that.listData.push(obj)
+                              } 
+                         }else{
+                               that.listData=[{day:'暂无信息',week:'请重试'}];
+                         }
+                    },
+                    error: function (xhr, textStatus) {
+
+                    }
+                })
+                 
+            },
+            // 计算某年某月有多少天
+            getMonNum(year,month){
+                  var curMonthDays=new Date(year,month,0).getDate();
+                  return curMonthDays;
+            },
+            // 截取URL的参数
+            GetQueryString(name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null)
+                    return decodeURI(r[2]);
+                return null;
+            },
+            // 计算某年某月某日是周几
+            getWeek(year,month,day){
+                var totaldays = 0;
+                for(var i = 1900;i < year;i++) {
+                    if((i % 4 == 0 && i % 100 != 0) || (i % 400 == 0)) {
+                        totaldays += 366;
+                    }else{
+                        totaldays += 365;
+                    }
+                }
+         
+                var isrun = ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 1 : 0;
+         
+                switch(month - 1) {
+                    case 11:
+                        totaldays += 30;
+                    case 10:
+                        totaldays += 31;
+                    case 9:
+                        totaldays += 30;
+                    case 8:
+                        totaldays += 31;
+                    case 7:
+                        totaldays += 31;
+                    case 6:
+                        totaldays += 30;
+                    case 5:
+                        totaldays += 31;
+                    case 4:
+                        totaldays += 30;
+                    case 3:
+                        totaldays += 31;
+                    case 2:
+                        isrun ? (totaldays += 29) : (totaldays +=28);
+                    case 1:
+                        totaldays += 31;
+                }
+         
+                totaldays += day;
+                var weekShow = '';
+                switch(totaldays % 7) {
+                    case 1:
+                        weekShow='一';
+                        break;
+                    case 2:
+                        weekShow='二';
+                        break;
+                    case 3:
+                        weekShow='三';
+                        break;
+                    case 4:
+                        weekShow='四';
+                        break;
+                    case 5:
+                        weekShow='五';
+                        break;
+                    case 6:
+                        weekShow='六';
+                        break;
+                    case 0:
+                        weekShow='日';
+                        break;
+                    }
+
+                return weekShow;
+        },
+      }
+    })
+</script>
+<style type="text/css">
+    .content_box{
+        margin: 0 auto;
+        width: 1000px;
+    }
+    .search_head{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 60px;
+    }
+    .show_table{
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #e3e8ee;
+    }
+    .show_first{
+        padding: 0 8px;
+        height: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e3e8ee;
+        background: #f5f7f9;
+    }
+    .show_sec{
+        height: 90px;
+        display: flex;
+        justify-content: space-between;
+
+    }
+    .time_div{
+        display: flex;
+        justify-content: space-between;
+        flex: 1
+    }
+    .time_list{
+        width: 100%;
+        height: 100%;
+        border-left: 1px solid #e3e8ee;
+    }
+    .time_list > div{
+
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 1px solid #e3e8ee;
+    }
+    .time_list:first-child{
+         border-left: none;
+    }
+    .left_show{
+        height: 100%;
+        border-right: 1px solid #e3e8ee;
+
+    }
+    .index_num{
+        height: 60px;
+        width: 60px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-bottom: 1px solid #e3e8ee;
+    }
+    .updataState{
+        background: #ebf7ff;
+        cursor: pointer;
+    }
+    .updataState:hover{
+        background: white
+    }
+</style>
+</body>
+</html>

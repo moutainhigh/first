@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.shared.domain.VisitorSmsSendInfo">
+
+	<!-- 访客系统短信发送日志记录 -->
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.VisitorSmsSendInfo">
+		INSERT INTO `om_visitor_sms_log` 
+			(`create_time`, `sms_phone`, `sms_content`, `sms_status`, `remark`) 
+		VALUES (now(), #{smsPhone}, #{smsContent}, #{smsStatus}, #{remark});
+	</insert>
+	
+</mapper>

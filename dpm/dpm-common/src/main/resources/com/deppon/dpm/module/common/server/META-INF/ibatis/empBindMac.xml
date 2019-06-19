@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.EmpBindMacDao" >
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.EmpBindMacEntity">
+		INSERT INTO emp_bind_mac_info (
+			id,
+			emp_code,
+			os_type,
+			phone_mac,
+			create_time,
+			update_time
+		)
+		VALUES
+			(
+				NULL,
+				#{empCode},
+				#{osType},
+				#{phoneMac},
+				NOW(),
+				NOW()
+			)
+		ON DUPLICATE KEY UPDATE emp_code = #{empCode},os_type = #{osType},update_time = NOW()
+	</insert>
+	
+	<select id="queryEmpCodeByMacAndOstype" resultType="string"
+		parameterType="com.deppon.dpm.module.common.shared.domain.EmpBindMacEntity">
+		SELECT emp_code FROM emp_bind_mac_info WHERE phone_mac = #{phoneMac} AND os_type = #{osType}
+	</select>
+</mapper>

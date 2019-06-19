@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.BreakDownDao" >
+	<insert id="insert" parameterType="com.deppon.dpm.module.common.shared.domain.BreakDownEntity">
+			
+		INSERT INTO app_breakdown_info 
+			(
+				empCode,
+				occurTime,
+				osType,
+				version,
+				reason
+			)
+		VALUES
+			(
+				#{empCode},
+				#{occurTime},
+				#{osType},
+				#{version},
+				#{reason}
+			)
+	</insert>
+</mapper>

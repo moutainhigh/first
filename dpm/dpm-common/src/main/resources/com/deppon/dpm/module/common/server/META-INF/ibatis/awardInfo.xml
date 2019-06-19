@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.awardInfo" >
+	<select id="getAwardList" parameterType="map"
+		resultType="com.deppon.dpm.module.common.shared.domain.AwardEntity">
+		SELECT * FROM OM_AWARD 
+		<where>
+			1 = 1 
+			<if test="articleID != null and articleID != ''">
+				and articleID=#{articleID}
+			</if>
+		</where>
+		ORDER BY PUBLISHTIME DESC limit #{begin},#{pageSize}
+	</select>
+	
+	<delete id="deleteAward" parameterType="String" >
+  	 	DELETE FROM OM_AWARD 
+  	 		WHERE articleID = #{articleID,jdbcType=VARCHAR} 
+  	</delete>
+  	
+  	<delete id="deleteAwardsByIds" parameterType="map" >
+  		DELETE FROM OM_AWARD 
+  	 		WHERE articleID IN
+  	 		<foreach collection="ids" item="id" open="(" separator="," close=")">
+  	 			#{id}
+  	 		</foreach>
+  	</delete>
+  	
+	<update id="updateAward" parameterType="com.deppon.dpm.module.common.shared.domain.AwardEntity" >
+	    UPDATE OM_AWARD 
+	     <set >
+	      <if test="publisher != null" >
+	        publisher = #{publisher,jdbcType=VARCHAR},
+	      </if>
+	      <if test="publisherEmail != null" >
+	        publisherEmail = #{publisherEmail,jdbcType=VARCHAR},
+	      </if>
+	      <if test="recruitPosition != null" >
+	        recruitPosition = #{recruitPosition,jdbcType=VARCHAR},
+	      </if>
+	      <if test="publishTime != null" >
+	        publishTime = #{publishTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="title != null" >
+	        title = #{title,jdbcType=VARCHAR},
+	      </if>
+	      <if test="content != null" >
+	        content = #{content,jdbcType=VARCHAR},
+	      </if>
+	      <if test="hasAward != null" >
+	      <choose>
+		      <when test="hasAward == 1">
+		         hasAward = 'true',
+		      </when>
+		      <when test="hasAward == 0">
+		         hasAward = 'false',
+		      </when>
+		      <otherwise>
+		         hasAward = #{hasAward,jdbcType=VARCHAR},
+		      </otherwise>
+		   </choose>
+	      </if>
+	      <if test="reward != null" >
+	        reward = #{reward,jdbcType=VARCHAR},
+	      </if>
+	      <if test="contactPerson != null" >
+	        contactPerson = #{contactPerson,jdbcType=VARCHAR},
+	      </if>      
+	      <if test="contactPhone != null" >
+	        contactPhone = #{contactPhone,jdbcType=VARCHAR}
+	      </if>      
+    	</set>
+	    WHERE articleID = #{articleID,jdbcType=VARCHAR} 
+  	</update>
+  	
+	<insert id="insertAward" parameterType="com.deppon.dpm.module.common.shared.domain.AwardEntity">
+		insert into om_award 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="articleID != null and articleID != ''">
+				articleID,
+			</if>
+			<if test="publisher != null and publisher != ''">
+				publisher,
+			</if>
+			<if test="publisherEmail != null and publisherEmail != ''">
+				publisherEmail,
+			</if>
+			<if test="recruitPosition != null and recruitPosition != ''">
+				recruitPosition,
+			</if>
+			<choose>
+				<when test="publishTime != null and publishTime != ''">
+					publishTime,
+				</when>
+				<otherwise>
+					publishTime,
+				</otherwise>
+			</choose>
+			<if test="title != null and title != ''">
+				title,
+			</if>
+			<if test="content != null and content != ''">
+				content,
+			</if>
+			<if test="hasAward != null">
+				hasAward,
+			</if>
+			<if test="reward != null and reward != ''">
+				reward,
+			</if>
+			<choose>
+				<when test="createTime != null and createTime != ''">
+					createTime,
+				</when>
+				<otherwise>
+					createTime,
+				</otherwise>
+			</choose>
+			<if test="contactPerson != null and contactPerson != ''">
+				contactPerson,
+			</if>
+			<if test="contactPhone != null and contactPhone != ''">
+				contactPhone
+			</if>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="articleID != null and articleID != ''">
+				#{articleID},
+			</if>
+			<if test="publisher != null and publisher != ''">
+				#{publisher},
+			</if>
+			<if test="publisherEmail != null and publisherEmail != ''">
+				#{publisherEmail},
+			</if>
+			<if test="recruitPosition != null and recruitPosition != ''">
+				#{recruitPosition},
+			</if>
+			<choose>
+				<when test="publishTime != null and publishTime != ''">
+					#{publishTime},
+				</when>
+				<otherwise>
+					now(),
+				</otherwise>
+			</choose>
+			<if test="title != null and title != ''">
+				#{title},
+			</if>
+			<if test="content != null and content != ''">
+				#{content},
+			</if>
+			<if test="hasAward != null" >
+		      <choose>
+			      <when test="hasAward == 1">
+			         'true',
+			      </when>
+			      <when test="hasAward == 0">
+			         'false',
+			      </when>
+			      <otherwise>
+			         #{hasAward},
+			      </otherwise>
+			   </choose>
+		    </if>
+			<if test="reward != null and reward != ''">
+				#{reward},
+			</if>
+			<choose>
+				<when test="createTime != null and createTime != ''">
+					#{createTime},
+				</when>
+				<otherwise>
+					now(),
+				</otherwise>
+			</choose>
+			<if test="contactPerson != null and contactPerson != ''">
+				#{contactPerson},
+			</if>
+			<if test="contactPhone != null and contactPhone != ''">
+				#{contactPhone}
+			</if>
+		</trim>
+	</insert>
+	
+	<insert id="insertReply" parameterType="com.deppon.dpm.module.common.shared.domain.AwardDetailEntity">
+		insert into om_award_detail 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="articleID != null and articleID != ''">
+				articleID,
+			</if>
+			<if test="userId != null and userId != ''">
+				userId,
+			</if>
+			<if test="toUserId != null and toUserId != ''">
+				toUserId,
+			</if>
+			<if test="sendContent != null and sendContent != ''">
+				sendContent,
+			</if>
+			<choose>
+				<when test="sendTime != null and sendTime != ''">
+					sendTime,
+				</when>
+				<otherwise>
+					sendTime,
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="createTime != null and createTime != ''">
+					createTime
+				</when>
+				<otherwise>
+					createTime
+				</otherwise>
+			</choose>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="articleID != null and articleID != ''">
+				#{articleID},
+			</if>
+			<if test="userId != null and userId != ''">
+				#{userId},
+			</if>
+			<if test="toUserId != null and toUserId != ''">
+				#{toUserId},
+			</if>
+			<if test="sendContent != null and sendContent != ''">
+				#{sendContent},
+			</if>
+			<choose>
+				<when test="sendTime != null and sendTime != ''">
+					#{sendTime},
+				</when>
+				<otherwise>
+					now(),
+				</otherwise>
+			</choose>
+			<choose>
+				<when test="createTime != null and createTime != ''">
+					#{createTime}
+				</when>
+				<otherwise>
+					now()
+				</otherwise>
+			</choose>
+		</trim>
+	</insert>
+	
+	<select id="getAwardDetail" parameterType="map"
+		 resultType="com.deppon.dpm.module.common.shared.domain.AwardDetailEntity">
+		select oa.ID,oa.userId,oa.toUserId,oa.sendContent,oa.sendTime,oe.empName,oe.jobName,ep.pictPath,oe.gender 
+		from om_award_detail oa join om_employee oe on oa.userId = oe.empCode 
+		join emp_pic ep on oa.userId = ep.empCode 
+		where oa.articleID = #{articleID} and oe.EMPSTATUS = 'on' order by oa.createTime desc limit #{begin},#{pageSize}
+	</select>
+	
+	<select id="queryCount" resultType="Long">
+		SELECT COUNT(1) from om_award
+	</select>
+</mapper>
