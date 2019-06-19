@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- zxy 20140805 新增 -->
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.systemConfig">
+	<resultMap id="resultMap"
+		type="com.deppon.dpm.tongxunlu.shared.vo.SystemConfig">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="androidVersion" column="android_version"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="iphoneVersion" column="iphone_version"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="content" column="content" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="iphoneForce" column="iphoneForce" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="androidForce" column="androidForce" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="androidUrl" column="android_url" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="iphoneUrl" column="iphone_url" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="lastsyndate" column="lastsyndate" javaType="String"
+			jdbcType="DATE" />
+		<result property="synSuccessed" column="syn_Successed"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="id" column="id" javaType="Integer" jdbcType="INTEGER" />
+	</resultMap>
+	<resultMap id="feedBack" 
+		type="com.deppon.dpm.tongxunlu.shared.domain.FeedBackDetailsEntity" >
+		<result property="feedBackId" column="ID" javaType="Integer" jdbcType="INTEGER" />
+		<result property="empCode" column="empcode" javaType="String" jdbcType="VARCHAR" />
+		<result property="empName" column="empname" javaType="String" jdbcType="VARCHAR" />
+		<result property="content" column="content" javaType="String" jdbcType="VARCHAR" />
+		<result property="fileName" column="file_path" javaType="String" jdbcType="VARCHAR" />
+		<result property="submitTime" column="submit_time" javaType="DATE" jdbcType="TIMESTAMP" />
+		<result property="executeStatus" column="executeStatus" javaType="String" jdbcType="VARCHAR" />
+		<result property="executePerson" column="executePerson" javaType="String" jdbcType="VARCHAR" />
+		<result property="plan" column="plan" javaType="String" jdbcType="VARCHAR" />
+		<result property="PS" column="PS" javaType="String" jdbcType="VARCHAR" />
+		<result property="isSolve" column="isSolve" javaType="String" jdbcType="VARCHAR" />
+		<result property="reply" column="reply" javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="employee" 
+		type="com.deppon.dpm.tongxunlu.shared.domain.EmployeeEntity" >
+		<result property="empName" column="empName" javaType="String" jdbcType="VARCHAR" />
+		<result property="mobileNo" column="mobileNo" javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="base_param">
+		id,android_version,iphone_version,content,iphoneForce,androidForce,android_url,iphone_url,lastsyndate,syn_Successed
+	</sql>
+	<update id="updateSyncDateByLastSyncDate" parameterType="java.util.Map">
+		update
+		system_config set
+		lastsyndate= #{newLastSynDate}
+		where
+		lastsyndate =
+		#{oldLastSynDate}
+	</update>
+	<select id="querySingleSystemConfig" resultMap="resultMap"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.SystemConfig">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="base_param" />
+        <![CDATA[
+            FROM system_config config 
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			<if test="id != null and id != '' ">
+				and id=#{id}
+			</if>
+		</where>
+		limit 1
+	</select>
+
+	<insert id="dataMonitor" parameterType="map">
+		insert into
+		data_monitor(monitor_type,access_time,emp_code,osType)values(#{monitorType},now(),#{empCode},#{osType})
+	</insert>
+
+	<insert id="feedbackinsert" parameterType="map">
+		insert into feedback 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">
+				empcode,
+			</if>
+			<if test="content != null and content != ''">
+				content,
+			</if>
+			<if test="osType != null and osType != ''">
+				osType,
+			</if>
+			<if test="submit_time == null or submit_time == ''">
+				submit_time,
+			</if>
+			<if test="file_path != null and file_path != ''">
+				file_path,
+			</if>
+				isSolve,
+				executeStatus,
+			<if test="type != null and type != ''">
+				type
+			</if>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">
+				#{userId},
+			</if>
+			<if test="content != null and content != ''">
+				#{content},
+			</if>
+			<if test="osType != null and osType != ''">
+				#{osType},
+			</if>
+			<if test="submit_time == null or submit_time == ''">
+				now(),
+			</if>
+			<if test="file_path != null and file_path != ''">
+				#{file_path},
+			</if>
+				'1',
+				'0',
+			<if test="type != null and type != ''">
+				#{type}
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="getExcEmpCodeCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+	   select count(*) from om_feedbackproblemlist where excEmpCode = #{excEmpCode}
+	</select>
+	
+	<update id="updateFeedbackReply" parameterType="com.deppon.dpm.tongxunlu.shared.domain.FeedBackDetailsEntity">
+	    UPDATE FEEDBACK 
+		<set>
+			<if test="reply != null">
+				reply = #{reply},
+			</if>
+			<if test="executeStatus != null">
+				executeStatus = #{executeStatus}
+			</if>
+		</set>
+		<where>
+			<choose>
+				<when test="type == '德邦欢行'">
+					empCode = #{empCode} AND type = "德邦欢行" AND executeStatus = "0"
+				</when>
+				<otherwise>
+					ID = #{id}
+				</otherwise>
+			</choose>
+		</where>
+	</update>
+	
+	<select id="getFeedbackDetails" resultMap="feedBack" parameterType="map">
+		SELECT fb.id,fb.osType,fb.type,fb.empcode,oe.empname,fb.content,fb.executePerson,fb.submit_time,
+		fb.file_path,fb.executeStatus,fb.plan,fb.PS,fb.isSolve FROM feedback fb LEFT JOIN om_employee oe ON 
+		oe.empcode = fb.empcode 
+		<where>
+			1 = 1 
+			<if test="empCode != null and empCode != ''">
+				and oe.EMPSTATUS = 'on' 
+				and fb.empcode=#{empCode} 
+			</if>
+		</where>
+		ORDER BY fb.submit_time DESC limit #{start},#{pageSize}
+	</select>
+
+	<select id="getFeedbackDetailEnt" resultMap="feedBack" parameterType="map">
+		SELECT fb.id,fb.osType,fb.type,fb.empcode,oe.empname,oe.mobileno,fb.content,fb.reply,fb.executePerson,fb.submit_time,
+  fb.file_path FROM feedback fb LEFT JOIN om_employee oe ON oe.empcode = fb.empcode WHERE fb.id=#{id}
+	</select>
+	
+	<select id="getExecuteEnt" resultMap="employee" parameterType="map"> 
+	   SELECT oe.empname,oe.mobileno from feedback fb 
+       INNER JOIN om_feedbackproblemlist of ON fb.type = of.problemType
+       INNER JOIN om_employee oe ON of.excEmpCode = oe.empcode
+       WHERE fb.id = #{id}
+	</select>
+
+	<select id="getSloverEnt" resultType="com.deppon.dpm.tongxunlu.shared.domain.FeedBackPushEntity" parameterType="map">
+		SELECT b.id,ol.excEmpCode FROM (
+          SELECT fd.type,fd.id FROM feedback fd WHERE fd.empcode=#{id} ORDER BY submit_time DESC LIMIT 1
+        ) AS b INNER JOIN om_feedbackproblemlist ol ON b.type=ol.problemType;
+	</select>
+
+	<select id="getReportListByHandleId" resultMap="feedBack" parameterType="map">
+		SELECT
+		fb.id,
+		oe.empname,
+		fb.empcode,
+		fb.osType,
+		fb.type,
+		fb.content,
+		fb.reply,
+		fb.executePerson,
+		fb.executeStatus,
+		fb.submit_time,
+		fb.file_path
+		FROM feedback fb
+		INNER JOIN om_feedbackproblemlist ol
+		ON fb.type = ol.problemType
+		INNER JOIN om_employee oe
+		ON fb.empcode = oe.empcode
+		<where>
+			1=1 AND ol.excEmpCode = #{userId}
+			<if test="searchContent != null and searchContent != ''">
+				and fb.content like #{searchContent}
+			</if>
+			<if test="searchBeginTime != null and searchBeginTime != ''">
+				<![CDATA[
+					and fb.submit_time >= #{searchBeginTime}
+				]]>
+			</if>
+			<if test="searchEndTime != null and searchEndTime != ''">
+				<![CDATA[
+					and fb.submit_time <= concat(#{searchEndTime},' 23:59:59')
+				]]>
+			</if>
+			<if test="searchName != null and searchName != ''">
+				and oe.empname like #{searchName}
+			</if>
+			<if test="searchCode != null and searchCode != ''">
+				and fb.empcode = #{searchCode}
+			</if>
+			<if test="searchIsSolve != null and searchIsSolve != ''">
+				<if test="searchIsSolve == 0 ">
+					and fb.isSolve = '0'
+				</if>
+				<if test="searchIsSolve == 1 ">
+					and (fb.isSolve = '1' or fb.isSolve is null or fb.isSolve = '')
+				</if>
+			</if>
+			<if test="searchStatus != null and searchStatus != ''">
+				<if test="searchStatus == 1 ">
+					and fb.executeStatus in ('1','2','3','4')
+				</if>
+				<if test="searchStatus == 0 ">
+					and (fb.executeStatus = '0' or fb.executeStatus is null or fb.executeStatus = '')
+				</if>
+			</if>
+			<if test="searchOsType != null and searchOsType != ''">
+				and fb.osType = #{searchOsType}
+			</if>
+			<if test="searchType != null and searchType != ''">
+				and fb.type = #{searchType}
+			</if>
+
+		</where>
+		ORDER BY fb.submit_time DESC
+		LIMIT #{start},#{size};
+	</select>
+
+	<!-- PC页面查询 列表sql -->
+	<select id="getFeedbackList" resultMap="feedBack" parameterType="map">
+		SELECT fb.id,fb.osType,fb.type,fb.empcode,oe.empname,fb.content,fb.executePerson,fb.submit_time,
+		fb.file_path,fb.executeStatus,fb.plan,fb.PS,fb.isSolve FROM feedback fb LEFT JOIN om_employee oe ON 
+		oe.empcode = fb.empcode 
+		<where>
+			1 = 1 and oe.EMPSTATUS ='on' 
+			<if test="searchContent != null and searchContent != ''">
+				and fb.content like #{searchContent}
+			</if>
+			<if test="searchBeginTime != null and searchBeginTime != ''">
+				<![CDATA[ 
+					and fb.submit_time >= #{searchBeginTime} 
+				]]>
+			</if>
+			<if test="searchEndTime != null and searchEndTime != ''">
+				<![CDATA[
+					and fb.submit_time < #{searchEndTime} 
+				]]>
+			</if>
+			<if test="searchName != null and searchName != ''">
+				and oe.empname like #{searchName}
+			</if>
+			<if test="searchCode != null and searchCode != ''">
+				and fb.empcode = #{searchCode} 
+			</if>
+			<if test="searchIsSolve != null and searchIsSolve != ''">
+				<if test="searchIsSolve == 0 ">
+					and fb.isSolve = '0' 
+				</if>
+				<if test="searchIsSolve == 1 ">
+					and (fb.isSolve = '1' or fb.isSolve is null or fb.isSolve = '')
+				</if>
+			</if>
+			<if test="searchStatus != null and searchStatus != ''">
+				<if test="searchStatus == 1 ">
+					and fb.executeStatus in ('1','2','3','4') 
+				</if>
+				<if test="searchStatus == 0 ">
+					and (fb.executeStatus = '0' or fb.executeStatus is null or fb.executeStatus = '')
+				</if>
+			</if>
+			<if test="searchOsType != null and searchOsType != ''">
+				and fb.osType = #{searchOsType} 
+			</if>
+			<if test="searchType != null and searchType != ''">
+				and fb.type = #{searchType} 
+			</if>
+		</where>
+		ORDER BY fb.submit_time DESC limit #{start},#{pageSize} 
+	</select>
+
+	<select id="getReportCountByHandleId" resultType="java.lang.Integer" parameterType="map">
+		SELECT
+		count(*)
+		FROM feedback fb
+		INNER JOIN om_feedbackproblemlist ol
+		ON fb.type = ol.problemType
+		INNER JOIN om_employee oe
+		ON fb.empcode = oe.empcode
+		<where>
+			1=1 AND ol.excEmpCode = #{userId}
+			<if test="searchContent != null and searchContent != ''">
+				and fb.content like #{searchContent}
+			</if>
+			<if test="searchBeginTime != null and searchBeginTime != ''">
+				<![CDATA[
+					and fb.submit_time >= #{searchBeginTime}
+				]]>
+			</if>
+			<if test="searchEndTime != null and searchEndTime != ''">
+				<![CDATA[
+					and fb.submit_time <= concat(#{searchEndTime},' 23:59:59')
+				]]>
+			</if>
+			<if test="searchName != null and searchName != ''">
+				and oe.empname like #{searchName}
+			</if>
+			<if test="searchCode != null and searchCode != ''">
+				and fb.empcode = #{searchCode}
+			</if>
+			<if test="searchIsSolve != null and searchIsSolve != ''">
+				<if test="searchIsSolve == 0 ">
+					and fb.isSolve = '0'
+				</if>
+				<if test="searchIsSolve == 1 ">
+					and (fb.isSolve = '1' or fb.isSolve is null or fb.isSolve = '')
+				</if> 
+					<!-- and fb.isSolve = #{searchIsSolve} -->
+			</if>
+			<if test="searchStatus != null and searchStatus != ''">
+				<!-- <if test="searchStatus == 1 ">
+					and fb.executeStatus in ('1','2','3','4')
+				</if>
+				<if test="searchStatus == 0 ">
+					and (fb.executeStatus = '0' or fb.executeStatus is null or fb.executeStatus = '')
+				</if> -->
+				and fb.executeStatus = #{searchStatus} 
+			</if>
+			<if test="searchOsType != null and searchOsType != ''">
+				and fb.osType = #{searchOsType}
+			</if>
+			<if test="searchType != null and searchType != ''">
+				and fb.type = #{searchType}
+			</if>
+
+		</where>
+	</select>
+	
+	<!-- PC页面查询 总数sql -->
+	<select id="getFeedbackCount" resultType="java.lang.Integer" parameterType="map">
+		select count(*) from feedback fb LEFT JOIN om_employee oe ON 
+		oe.empcode = fb.empcode
+		<where>
+			1 = 1 and oe.EMPSTATUS ='on' 
+			<if test="searchContent != null and searchContent != ''">
+				and fb.content like #{searchContent}
+			</if>
+			<if test="searchBeginTime != null and searchBeginTime != ''">
+				<![CDATA[ 
+					and fb.submit_time >= #{searchBeginTime} 
+				]]>
+			</if>
+			<if test="searchEndTime != null and searchEndTime != ''">
+				<![CDATA[
+					and fb.submit_time < #{searchEndTime}
+				]]>
+			</if>
+			<if test="searchName != null and searchName != ''">
+				and oe.empname like #{searchName}
+			</if>
+			<if test="searchCode != null and searchCode != ''">
+				and fb.empcode = #{searchCode}
+			</if>
+			<if test="searchIsSolve != null and searchIsSolve != ''">
+				<if test="searchIsSolve == 0 ">
+					and fb.isSolve = '0' 
+				</if>
+				<if test="searchIsSolve == 1 ">
+					and (fb.isSolve = '1' or fb.isSolve is null or fb.isSolve = '')
+				</if>
+			</if>
+			<if test="searchStatus != null and searchStatus != ''">
+				<if test="searchStatus == 1 ">
+					and fb.executeStatus in ('1','2','3','4') 
+				</if>
+				<if test="searchStatus == 0 ">
+					and (fb.executeStatus = '0' or fb.executeStatus is null or fb.executeStatus = '')
+				</if>
+			</if>
+			<if test="searchOsType != null and searchOsType != ''">
+				and fb.osType = #{searchOsType} 
+			</if>
+			<if test="searchType != null and searchType != ''">
+				and fb.type = #{searchType} 
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateFeedback" parameterType="com.deppon.dpm.tongxunlu.shared.domain.FeedBackDetailsEntity">
+		UPDATE FEEDBACK 
+		<set>
+			<if test="executeStatus != null and executeStatus != ''">
+				executeStatus = #{executeStatus},
+			</if>
+			<if test="executePerson != null">
+				executePerson = #{executePerson},
+			</if>
+			<if test="plan != null">
+				plan = #{plan},
+			</if>
+			<if test="PS != null">
+				PS = #{PS},
+			</if>
+			<if test="isSolve != null and isSolve != ''">
+				isSolve = #{isSolve},
+			</if>
+			<if test="submitTime != null">
+				submit_time = #{submitTime}
+			</if>
+		</set>
+		WHERE ID = #{id}
+	</update>
+	
+	<select id="getSubmitTimeById" parameterType="string" resultType="date">
+		SELECT SUBMIT_TIME FROM FEEDBACK WHERE ID = #{id}
+	</select>
+	
+	<insert id="functionAccessMonitor" parameterType="map">
+		INSERT INTO data_monitor_fun (
+			emp_code,
+			access_time,
+			monitor_type,
+			OSTYPE
+		)
+		VALUES (
+			#{userId},
+			NOW(),
+			#{monitorType},
+			#{osType}
+		)	
+	</insert>
+	
+	<insert id="dataMonitorTime" parameterType="com.deppon.dpm.tongxunlu.shared.domain.MonitorTime">
+		INSERT INTO data_monitor_time 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="empCode != null and empCode != ''">
+				emp_code,
+			</if>
+			<if test="monitorType != null and monitorType != ''">
+				monitor_type,
+			</if>
+			<if test="totalDuration != null and totalDuration != ''">
+				total_duration,
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				begin_time,
+			</if>
+			<if test="endTime != null and endTime != ''">
+				end_time,
+			</if>
+			<if test="osType != null and osType != ''">
+				os_type,
+			</if>
+			create_time
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="empCode != null and empCode != ''">
+				#{empCode},
+			</if>
+			<if test="monitorType != null and monitorType != ''">
+				#{monitorType},
+			</if>
+			<if test="totalDuration != null and totalDuration != ''">
+				#{totalDuration},
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				#{beginTime},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				#{endTime},
+			</if>
+			<if test="osType != null and osType != ''">
+				#{osType},
+			</if>
+			now()
+		</trim>
+	</insert>
+	
+	<!-- 监控应用下载卸载 -->
+	<insert id="dataMonitorDownload" parameterType="com.deppon.dpm.tongxunlu.shared.domain.MonitorDownload">
+		INSERT INTO data_monitor_download 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="empCode != null and empCode != ''">
+				emp_code,
+			</if>
+			<if test="appId != null and appId != ''">
+				appId,
+			</if>
+			<if test="downType != null and downType != ''">
+				down_type,
+			</if>
+			<if test="osType != null and osType != ''">
+				os_type,
+			</if>
+			create_time
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="empCode != null and empCode != ''">
+				#{empCode},
+			</if>
+			<if test="appId != null and appId != ''">
+				#{appId},
+			</if>
+			<if test="downType != null and downType != ''">
+				#{downType},
+			</if>
+			<if test="osType != null and osType != ''">
+				#{osType},
+			</if>
+			now()
+		</trim>
+	</insert>
+	<!-- 意见反馈问题类型列表 -->
+	<select id="problemList" resultType='com.deppon.dpm.tongxunlu.shared.domain.FeedbackProblemListEntity'>
+		SELECT problemType FROM om_feedBackProblemList t WHERE t.status='on';
+	</select>
+	
+	<!-- 获取 指定员工 的 指定类型 未解决的意见反馈的总数 -->
+	<select id="getFeedBackCountByType" resultType="java.lang.Integer" parameterType="map">
+		select count(*) from feedback fb LEFT JOIN om_employee oe ON 
+		oe.empcode = fb.empcode
+		<where>
+			1 = 1 and oe.EMPSTATUS ='on' 
+			<if test="type != null and type != ''">
+				and fb.type = #{type}
+			</if>
+			<if test="userId != null and userId != ''">
+				and fb.empcode = #{userId}
+			</if>
+			and fb.isSolve = '1' 
+			and fb.executeStatus = '0'
+		</where>
+	</select>
+	
+	<!-- 获取欢行小服务台问题列表 -->
+	<select id="getHxQuestions" resultType="com.deppon.dpm.module.common.shared.domain.HxQuestionEntity">
+		SELECT question_id as questionId,question_type as questionType,question,answer FROM om_hx_question;
+	</select>
+	
+	<!-- 插入欢行小服务台反馈记录 -->
+	<insert id="insertHxChatRecord" parameterType="map">
+		insert into feedback_hx_mobile 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">
+				empcode,
+			</if>
+			<if test="content != null and content != ''">
+				content,
+			</if>
+			<if test="type != null and type != ''">
+				type
+			</if>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="content != null and content != ''">
+				#{content,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null and type != ''">
+				#{type,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- 更新欢行小服务台反馈记录 -->
+	<update id="updateHxChatRecord" parameterType="map">
+		UPDATE feedback_hx_mobile 
+		SET content= #{content,jdbcType=VARCHAR},update_time=now() 
+		WHERE empcode=#{userId,jdbcType=VARCHAR};
+	</update>
+	
+	<!-- 根据工号获取欢行小服务台反馈记录 -->
+	<select id="getHxChatRecordByUserId" 
+		resultType="com.deppon.dpm.tongxunlu.shared.domain.FeedBackHxRecordEntity" parameterType="string">
+		SELECT id,empcode,content,type FROM feedback_hx_mobile WHERE empcode=#{userId,jdbcType=VARCHAR};
+	</select>
+</mapper>

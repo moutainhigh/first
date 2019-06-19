@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, target-densitydpi=device-dpi" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>德邦物流-待办事项</title>
+<link rel="stylesheet" href="../css/reset.css" />
+<link rel="stylesheet" href="../css/ios/common.css" />
+<link rel="stylesheet" href="../css/ios/list.css" />
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/win8_auto_resize.js"></script>
+</head>
+
+<body>
+<div id="list">
+    <div id="div1">
+    	<span>待办事项</span>
+    	<a class="return"></a>
+        <div class="home"></div>
+    </div>
+    <div id="div2">
+    	<div class="ulBox">
+    		<ul>
+    			<li class="first">
+    				<div class="fyy-fl">
+    					增补员申请(新)<br />
+    					<em>办公门户系统开发部</em>
+    				</div>
+    				<div class="fyy-fr">
+    					2013-03-01<br />
+    					廖建雄
+    				</div>
+    			</li>
+    			<li>
+    				<div class="fyy-fl">
+    					增补员申请(新)<br />
+    					<em>办公门户系统开发部</em>
+    				</div>
+    				<div class="fyy-fr">
+    					2013-03-01<br />
+    					廖建雄
+    				</div>
+    			</li>
+    			<li>
+    				<div class="fyy-fl">
+    					增补员申请(新)<br />
+    					<em>办公门户系统开发部</em>
+    				</div>
+    				<div class="fyy-fr">
+    					2013-03-01<br />
+    					廖建雄
+    				</div>
+    			</li>
+    			<li>
+    				<div class="fyy-fl">
+    					增补员申请(新)<br />
+    					<em>办公门户系统开发部</em>
+    				</div>
+    				<div class="fyy-fr">
+    					2013-03-01<br />
+    					廖建雄
+    				</div>
+    			</li>
+    			<li class="last">
+    				<div class="fyy-fl">
+    					增补员申请(新)<br />
+    					<em>办公门户系统开发部</em>
+    				</div>
+    				<div class="fyy-fr">
+    					2013-03-01<br />
+    					廖建雄
+    				</div>
+    			</li>
+    		</ul>
+        </div>
+    </div>
+</div>
+<script>
+$(function(){
+	$("#div2").find("li").live('touchstart',function(){
+		$(this).addClass("on");
+	});
+	$("#div2").find("li").live('touchend',function(){
+		$(this).removeClass("on");
+	});
+	$("#div2").find("li").live('touchmove',function(){
+		$(this).removeClass("on");
+	});
+});
+</script>
+</body>
+</html>

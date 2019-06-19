@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.impl.CIDDao">
+	<select id="queryCIDByOsType" parameterType="string" resultType="com.deppon.dpm.tongxunlu.shared.domain.CIDEntity">
+		SELECT id,os_type osType,download_url downloadUrl,prev_update_time prevUpdateTime,update_time updateTime,create_time createTime 
+		from om_cid 
+		where 1 = 1 
+		<if test="_parameter != null and _parameter != ''">
+			and os_type = #{osType}
+		</if>
+	</select>
+	
+	<insert id="insertCID" parameterType="com.deppon.dpm.tongxunlu.shared.domain.CIDEntity">
+		INSERT INTO om_cid  (
+			 id ,
+			 os_type ,
+			 download_url ,
+			 prev_update_time,
+			 update_time ,
+			 create_time 
+		)
+		VALUES
+			(
+				NULL,
+				#{osType},
+				#{downloadUrl},
+				#{prevUpdateTime},
+				#{updateTime},
+				#{createTime}
+			)
+	</insert>
+	
+	<insert id="updateCID" parameterType="com.deppon.dpm.tongxunlu.shared.domain.CIDEntity">
+		UPDATE om_cid SET prev_update_time = #{prevUpdateTime},update_time = #{updateTime} 
+		WHERE id = #{id}
+	</insert>
+	
+	<!-- 根据手机号查询用户信息 -->
+	<select id="queryUserInfoByNo" parameterType="string" resultType="com.deppon.dpm.tongxunlu.shared.vo.CIDEMP">
+		 SELECT emp.empname,emp.mobileno,org.orgname
+         FROM om_employee emp
+         inner JOIN om_organization org ON org.orgid = emp.orgid
+         WHERE emp.empstatus = 'on' and emp.mobileno = #{iphoneNo}
+	</select>
+	<!-- 根据工号查询上级部门信息 -->
+	<select id="queryOrgIdByUserId" parameterType="string" resultType="string">
+		 select tt.PARENTORGID from om_employee t 
+		 INNER JOIN om_organization tt on t.ORGID = tt.ORGID
+		 where t.empcode = #{userId}
+	</select>
+</mapper>

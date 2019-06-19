@@ -1,0 +1,40 @@
+<!DOCTYPE jboss-web PUBLIC
+   "-//JBoss//DTD Web Application 5.0//EN"
+   "http://www.jboss.org/j2ee/dtd/jboss-web_5_0.dtd">
+
+<jboss-web>
+	<context-root>dpm</context-root>
+	<!-- <resource-ref>
+		<res-ref-name>jdbc/dpmmsds</res-ref-name>
+		<jndi-name>java:jdbc/dpmmsds</jndi-name>
+	</resource-ref>
+
+	<resource-ref>
+		<res-ref-name>jdbc/oaorlds</res-ref-name>
+		<jndi-name>java:jdbc/oaorlds</jndi-name>
+	</resource-ref>
+
+	<resource-ref>
+		<res-ref-name>jdbc/dppmsys</res-ref-name>
+		<jndi-name>java:jdbc/dppmsys</jndi-name>
+	</resource-ref> -->
+	<!-- <resource-ref>
+		<res-ref-name>jms/dpm/UUMS_APP</res-ref-name>
+		<jndi-name>java:jms/dpm/UUMS_APP</jndi-name>
+	</resource-ref> 
+	<resource-ref>
+		<res-ref-name>jms/dpm/INNTFPB</res-ref-name>
+		<jndi-name>java:jms/dpm/INNTFPB</jndi-name>
+	</resource-ref>-->
+
+	<!-- MQC -->
+	<!-- <resource-ref>
+		<res-ref-name>jms/dpm/MQ1</res-ref-name>
+		<jndi-name>java:jms/dpm/MQ1</jndi-name>
+	</resource-ref>
+
+	<resource-ref>
+		<res-ref-name>jms/dpm/MQ2</res-ref-name>
+		<jndi-name>java:jms/dpm/MQ2</jndi-name>
+	</resource-ref> -->
+</jboss-web>

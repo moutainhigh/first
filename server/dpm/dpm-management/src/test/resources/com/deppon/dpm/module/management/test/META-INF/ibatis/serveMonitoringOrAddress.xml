@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.dpm.module.management.server.dao.busmanager.serveMonitoringOrAddressDao">
+	
+	<select id="queryAddressNationwide" resultType="com.deppon.dpm.module.management.shared.domain.ServeAddressBean">
+		select DISTINCT code,name,parent_district_code parCode,degree  
+		      from T_BAS_DISTRICT 
+		      where degree in('CITY','DISTRICT_PROVINCE') and active='Y'
+	</select>
+
+    <insert  id="saveMonitoring"
+             parameterType="com.deppon.dpm.module.management.shared.domain.ServeAddressBean"  >
+        INSERT INTO
+			COLLECT_COUNTINFO(USERID,START_TIME,END_TIME,TYPE)
+		values(#{userNo,jdbcType=VARCHAR},now(),now(),#{type})
+    </insert>
+    <select id="queryServeTask" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT  count(*) from serve_originators_info so right join serve_participants_info sp on(so.id=sp.origId )
+          where  sp.msgRemind=0 and sp.partState=0 and so.origState=0 and so.startTime>NOW()
+          and so.origNO=#{userNo,jdbcType=VARCHAR}
+		
+	</select>
+	<update id="updateServeTask" parameterType="java.lang.String" >
+	     update serve_participants_info a 
+			inner join  
+			    (SELECT  sp.id from serve_originators_info so right join serve_participants_info sp on(so.id=sp.origId )
+			          where  sp.msgRemind=0 and sp.partState=0 and so.origState=0 and so.startTime>NOW()
+			          and so.origNO=#{userNo,jdbcType=VARCHAR}) b 
+			on a.id=b.id set msgRemind=1
+	</update>
+	 <select id="queryProcTask" parameterType="java.lang.String" 
+	         resultType="java.lang.Integer">
+	         
+	       	<![CDATA[
+			   select count(*) from proc_survey_check 
+	            where check_userNo like concat('%',#{userNo,jdbcType=VARCHAR},'%')
+	             and check_state in(0,1) and check_mark=0
+			   
+			]]>      
+	             
+	         
+	</select>
+	
+</mapper>
+	

@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			
+			http://cxf.apache.org/core
+		    http://cxf.apache.org/schemas/core.xsd
+		    http://cxf.apache.org/jaxws
+		    http://cxf.apache.org/schemas/jaxws.xsd
+		    http://cxf.apache.org/jaxrs
+		    http://cxf.apache.org/schemas/jaxrs.xsd">
+	<!-- 以上是同步配置. -->
+
+	<!-- dao配置start -->
+	<bean id="loginInfoDao"
+		class="com.deppon.dpm.module.common.server.dao.impl.LoginInfoDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- end -->
+	<!-- 业务层配置start -->
+	<bean id="loginInfoService"
+		class="com.deppon.dpm.module.common.server.service.impl.LoginInfoService">
+		<property name="loginInfoDao" ref="loginInfoDao" />
+		<property name="template" ref="jdbcTemplate" />
+	</bean>
+	<!-- end -->
+
+	<!-- dao配置start -->
+	<bean id="monitorCountInfoDao"
+		class="com.deppon.dpm.module.common.server.dao.impl.MonitorCountInfoDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- end -->
+	<!-- 业务层配置start -->
+	<bean id="monitorCountInfoService"
+		class="com.deppon.dpm.module.common.server.service.impl.MonitorCountInfoService">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+		<property name="monitorCountInfoDao" ref="monitorCountInfoDao"></property>
+	</bean>
+	<!-- end -->
+	<!-- 配置页start -->
+	<bean id="editWelcomePage"
+		class="com.deppon.dpm.module.common.server.action.EditWelcomePageAction" scope="prototype">
+		<property name="editWelcomePageService" ref="editWelcomePageService"/>
+	</bean>
+	<bean id="editWelcomePageService"
+		class="com.deppon.dpm.module.common.server.service.impl.EditWelcomePageService">
+		<property name="photoAddressService" ref="photoAddressService" />
+		<property name="editWelcomePageDao" ref="editWelcomePageDao" />
+		<property name="webUrl" value="${dmp.announce.webUrl}"/>
+		<property name="template" ref="jdbcTemplate"></property>
+	</bean>
+	<bean id="editWelcomePageDao"
+		class="com.deppon.dpm.module.common.server.dao.impl.EditWelcomePageDao" />
+	<!-- 配置页end -->
+	
+	<!-- 悬赏start -->
+	<bean id="awardAction" class="com.deppon.dpm.module.common.server.action.AwardAction" scope="prototype">
+		<property name="awardService" ref="awardService"/>
+	</bean>
+	<bean id="awardService" class="com.deppon.dpm.module.common.server.service.impl.AwardService">
+		<property name="awardDao" ref="awardDao"/>
+		<property name="template" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="awardDao" class="com.deppon.dpm.module.common.server.dao.impl.AwardDao"/>
+	
+	<bean id="awardPcAction" class="com.deppon.dpm.module.common.server.action.AwardPcAction" scope="prototype">
+		<property name="awardService" ref="awardService"/>
+	</bean>
+	<!-- 悬赏end -->
+	
+	<!-- 系统崩溃 start-->
+	<bean id="breakDownAction" class="com.deppon.dpm.module.common.server.action.BreakDownAction" scope="prototype">
+		<property name="breakDownService" ref="breakDownService"></property>
+	</bean>
+	<bean id="breakDownService" class="com.deppon.dpm.module.common.server.service.impl.BreakDownService">
+		<property name="breakDownDao" ref="breakDownDao"></property>
+	</bean>
+	<bean id="breakDownDao" class="com.deppon.dpm.module.common.server.dao.impl.BreakDownDao">
+	</bean>
+	<!-- 系统崩溃 end-->
+	
+	<!-- androidH5应用资源文件数量记录 start -->
+	<bean id="h5ApplyFileCompareAction" scope="prototype"
+		class="com.deppon.dpm.module.common.server.action.H5ApplyFileCompareAction">
+		<property name="h5ApplyFileCompareService" ref="h5ApplyFileCompareService"/>
+	</bean>
+	<bean id="h5ApplyFileCompareService" 
+		class="com.deppon.dpm.module.common.server.service.impl.H5ApplyFileCompareService">
+		<property name="template" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="h5ApplyFileComparePcAction" scope="prototype" 
+		class="com.deppon.dpm.module.common.server.action.H5ApplyFileComparePcAction">
+		<property name="h5ApplyFileCompareService" ref="h5ApplyFileCompareService"/>
+	</bean>
+	<!-- androidH5应用资源文件数量记录 end -->
+	
+	<bean id="uUMSRoleService" class="com.deppon.dpm.module.common.server.service.impl.UUMSRoleServiceImpl">
+		<property name="roleUrl" value="${roleurl}"/>
+	</bean>
+	
+	<!-- NAZA接口调用错误监控 -->
+	<bean id="nazaInvokeMonitorAction" scope="prototype"
+		class="com.deppon.dpm.module.common.server.action.NazaInvokeMonitorAction">
+		<property name="nazaInvokeMonitorService" ref="nazaInvokeMonitorService" />
+	</bean>
+	<bean id="nazaInvokeMonitorService" 
+		class="com.deppon.dpm.module.common.server.service.impl.NazaInvokeMonitorServiceImpl">
+		<property name="nazaInvokeMonitorDao" ref="nazaInvokeMonitorDao"/>
+	</bean>
+	<bean id="nazaInvokeMonitorDao" 
+		class="com.deppon.dpm.module.common.server.dao.impl.NazaInvokeMonitorDaoImpl" />
+		
+	<!-- 访问监控接口 -->
+	<bean class="com.deppon.dpm.module.common.server.action.DataMonitorForTongjiAction" scope="prototype">
+		<property name="dataMonitorForTongjiService" ref="dataMonitorForTongjiService" />
+	</bean>
+	<bean id="dataMonitorForTongjiService" class="com.deppon.dpm.module.common.server.service.impl.DataMonitorForTongjiServiceImpl">
+		<property name="dataMonitorForTongjiDao" ref="dataMonitorForTongjiDao" />
+	</bean>
+	<bean id="dataMonitorForTongjiDao" class="com.deppon.dpm.module.common.server.dao.impl.DataMonitorForTongjiDaoImpl" />
+	
+	<bean class="com.deppon.dpm.module.common.server.action.LoginInfoPcAction" scope="prototype">
+		<property name="loginInfoService" ref="loginInfoService"/>
+	</bean>
+	
+	<!-- app版本更新权限控制 -->
+	<bean class="com.deppon.dpm.module.common.server.action.VersionUpdateControlAction" scope="prototype">
+		<property name="versionUpdateControlService" ref="versionUpdateControlService"/>
+		<property name="classFileBaseUrl" value="${versionUpdateControl.baseUrl}"/>
+	</bean>
+	
+	<bean id="versionUpdateControlService" class="com.deppon.dpm.module.common.server.service.impl.VersionUpdateControlService">
+		<property name="serverHost" value="${serverHostPort}"/>
+		<property name="versionUpdateControlDao" ref="versionUpdateControlDao"/>
+	</bean>
+	
+	<bean id="versionUpdateControlDao" class="com.deppon.dpm.module.common.server.dao.impl.VersionUpdateControlDao">
+	</bean>
+	
+	<!-- 用户绑定mac信息 -->
+	<bean class="com.deppon.dpm.module.common.server.action.EmpBindMacAction" scope="prototype">
+		<property name="empBindMacService" ref="empBindMacService"/>
+	</bean>
+	
+	<bean id="empBindMacService" class="com.deppon.dpm.module.common.server.service.impl.EmpBindMacService">
+		<property name="empBindMacDao" ref="empBindMacDao"/>
+	</bean>
+	
+	<bean id="empBindMacDao" class="com.deppon.dpm.module.common.server.dao.impl.EmpBindMacDao" />
+
+	<!-- 手势密码管理 -->
+	<bean class="com.deppon.dpm.module.common.server.action.GestureAction" scope="prototype">
+		<property name="gestureService" ref="gestureService"/>
+	</bean>
+	<bean id="gestureService" class="com.deppon.dpm.module.common.server.service.impl.GestureService">
+		<property name="gestureDao" ref="gestureDao"/>
+	</bean>
+	<bean id="gestureDao" class="com.deppon.dpm.module.common.server.dao.impl.GestureDao" />
+	
+	<!-- 短信开关管理 -->
+	<bean class="com.deppon.dpm.module.common.server.action.SmsAction" scope="prototype">
+		<property name="smsService" ref="smsService"/>
+	</bean>
+	<bean id="smsService" class="com.deppon.dpm.module.common.server.service.impl.SmsService">
+		<property name="smsDao" ref="smsDao"/>
+	</bean>
+	<bean id="smsDao" class="com.deppon.dpm.module.common.server.dao.impl.SmsDao"/>
+	
+	<!-- 工程管理部门 -->
+	<bean class="com.deppon.dpm.module.common.server.action.ProjectManagePcAction" scope="prototype">
+		<property name="projectManageDeptService" ref="projectManageDeptService"/>
+	</bean>
+	<bean id="projectManageDeptService" class="com.deppon.dpm.module.common.server.service.impl.ProjectManageDeptService">
+		<property name="projectManageDeptDao" ref="projectManageDeptDao"/>
+	</bean>
+	<bean id="projectManageDeptDao" class="com.deppon.dpm.module.common.server.dao.impl.ProjectManageDeptDao"/>
+
+	<!-- 本地推送PC配置 -->
+	<bean class="com.deppon.dpm.module.common.server.action.NativePushCfgPcAction" scope="prototype">
+		<property name="nativePushCfgService" ref="nativePushCfgService"/>
+		<property name="birthdayPushInfoUrl" value="${birthday_pushInfo_url}"/>
+	</bean>
+	<bean id="nativePushCfgService" class="com.deppon.dpm.module.common.server.service.impl.NativePushCfgService">
+		<property name="nativePushCfgDao" ref="nativePushCfgDao"/>
+		<property name="template" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="nativePushCfgDao" class="com.deppon.dpm.module.common.server.dao.impl.NativePushCfgDao" />
+
+	<!-- 自动打卡监控 -->
+	<bean class="com.deppon.dpm.module.common.server.action.AutoPunchClockMonitorAction" scope="prototype">
+		<property name="autoPunchClockMonitorService" ref="autoPunchClockMonitorService"/>
+	</bean>
+	<bean id="autoPunchClockMonitorService" class="com.deppon.dpm.module.common.server.service.impl.AutoPunchClockMonitorService">
+		<property name="autoPunchClockMonitorDao" ref="autoPunchClockMonitorDao"/>
+	</bean>
+	<bean id="autoPunchClockMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.AutoPunchClockMonitorDao"/>
+
+	<!-- 用户功能开关 -->
+	<bean id="userFuncStatusAction" class="com.deppon.dpm.module.common.server.action.UserFuncStatusAction" scope="prototype">
+		<property name="userFuncStatusService" ref="userFuncStatusService"/>
+	</bean>
+	<bean id="userFuncStatusService" class="com.deppon.dpm.module.common.server.service.impl.UserFuncStatusService">
+		<property name="userFuncStatusDao" ref="userFuncStatusDao"/>
+	</bean>
+	<bean id="userFuncStatusDao" class="com.deppon.dpm.module.common.server.dao.impl.UserFuncStatusDao"/>
+
+	<!-- 用户模块异常监控 -->
+	<bean id="userFuncMonitorAction" class="com.deppon.dpm.module.common.server.action.UserFuncMonitorAction" scope="prototype">
+		<property name="userFuncMonitorService" ref="userFuncMonitorService"/>
+	</bean>
+	<bean id="userFuncMonitorService" class="com.deppon.dpm.module.common.server.service.impl.UserFuncMonitorService">
+		<property name="userFuncMonitorDao" ref="userFuncMonitorDao"/>
+	</bean>
+	<bean id="userFuncMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.UserFuncMonitorDao"/>
+	
+	<!-- 用户操作轨迹监控 -->
+	<bean id="userOperationMonitorAction" class="com.deppon.dpm.module.common.server.action.UserOperationMonitorAction" scope="prototype">
+		<property name="userOperationMonitorService" ref="userOperationMonitorService"/>
+		<property name="redisService" ref="redisService"/>
+	</bean>
+	<bean id="userOperationMonitorService" class="com.deppon.dpm.module.common.server.service.impl.UserOperationMonitorService">
+		<property name="userOperationMonitorDao" ref="userOperationMonitorDao"/>
+	</bean>	
+	<bean id="userOperationMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.UserOperationMonitorDao"/>
+
+	<!-- 登录后保存用户登录信息 监控-->
+	<bean id="loginInfoMonitorAction" class="com.deppon.dpm.module.common.server.action.LoginInfoMonitorAction" scope="prototype">
+		<property name="loginInfoMonitorService" ref="loginInfoMonitorService"/>
+	</bean>
+	<bean id="loginInfoMonitorService" class="com.deppon.dpm.module.common.server.service.impl.LoginInfoMonitorService">
+		<property name="loginInfoMonitorDao" ref="loginInfoMonitorDao"/>
+	</bean>
+	<bean id="loginInfoMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.LoginInfoMonitorDao"/>
+
+	<!-- 用户使用app的时长监控 -->
+	<bean id="appToUseTimeMonitorAction" class="com.deppon.dpm.module.common.server.action.AppToUseTimeMonitorAction" scope="prototype">
+		<property name="appToUseTimeMonitorService" ref="appToUseTimeMonitorService"/>
+	</bean>
+	<bean id="appToUseTimeMonitorService" class="com.deppon.dpm.module.common.server.service.impl.AppToUseTimeMonitorService">
+		<property name="appToUseTimeMonitorDao" ref="appToUseTimeMonitorDao"/>
+	</bean>
+	<bean id="appToUseTimeMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.AppToUseTimeMonitorDao"/>
+
+	<!-- 计步器数据保存 -->
+	<bean id="userStepCountAction" class="com.deppon.dpm.module.common.server.action.UserStepCountAction" scope="prototype">
+		<property name="userStepCountService" ref="userStepCountService"/>
+	</bean>
+	<bean id="userStepCountService" class="com.deppon.dpm.module.common.server.service.impl.UserStepCountService">
+		<property name="userStepCountDao" ref="userStepCountDao"/>
+	</bean>
+	<bean id="userStepCountDao" class="com.deppon.dpm.module.common.server.dao.impl.UserStepCountDao"/>
+
+	<!-- 班车服务图片 -->
+	<bean id="regularBusImgAction" class="com.deppon.dpm.module.common.server.action.RegularBusImgAction" scope="prototype">
+		<property name="regularBusImgService" ref="regularBusImgService"/>
+		<property name="regularBusImgBaseUrl" value="${regularBus.imgBaseUrl}"/>
+	</bean>
+	<bean id="regularBusImgService" class="com.deppon.dpm.module.common.server.service.impl.RegularBusImgService">
+		<property name="regularBusImgDao" ref="regularBusImgDao"/>
+		<property name="serverHostPort" value="${serverHostPort}"/>
+	</bean>
+	<bean id="regularBusImgDao" class="com.deppon.dpm.module.common.server.dao.impl.RegularBusImgDao" />
+
+	<!-- Ecc推送链接信息 -->
+	<bean id="jpushForEccAction" class="com.deppon.dpm.module.common.server.action.JpushForEccAction" scope="prototype">
+		<property name="eccPushLinkInfoUrl" value="${ecc.pusLinkInfo.url}"/>
+	</bean>
+	
+	<!-- 各产品线推送信息监控 -->
+	<bean id="jPushNewMonitorService" class="com.deppon.dpm.module.common.server.service.impl.JPushNewMonitorService">
+		<property name="jPushNewMonitorDao" ref="jPushNewMonitorDao"/>
+	</bean>
+	<bean id="jPushNewMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.JPushNewMonitorDao" />
+
+	<!-- 应用自动更新控制 -->
+	<bean id="appAutoUpdateControlDao" class="com.deppon.dpm.module.common.server.dao.impl.AppAutoUpdateControlDao" />
+
+	<!-- 副总呼叫监控 -->
+	<bean id="leaderCallMonitorAction" class="com.deppon.dpm.module.common.server.action.LeaderCallMonitorAction" scope="prototype">
+		<property name="leaderCallMonitorService" ref="leaderCallMonitorService"/>
+	</bean>
+	<bean id="leaderCallMonitorService" class="com.deppon.dpm.module.common.server.service.impl.LeaderCallMonitorService">
+		<property name="leaderCallMonitorDao" ref="leaderCallMonitorDao"/>
+	</bean>
+	<bean id="leaderCallMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.LeaderCallMonitorDao"/>
+	
+	<!-- action监控详情 -->
+	<bean id="monitorActionInfoService" class="com.deppon.dpm.module.common.server.service.impl.MonitorActionInfoServiceImpl">
+		<property name="monitorActionInfoDao" ref="monitorActionInfoDao"/>
+	</bean>
+	<bean id="monitorActionInfoDao" class="com.deppon.dpm.module.common.server.dao.impl.MonitorActionInfoDaoImpl"/>
+	
+	<!-- 模块访问数据查询接口 -->
+	<jaxrs:server id="moduleAccess" address="/moduleAccess">
+		<jaxrs:serviceBeans>
+			<ref bean="moduleAccessService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	<bean id="moduleAccessService" class="com.deppon.dpm.module.common.server.service.impl.ModuleAccessService">
+		<property name="monitorActionInfoDao" ref="monitorActionInfoDao"/>
+	</bean> 
+	
+</beans>

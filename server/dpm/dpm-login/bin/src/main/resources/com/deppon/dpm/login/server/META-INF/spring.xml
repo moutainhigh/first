@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			http://code.alibabatech.com/schema/dubbo 
+			http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+			
+			http://cxf.apache.org/core
+        	http://cxf.apache.org/schemas/core.xsd
+        	http://cxf.apache.org/jaxws
+        	http://cxf.apache.org/schemas/jaxws.xsd
+        	http://cxf.apache.org/jaxrs
+        	http://cxf.apache.org/schemas/jaxrs.xsd"
+	default-autowire="byName">
+
+
+	<bean id="casLoginService" class="com.deppon.dpm.login.server.service.CasLoginService">
+		<property name="casLoginUrl" value="${cas_login_url}"></property>
+		<property name="casUrl" value="${cas_url}"></property>
+		<property name="mainPageUrl" value="${main_page_url}"></property>
+		<property name="roleUrl" value="${roleurl}"></property>
+	</bean>
+	
+	<bean id="loginService" class="com.deppon.dpm.login.server.service.LoginService">
+		<property name="employeeDao" ref="empDao"></property>
+		<property name="roleResourceDao" ref="roleResourceDao"></property>
+		<property name="organizationDao" ref="orgDao"></property>
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+		<property name="personlyImageService" ref="personlyImageService"></property>
+		<property name="iApplyStoreService" ref="iApplyStoreService"></property>
+		<property name="informationService" ref="informationService"></property>
+		<!-- UUMS-NEW 引入公文搜索service用于查询员工信息-->
+		<property name="noticeSearchService" ref="noticeSearchService" />
+		<property name="appPermissionService" ref="appPermissionService" />
+	</bean>
+
+	<!-- 用户数据缓存提供者 -->
+	<bean id="userCacheProvider" class="com.deppon.dpm.login.server.cache.UserCacheProvider">
+		<property name="loginService" ref="loginService"></property>
+	</bean>
+	
+	<!-- 用户缓存 -->
+	<bean id="userCache" class="com.deppon.dpm.login.server.cache.UserCache"
+		lazy-init="false">
+		<property name="cacheProvider" ref="userCacheProvider"></property>
+		<property name="cacheStorage" ref="storage"></property>
+	</bean>
+
+	<bean id="resourceUriCacheProvider"
+		class="com.deppon.dpm.login.server.cache.ResourceUriCacheProvider">
+	</bean>
+	<bean id="resourceUriCache" class="com.deppon.dpm.login.server.cache.ResourceUriCache"
+		lazy-init="false">
+		<property name="cacheProvider" ref="resourceUriCacheProvider"></property>
+		<property name="cacheStorage" ref="storage"></property>
+	</bean>
+	<bean id="loginAction" class="com.deppon.dpm.login.server.action.LoginAction"
+		scope="prototype">
+		<!-- <property name="loginService" ref="loginService"></property> -->
+		<property name="smsUrl" value="${sms_url}" />
+		<property name="smsMsgType" value="${smsMsgType}"/>
+		<property name="smsSource" value="${smsSource}"/>
+		<property name="smsEncrypt" value="${smsEncrypt}"/>
+		<property name="smartExpressUrl" value="${smartExpressUrl}"/>
+		<!-- <property name="isForbidden" value="is_forbidden"></property> -->
+	</bean>
+	<bean id="menuAction" class="com.deppon.dpm.login.server.action.MenuAction"
+		scope="prototype">
+		<!-- <property name="loginService" ref="loginService"></property> -->
+	</bean>
+	<!-- WEB服务ACTION层 -->
+	<bean id="dataDictionaryAction" class="com.deppon.dpm.login.server.action.DataDictionaryAction"
+		scope="prototype">
+	</bean>
+
+	<!-- 意见反馈action -->
+	<bean id="feedbackAction" class="com.deppon.dpm.login.server.action.FeedbackAction"
+		scope="prototype">
+		<property name="feedbackService" ref="feedbackService" />
+		<property name="jPushService" ref="jPushNewService"/>
+		<property name="loginService" ref="loginService"/>
+		<property name="loginRedisService" ref="loginRedisService"/>
+		<property name="uUMSRoleService" ref="uUMSRoleService"/>
+	</bean>
+	
+	<bean id="feedbackService" class="com.deppon.dpm.login.server.service.FeedbackService">
+		<property name="feedbackDao" ref="feedbackDao" />
+		<property name="normalQuestionDao" ref="normalQuestionDao" />
+		<property name="photoAddressService" ref="photoAddressService" />
+	</bean>
+
+	<bean id="feedbackDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.FeedbackDao" />
+	
+	<!-- 后台管理start -->
+	<bean id="manageAction" class="com.deppon.dpm.login.server.action.ManageAction" scope="prototype">
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+		<property name="casLoginService" ref="casLoginService"></property>
+		<!-- UUMS-NEW 后台管理系统登录验证 -->
+		<property name="loginService" ref="loginService"></property>
+	</bean>
+	<!-- 后台管理 end -->
+	
+	<bean id="modifyPasswordAction" class="com.deppon.dpm.login.server.action.ModifyLoginPasswordAction"
+		scope="prototype">
+	</bean>
+	
+	
+	
+	<jaxrs:server id="modifyLoginPassword" address="/modifyLoginPassword">
+		<jaxrs:serviceBeans>
+			<ref bean="modifyLoginPasswordService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+			<entry key="xml" value="application/xml" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	<bean id="modifyLoginPasswordService"
+		class="com.deppon.dpm.login.server.service.ModifyLoginPasswordService" scope="prototype">
+	</bean>
+	
+	<!-- UUMS-NEW  配置dubbox -->
+	<dubbo:registry id="uumsDubboRegistry" address="${dubbo.registry.uums-dubbo.address}" />
+	<!-- 此项在工作流dubbo里配置过，所以这里不用再配置 -->
+	<!-- <dubbo:application name="uums-client"/> -->
+	<!--监控注册-->
+	<!-- <dubbo:monitor protocol="registry" /> -->
+	<!-- 声明需要暴露的服务接口 -->
+	<dubbo:reference id="baseRoleDubboService" registry="uumsDubboRegistry"   check="false"  
+	interface="com.deppon.uums.module.dubbo.server.service.IBaseRoleDubboService" timeout="16000"/>
+	<dubbo:reference id="basePasswordDubboService" registry="uumsDubboRegistry"   check="false"  
+	interface="com.deppon.uums.module.dubbo.server.service.IBasePasswordDubboService" timeout="16000"/>
+	
+</beans>

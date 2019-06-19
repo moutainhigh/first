@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.UserStepCountDao">
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.UserStepCountEntity">
+		INSERT INTO user_step_count (
+			id,
+			user_id,
+			step_count,
+			day_time,
+			update_time
+		)
+		VALUES(
+				NULL,
+				#{userId}, 
+				#{stepCount}, 
+				#{dayTime}, 
+				NOW()
+		)
+	</insert>
+	
+	<update id="update" parameterType="com.deppon.dpm.module.common.shared.domain.UserStepCountEntity">
+		update user_step_count set step_count = #{stepCount},update_time = NOW() where id = #{id}
+	</update>
+	
+	<select id="queryByUserIdAndDayTime" parameterType="com.deppon.dpm.module.common.shared.domain.UserStepCountEntity"
+		resultType="com.deppon.dpm.module.common.shared.domain.UserStepCountEntity">
+		SELECT id,user_id userId,step_count stepCount,day_time dayTime from user_step_count 
+		where user_id = #{userId} AND day_time = #{dayTime}
+	</select>
+</mapper>

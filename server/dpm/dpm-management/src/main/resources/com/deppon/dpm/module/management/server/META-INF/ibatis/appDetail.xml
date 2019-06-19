@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.deppon.dpm.module.management.server.dao.impl.AppDetailDao">
+ 
+    <resultMap id="appDetailMap" type="com.deppon.dpm.module.management.shared.domain.AppDetailEntity">
+		<result property="id" column="id"/>
+		<result property="appstoreId" column="appstore_id"/>
+		<result property="appName" column="app_name"/>
+		<result property="appIntroduce" column="app_introduce"/>
+		<result property="newFeature" column="new_feature"/>
+		<result property="detailMessage" column="detail_message" />
+		<result property="appPhoto" column="app_photo" />
+		<result property="totalScore" column="total_score" />
+		<result property="commentCount" column="comment_count" />
+		<result property="totalScore" column="total_score" />
+		<result property="commentCount" column="comment_count" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+	
+	<resultMap  id="appCommentMap" type="com.deppon.dpm.module.management.shared.domain.AppCommentEntity" >
+	    <result property="commentId" column="commentId"/>
+		<result property="appId" column="appId"/>
+		<result property="empCode" column="empCode"/>
+		<result property="content" column="content" />
+		<result property="score" column="score" />
+		<result property="createTime" column="createTime" />
+		<result property="status" column="status" />
+		<result property="replyContent" column="replyContent" />
+		<result property="replyEmpCode" column="replyEmpCode" />
+	</resultMap>
+	
+	<resultMap  id="applyStoreMap" type="com.deppon.dpm.module.management.shared.domain.ApplyStore" >
+	    <result property="appId" column="id"/>
+		<result property="cnName" column="cn_name"/>
+	</resultMap>
+	
+	<!-- 查询应用商店所有app的id和名字 -->
+	<select id="selectAllAppId" resultMap="applyStoreMap">
+	    select id, cn_name from apply_store
+	    WHERE id NOT IN (
+	    SELECT appstore_id FROM app_detail
+	    )
+	</select>
+	
+	<select id="selectAppNameById" parameterType="Integer" resultType="String">
+	    select cn_name from apply_store where id=#{appId}
+	</select>
+	
+	<!-- 添加应用详情 -->
+	<insert id="insertAppDetail" parameterType="map">
+	    insert into app_detail
+	    (app_name, app_introduce, new_feature, detail_message, app_photo, appstore_id, create_time, update_time)
+	    values
+	    (#{appName}, #{appIntroduce},#{newFeature}, #{detailMessage}, #{file_path}, #{appstoreId}, NOW(), NOW())
+	</insert>
+	
+	<!-- 详情表中某应用的数量 -->
+	<select id="getappdetailCount" parameterType="String" resultType="Integer">
+	    select count(*) from app_detail where app_name = #{appName}
+	</select>
+	
+	<!-- 根据id查询应用详情 -->
+	<select id="selectAppDetailById" parameterType="Integer" resultMap="appDetailMap">
+	    select * from app_detail where appstore_id = #{appstoreId}
+	</select>
+	
+	<!-- 查询应用详情列表 -->
+	<select id="getAppDetailList" resultMap="appDetailMap">
+	    select * from app_detail
+        where app_name in 
+        (select problemType from om_feedbackproblemlist where excEmpCode = #{userId})
+        order by appstore_id
+	</select>
+	
+	<!-- 274727可显示全部应用详情 -->
+	<select id="getAllDetailList" resultMap="appDetailMap">
+	    select * from app_detail
+	</select>
+	
+	<!-- 修改应用详情 -->
+	<update id="updateAppDetail" parameterType="map">
+		update app_detail 
+		<set>
+			<if test="appIntroduce != null">
+				app_introduce = #{appIntroduce},
+			</if>
+			<if test="newFeature != null">
+				new_feature = #{newFeature},
+			</if>
+			<if test="detailMessage != null">
+				detail_message = #{detailMessage},
+			</if>
+			<if test="file_path != null">
+				app_photo = #{file_path},
+			</if>
+			update_time = NOW()
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 修改应用对接人 -->
+	<update id="updateAppManager" parameterType="map">
+		update om_feedbackproblemlist 
+		<set>
+			<if test="appManager != null">
+				excEmpCode = #{appManager}
+			</if>
+		</set>
+		where problemType = #{appName}
+	</update>
+	
+	<!-- 根据应用名查询对接人 -->
+	<select id="getNQHandleByApp" parameterType="String" resultType="com.deppon.dpm.module.management.shared.domain.NQHandleEntity">
+	    SELECT * FROM om_normal_question_handle 
+	    WHERE Content LIKE CONCAT(CONCAT('%',#{appName}),'%')
+	    limit 1
+	</select>
+	
+	<!-- 根据对接人查询负责的应用 -->
+	<select id="getNQHandlebyCode" parameterType="String" resultType="com.deppon.dpm.module.management.shared.domain.NQHandleEntity">
+	    SELECT * FROM om_normal_question_handle 
+	    WHERE empCode = #{empCode}
+	</select>
+	
+	<!--  -->
+	<update id="updateNQHandle" parameterType="map">
+	    update om_normal_question_handle 
+		<set>
+			<if test="empCode != null">
+				empName = (SELECT empName FROM om_employee WHERE empCode = #{empCode}),
+			</if>
+			<if test="empCode != null">
+				empCode = #{empCode},
+			</if>
+			<if test="content != null">
+				content = #{content}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="deleteNQHandle" parameterType="Integer">
+	    delete from om_normal_question_handle 
+	    where id = #{id}
+	</delete>
+	
+	<insert id="insertNQHandle" parameterType="map">
+	    insert into om_normal_question_handle(empName,empCode, content)
+	    values((SELECT empName FROM om_employee WHERE empCode = #{empCode}), #{empCode}, #{content})
+	</insert>
+	
+	<!-- 计算应用评分 -->
+	<select id="getAppScore" parameterType="Integer" resultType="Double">
+	    SELECT SUM(score)/COUNT(*) FROM
+	    (
+	    SELECT * FROM
+	    (SELECT * FROM app_comment WHERE appId = #{appId} ORDER BY createTime DESC) AS aa
+	    GROUP BY empCode
+	    ) AS bb
+	<!-- select sum(score)/count(*) from app_comment where appId = #{appId} -->
+	</select>
+	
+	
+	<!-- 添加应用评论 -->
+	<insert id="insertAppComment" parameterType="com.deppon.dpm.module.management.shared.domain.AppCommentEntity">
+	    insert into app_comment(appId, empCode, content, score, createTime,status)
+	    values(#{appId}, #{empCode}, #{content}, #{score}, NOW(),'on')
+	</insert>
+	
+	<!-- 更新应用评分 -->
+	<update id="updateTotalScore" parameterType="map">
+	    update app_detail 
+	    <set>
+	       <if test="appstoreId != null and totalScore != null">
+	        total_score = #{totalScore},
+	      </if>
+	    </set>
+	    where appstore_id = #{appstoreId}
+	</update>
+	
+	<!-- 获取应用评分 -->
+	<select id="getAppScoreById" parameterType="Integer" resultType="Double">
+	    select total_score from app_detail 
+	    where appstore_id = #{appId}
+	</select>
+	
+	<!-- 获得该工号的评论数 -->
+	<select id="getEmpCodeCount" parameterType="String" resultType="Integer">
+	    select count(*) from app_comment where empCode = #{empCode}
+	</select>
+	
+	<!-- 分页展示评论列表 -->
+	<select id="getCommentList" parameterType="map" resultMap="appCommentMap">
+	    select commentId, appId, empCode, content, score, createTime,status,replyContent,replyEmpCode 
+	    from app_comment
+	    where status = 'on' and appId = #{appId}
+	    order by createTime DESC
+	    limit #{startNo}, #{pageSize}
+	</select>
+	
+	<!-- 获取有回复权限的工号 -->
+	<select id="getExcEmpcodeList" resultType="String">
+	   SELECT DISTINCT excEmpCode FROM om_feedbackproblemlist
+	</select>
+	
+	<!-- 获得该应用的评论条数 -->
+	<select id="getCommentCount" parameterType="Integer" resultType="Integer">
+	    select count(*) from app_comment where appId = #{appId}
+	</select>
+	
+	<!-- 添加评论回复 -->
+	<update id="updateCommentReply" parameterType="com.deppon.dpm.module.management.shared.domain.AppCommentEntity">
+	    update app_comment
+	    <set>
+	       <if test="commentId != null and replyContent != null">
+	        replyContent = #{replyContent},
+	      </if>
+	      <if test="commentId != null and replyEmpCode != null">
+	        replyEmpCode = #{replyEmpCode},
+	      </if>
+	    </set>
+	    where commentId = #{commentId}
+	</update>
+ 
+ </mapper>

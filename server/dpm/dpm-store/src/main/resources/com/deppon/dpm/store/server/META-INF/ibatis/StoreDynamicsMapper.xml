@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.store.server.dao.IStoreDynamicsDao">
+  <resultMap id="BaseResultMap" type="com.deppon.dpm.store.server.entity.StoreDynamics">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="taskid" jdbcType="VARCHAR" property="taskid" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="info" jdbcType="VARCHAR" property="info" />
+    <result column="dynamicstime" jdbcType="VARCHAR" property="dynamicstime" />
+    <result column="dynamicstype" jdbcType="VARCHAR" property="dynamicstype" />
+    <result column="dr" jdbcType="INTEGER" property="dr" />
+    <result column="ts" jdbcType="VARCHAR" property="ts" />
+  </resultMap>
+ 
+ 
+  
+</mapper>

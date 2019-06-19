@@ -1,0 +1,20 @@
+<ion-view title="助手详情">
+    <ion-nav-buttons side="left">
+        <button class="depponback button-icon icon ion-ios7-arrow-left button back-button first-page" ng-click="back()"></button>
+    </ion-nav-buttons>
+<ion-content>
+		<div class="list">  <label class="item item-input">   
+			  <span class="input-label">标题: </span><span>{{item.title}}</span>  </label> 
+			  <label class="item item-input">    
+			  <span class="input-label">发布日期:</span><span>{{item.publishtime}}</span>
+			  </label>
+			  
+			  <label class="item item-input"> 
+			  <span class="input-label">发布:</span><span>{{item.publishor}}</span></label>
+			<div>  
+			<div class="item item-body">   
+			<p ng-bind-html="item.contentstr | rawHtml"> </p>
+			</div></div>
+		 </div>
+</ion-content>
+</ion-view>

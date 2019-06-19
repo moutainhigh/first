@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-announce" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-anps" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-collect-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-config" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-doc" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-dpc" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-fssc" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-hranswers" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-login" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-lsp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-main" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-management" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-news" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-projecttools" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-sdk" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-sync" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-tongxunlu" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-uums" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-vms" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-vpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dpm-wfs" charset="UTF-8" />
+  </component>
+</project>

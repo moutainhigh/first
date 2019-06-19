@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.organization">
+	<resultMap id="orgVo"
+		type="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgCode" column="orgCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgLevel" column="orgLevel" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgAddr" column="orgAddr" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="zipCode" column="zipCode" javaType="String"
+			jdbcType="DATE" />
+		<result property="managerId" column="managerId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="linkTel" column="linkTel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="email" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="area" column="area" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="remark" column="remark" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="appSysCode" column="appSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="parentId" column="PARENTORGID" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="finaSysCode" column="finaSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createTime" column="createTime" javaType="Date"
+			jdbcType="DATE" /> 
+	</resultMap>
+	<sql id="org_param">
+		orgId,orgName,orgCode,orgLevel,managerId,area,appSysCode,PARENTORGID
+	
+	</sql>
+	<delete id="delete" parameterType="int">
+          <![CDATA[
+             delete from om_organization where orgId = #{id}
+          ]]>
+	</delete>
+	<update id="update" parameterType="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+		update om_organization set
+		orgName= #{orgName}, orgCode = #{orgCode}, orgLevel = #{orgLevel} ,
+		orgAddr =
+		#{orgAddr} , zipCode = #{zipCode} , managerId = #{managerId}
+		,
+		linkTel =
+		#{linkTel} , email = #{email} , area = #{area} , remark
+		=
+		#{remark} , appSysCode = #{appSysCode} , PARENTORGID = #{parentId},
+		finaSysCode
+		=
+		#{finaSysCode}  where
+		orgId
+		= #{orgId}
+	</update>
+	<select id="getOrgs" resultMap="orgVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="org_param" />
+        <![CDATA[
+            FROM om_organization org 
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1=1
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="parentId>0">
+				AND PARENTORGID = #{parentId}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+	  <![CDATA[
+            order by PARENTORGID,orgid  ]]>
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+	</select>
+	<select id="getOrgsSize" resultType="java.lang.Integer"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+        <![CDATA[
+            SELECT count(1)
+        ]]> 
+        <![CDATA[
+            FROM om_organization org 
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1=1
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="parentId>0">
+				AND PARENTORGID = #{parentId}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+	</select>
+</mapper>

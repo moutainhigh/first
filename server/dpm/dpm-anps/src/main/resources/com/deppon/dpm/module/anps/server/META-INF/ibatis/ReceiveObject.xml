@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.anps.server.dao.impl.ReceiveObjectDao" >
+
+<resultMap id="orgVo"
+		type="com.deppon.dpm.module.anps.shared.domain.OrganizationEntity">
+		<!-- 有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="empNum" column="empNum" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgCode" column="orgCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgLevel" column="orgLevel" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgAddr" column="orgAddr" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="zipCode" column="zipCode" javaType="String"
+			jdbcType="DATE" />
+		<result property="managerId" column="managerId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="linkTel" column="linkTel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="email" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="area" column="area" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="remark" column="remark" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="appSysCode" column="appSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="parentId" column="PARENTORGID" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="finaSysCode" column="finaSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deptSeq" column="DEPTSEQ" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createTime" column="createTime" javaType="Date"
+			jdbcType="DATE" />
+	</resultMap>
+	
+	<resultMap id="empVo" type="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		<!-- 有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="empId" column="empId" jdbcType="NUMERIC" />
+		<result property="empCode" column="empCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="empName" column="empName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="mobileNo" column="mobileNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gender" column="gender" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="inDate" column="inDate" javaType="Date"
+			jdbcType="DATE"/>
+		<result property="updateTime" column="updateTime" javaType="Date"
+			jdbcType="DATE"/>
+		<result property="birthDate" column="birthDate" javaType="Date"
+			jdbcType="DATE" />
+		<result property="empStatus" column="empStatus" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardNo" column="cardNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardType" column="cardType" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="pEmail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobGroups" column="jobGroups" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobName" column="jobName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobLevel" column="jobLevel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobDuty" column="jobDuty" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobSequence" column="jobSequence" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="tel" column="TEL" javaType="String" jdbcType="VARCHAR" />
+		<result property="emailUserName" column="oemail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="emailPassword" column="email_password"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="address" column="address" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="callFrequency" column="callFrequency"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="parentOrgId" column="parentOrgId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deptSeq" column="DEPTSEQ" javaType="String"
+		jdbcType="VARCHAR" />
+		<result property="headPhoto" column="pictPath" javaType="String"
+		jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 根据组织id查询所有子组织信息 -->
+	<select id="selectChildOrgs" parameterType="string" resultMap="orgVo">
+	SELECT * FROM om_organization t WHERE t.PARENTORGID = #{orgid};
+	<!-- 子组织人数，非递归所有人数 -->
+	<!-- SELECT COUNT(t.empcode) empNum, t1.* FROM om_employee t INNER JOIN
+	(
+	SELECT * FROM om_organization WHERE PARENTORGID = #{orgid}
+	)t1 ON t.ORGID = t1.orgid 
+	WHERE t.EMPSTATUS = 'on' 
+	GROUP BY t1.orgid  -->
+	</select>
+	
+	<!-- 根据组织id递归查询所有子组织信息 然后部门人数相加 -->
+	<select id="getTotalNum" parameterType="string" resultType="java.lang.Integer">
+	SELECT SUM(t2.num) FROM
+	(
+	SELECT t1.orgid orgid, t1.orgName orgname,COUNT(1) num from om_employee t
+	INNER JOIN
+	(
+	SELECT orgid, orgname FROM om_organization WHERE deptseq LIKE '%.${_parameter}.%'
+	) t1 on t.orgid = t1.orgid
+	WHERE t.EMPSTATUS = 'on' 
+	GROUP BY t1.orgid
+	)t2
+	</select>
+   
+	<select id="getEmps" resultMap="empVo"
+		parameterType="string">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' AND org.orgId = #{orgId}
+		</where>
+	</select>
+	
+	
+	
+	
+	<sql id="emp_param">
+		empid,emp.empCode ,empName,MOBILENO,
+		case when emp.OEMAIL is
+		null
+		then emp.PEMAIL else
+		emp.OEMAIL end email,
+		jobName,case when jobLevel is null then "" else jobLevel end jobLevel,
+		case when jobGroups is null then "" else jobGroups end jobGroups,
+		jobDuty,org.orgName,org.orgId,gender,tel,org.parentOrgId,org.orgName,org.DEPTSEQ,
+		case when pic.pictPath is NULL THEN "" else pic.pictPath END pictPath
+	</sql>
+	
+	<select id="getOrgidByEmpCode" parameterType="string" resultType="string">
+	SELECT
+		om_organization.ORGID
+	FROM
+		om_employee
+	LEFT JOIN om_organization ON om_employee.ORGID = om_organization.ORGID
+	WHERE
+		om_employee.empcode = #{empCode}
+	</select>
+	
+		
+	<!-- 查询岗位信息 -->
+	<select id="getNoticeJobInfo" resultType="com.deppon.dpm.module.anps.shared.domain.NoticeJobEntity" parameterType="string">
+	<!-- SELECT * FROM
+	(
+	SELECT
+	COUNT(t.empcode) num,
+	t.JOBNAME jobName,
+	t1.createDate createDate,
+	t1.sort sort
+	FROM
+	om_employee t
+	INNER JOIN notice_group_jobname t1 ON t.JOBNAME = t1.orgname
+	INNER JOIN om_organization t2 ON t.ORGID = t2.orgid
+	WHERE t.EMPSTATUS = 'on'
+	AND t2.deptseq LIKE '%.${_parameter}.%'
+	GROUP BY
+	t1.orgname
+	)t3 ORDER BY t3.sort -->
+	
+	SELECT t.orgName jobName FROM notice_group_jobname t
+	
+	</select>
+	
+	<!-- 查询某个岗位 某个部门 多少人  参数 orgid jobname-->
+	<select id="getNoticeJobNumber" resultType="java.lang.Integer" parameterType="Map">
+	SELECT SUM(t2.num) totalNumber FROM
+	(
+	SELECT COUNT(t.empcode) num, t1.orgid orgid, t1.ORGNAME orgname FROM
+	om_employee t INNER JOIN om_organization t1 ON t.ORGID = t1.ORGID
+	WHERE t1.deptseq LIKE '%${orgid}%'
+	AND t.JOBNAME = #{jobName}
+	AND t.EMPSTATUS = 'on'
+	GROUP BY t1.ORGID
+	)t2
+	</select>
+	
+	
+	<!-- 查询某个部门下某岗位有多少人（所有管理人员   高级经理及以上管理人员  总监及以上管理人员）-->
+	<select id="getJobNumManager" resultType="java.lang.Integer" parameterType="Map">
+	SELECT
+	COUNT(1)
+	FROM
+	om_employee t
+	INNER JOIN om_organization t2 ON t.orgid
+	= t2.orgid
+	<where>
+		t.JOBSEQUENCE = '管理序列'
+		AND t.JOBNAME NOT LIKE '储备%'
+		AND t.empstatus =
+		'on'
+		<if test="orgid != null">
+			AND t2.deptseq LIKE '%${orgid}%'
+		</if>
+		<if test="jobName == '高级经理及以上管理人员'.toString() ">
+			AND t.JOBLEVEL >= '07'
+		</if>
+		<if test="jobName == '总监及以上管理人员'.toString() ">
+			AND t.JOBLEVEL >= '08'
+		</if>
+
+	</where>
+	ORDER BY
+	t.JOBLEVEL
+	</select>
+	
+	
+	
+	<!-- 查询某个部门下某岗位有多少人（营业网点经理   司机  快递员 营业员/接送货员/收银员 理货员）-->
+	<select id="getJobNumManagerOther" resultType="java.lang.Integer" parameterType="Map">
+	SELECT COUNT(1) FROM om_employee t
+	INNER JOIN om_organization t4 ON
+	t.orgid = t4.orgid
+	INNER JOIN
+	(
+	SELECT t1.jobid jobId, t1.orgname
+	jobName,t2.jobname jobDetail FROM
+	notice_group_jobname t1
+	INNER JOIN
+	notice_job_detail t2 ON t1.jobid = t2.jobid
+	WHERE t1.jobid = #{jobId}
+	)t3 ON
+	t.jobname = t3.jobDetail
+	<where>
+		t.empstatus = 'on'
+		<if test="orgid != null">
+			AND t4.deptseq LIKE '%${orgid}%'
+		</if>
+	</where>
+	</select>
+	
+	
+	<!-- 岗位下的员工（所有管理人员   高级经理及以上管理人员  总监及以上管理人员） -->
+	<select id="getNoticeJobEmpManager" resultMap="empVo" parameterType="Map">
+	
+	<![CDATA[
+            SELECT
+        ]]>
+	<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+    <!--对于查询条件，可以通过where标签进行定义 -->
+	<where>
+		emp.JOBSEQUENCE = '管理序列'
+		AND emp.JOBNAME NOT LIKE '储备%'
+		AND emp.empstatus = 'on'
+		<if test="orgId != null">
+			AND emp.orgid = #{orgId}
+		</if>
+		<if test="jobName == '高级经理及以上管理人员'.toString() ">
+			AND emp.JOBLEVEL >= '07'
+		</if>
+		<if test="jobName == '总监及以上管理人员'.toString() ">
+			AND emp.JOBLEVEL >= '08'
+		</if>
+	</where>
+	</select>
+
+
+	<!-- 岗位下的员工（营业网点经理   司机  快递员 营业员/接送货员/收银员 理货员） -->
+<select id="getNoticeJobEmpOther" resultMap="empVo"
+	parameterType="Map">
+	<![CDATA[
+            SELECT
+        ]]>
+	<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+            INNER JOIN (
+				SELECT
+				t1.jobid jobId,
+				t1.orgname jobName2,
+				t2.jobname jobDetail
+				FROM
+				notice_group_jobname t1
+				INNER JOIN notice_job_detail t2 ON t1.jobid = t2.jobid
+				WHERE
+				t1.jobid = #{jobId}
+			) t3 ON emp.jobname = t3.jobDetail
+        ]]>
+	<!--对于查询条件，可以通过where标签进行定义 -->
+	<where>
+		emp.empstatus='on'
+		<if test="orgId != null">
+			AND org.orgId = #{orgId}
+		</if>
+	</where>
+</select>
+
+
+
+<select id="getLeadEmps" resultMap="empVo"
+		parameterType="string">
+        <![CDATA[
+            SELECT
+        ]]>
+		  <include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' AND org.orgId = #{orgId}
+			AND JOBSEQUENCE='管理序列' 
+		</where>
+	</select>
+	
+	<select id="getLeaderEmp" resultMap="empVo"
+		parameterType="string">
+        <![CDATA[
+            SELECT
+        ]]>
+		  <include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' 
+			AND JOBSEQUENCE='管理序列'
+			AND emp.empCode = #{empCode} 
+		</where>
+	</select>
+	
+	<select id="getOrgNameByEmpCode" parameterType="string" resultType="string">
+	SELECT
+		om_organization.ORGNAME
+	FROM
+		om_employee
+	LEFT JOIN om_organization ON om_employee.ORGID = om_organization.ORGID
+	WHERE
+		om_employee.empcode = #{empCode}
+	</select>
+
+</mapper>
+

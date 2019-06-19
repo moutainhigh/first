@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="dpm-management" namespace="/dpm-management"
+		extends="foss-default">
+		<!-- 模块主页面 -->
+
+		<interceptors>
+			<interceptor name="checkUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor" />
+			<interceptor name="myinterceptor"
+				class="com.deppon.dpm.tongxunlu.server.action.MyInterceptor"></interceptor>
+		</interceptors>
+		
+		<!-- 应用详情 -->
+		<action name="appDetail_*" class="appDetailAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+		    <interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" /> 
+			<result name="error" type="json"></result>
+			<result name="success" type="dispatcher">/appdetail/pages/appDetail.jsp
+			</result>
+			<result name="insertDetail" type="dispatcher">/appdetail/pages/blank.jsp</result>
+		</action>
+		
+		<!-- 会议室预定 -->
+		<action name="meetingRoom_*" class="meetingRoomAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+		    <interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" /> 
+            <result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="calendar_*" class="calendarAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="email_*" class="emailAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">4997152</param>
+			</interceptor-ref>
+		</action>
+		
+		<action name="store_listLimitTen" class="applyStoreAction" method="listLimitTen">
+			<interceptor-ref name="defaultStack" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="store_*" class="applyStoreAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="calendar_getCalendarPlan" class="calendarPlanAction"
+			method="getCalendarPlan">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="it_*" method="{1}" 
+			class="terminalInformationAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result type="json"></result>
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">4997152</param>
+			</interceptor-ref>
+		</action>
+		<action name="appPermission_*" method="{1}" 
+			class="appPermissionAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="locationPermission_*" method="{1}" 
+			class="locationPermissionAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 2017年度总结 -->
+		<action name="yearSummary_*" method="{1}" 
+			class="yearSummaryAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 打卡考勤记录 -->
+		<action name="punchClock_*" method="{1}" 
+			class="punchClockAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 首页改版-->
+		<!-- <action name="mainPage_*" method="{1}" 
+			class="mainPageAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action> -->
+	</package>
+</struts>

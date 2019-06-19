@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.main.server.dao.punchClockGlobal">
+	
+	<resultMap id="organization" type="com.deppon.dpm.module.common.shared.vo.OrganizationEntity">
+		<result property="orgId" column="ORGID" />
+		<result property="orgCode" column="orgcode" />
+		<result property="orgName" column="ORGNAME" />
+		<result property="orgLevel" column="ORGLEVEL" />	
+		<result property="parentOrgId" column="PARENTORGID" />
+		<result property="orgAddr" column="orgaddr" />
+		<result property="zipCode" column="ZIPCODE" />
+		<result property="managerId" column="managerId" />
+		<result property="linkTel" column="linktel" />
+		<result property="email" column="EMAIL" />
+		<result property="area" column="AREA" />
+		<result property="remark" column="REMARK" />
+		<result property="appSysCode" column="appsyscode" />
+		<result property="parentCompCode" column="PARENTCOMPCODE" />
+		<result property="orgProperty" column="ORGPROPERTY" />
+		<result property="finaSysCode" column="FINASYSCODE" />
+		<result property="deptSeq" column="DEPTSEQ" />
+		<result property="createTime" column="CREATETIME" />
+		<result property="lastUpdate" column="LASTUPDATE" />
+	</resultMap>
+	
+	<resultMap id="position" type="com.deppon.dpm.module.main.shared.domain.PunchClockPositionGlobalEntity">
+		<result property="id" column="id" />
+		<result property="orgId" column="org_id" />
+		<result property="orgName" column="org_name" />
+		<result property="salesDepartAddr" column="sales_depart_addr" />
+		<result property="managerId" column="manager_id" />
+		<result property="parentOrgId" column="parent_org_id" />	
+		<result property="latitude" column="latitude" />
+		<result property="longitude" column="longitude" />
+		<result property="radius" column="radius" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="isEnable" column="is_enable" />
+		<result property="verifyStatus" column="verify_status" />
+		<result property="osType" column="os_type" />
+		<result property="phoneModel" column="phone_model" />
+		<result property="osVersion" column="os_version" />
+		<result property="appVersion" column="app_version" />
+		<result property="deviceToken" column="device_token" />
+	</resultMap>
+	
+	<!-- 设定全国打卡位置 -->
+	<insert id="addClockPosition"
+		parameterType="com.deppon.dpm.module.main.shared.domain.PunchClockPositionGlobalEntity">
+		INSERT INTO om_punch_position
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="orgId != null">
+				org_id,
+			</if>
+			<if test="orgName != null">
+				org_name,
+			</if>
+			<if test="salesDepartAddr != null">
+				sales_depart_addr,
+			</if>
+			<if test="managerId != null">
+				manager_id,
+			</if>
+			<if test="parentOrgId != null">
+				parent_org_id,
+			</if>
+			<if test="latitude != null">
+				latitude,
+			</if>
+			<if test="longitude != null">
+				longitude,
+			</if>
+			<if test="radius != null">
+				radius,
+			</if>
+				create_time,
+				update_time,
+			<if test="isEnable != null">
+				is_enable,
+			</if>
+			<if test="verifyStatus != null">
+				verify_status,
+			</if>
+			<if test="osType != null">
+				os_type,
+			</if>
+			<if test="phoneModel != null">
+				phone_model,
+			</if>
+			<if test="osVersion != null">
+				os_version,
+			</if>
+			<if test="appVersion != null">
+				app_version,
+			</if>
+			<if test="deviceToken != null">
+				device_token,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="orgId != null">
+				#{orgId},
+			</if>
+			<if test="orgName != null">
+				#{orgName},
+			</if>
+			<if test="salesDepartAddr != null">
+				#{salesDepartAddr},
+			</if>
+			<if test="managerId != null">
+				#{managerId},
+			</if>
+			<if test="parentOrgId != null">
+				#{parentOrgId},
+			</if>
+			<if test="latitude != null">
+				#{latitude},
+			</if>
+			<if test="longitude != null">
+				#{longitude},
+			</if>
+			<if test="radius != null">
+				#{radius},
+			</if>
+			<if test="true">
+				CURRENT_TIMESTAMP,
+			</if>
+			<if test="true">
+				CURRENT_TIMESTAMP,
+			</if>
+			<if test="isEnable != null">
+				#{isEnable},
+			</if>
+			<if test="verifyStatus != null">
+				#{verifyStatus},
+			</if>
+			<if test="osType != null">
+				#{osType},
+			</if>
+			<if test="phoneModel != null">
+				#{phoneModel},
+			</if>
+			<if test="osVersion != null">
+				#{osVersion},
+			</if>
+			<if test="appVersion != null">
+				#{appVersion},
+			</if>
+			<if test="deviceToken != null">
+				#{deviceToken},
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- 根据部门ID更新对应的打卡位置的审核状态 -->
+	<update id="updateClockPositionStatus" parameterType="map">
+		update om_punch_position set is_enable=#{isEnable} , verify_status=#{verifyStatus} , update_time=CURRENT_TIMESTAMP where id=#{id}
+	</update>
+	
+	<!-- 根据ID更新对应的打卡位置-->
+	<update id="updateClockPosition" parameterType="com.deppon.dpm.module.main.shared.domain.PunchClockPositionGlobalEntity">
+		update om_punch_position 
+		<set>
+			<if test="isEnable != null">
+				is_enable=0,
+			</if>
+			<if test="true">
+				update_time=CURRENT_TIMESTAMP,
+			</if>
+		</set>
+		<where>
+			<if test="orgId != 0">
+				AND org_id=#{orgId}
+			</if>
+			<if test="id != 0">
+				AND id=#{id}
+			</if>
+		</where>
+	</update>
+	
+	<!-- 根据工号查看部门负责人的工号是否为当前登录的用户 -->
+	<select id="getOrgIdByEmpCode" parameterType="string" resultMap="organization">
+		select * from om_employee e 
+		left join om_organization o on e.orgid=o.orgid 
+		where o.managerId=#{empCode} and e.empcode=#{empCode}
+	</select>
+	
+	<!-- 根据工号查看部门负责人的工号是否为当前登录的用户 -->
+	<select id="getOrgById" parameterType="string" resultMap="organization">
+		select * from om_organization where orgid=#{orgId}
+	</select>
+	
+	<!-- 根据部门ID获取对应的不同状态的打卡位置经纬度,其中isEnable代表打卡位置是否有效0/1,verifyStaus代表审核状态0(待审核)/1(审核通过)/2(审核未通过) -->
+	<select id="getPunchClockPositionByOrgId" parameterType="map" resultMap="position">
+		select * from om_punch_position 
+		<where>
+			<if test="managerId != null">
+				AND manager_id=#{managerId}
+			</if>
+			<if test="orgId != null">
+				AND org_id=#{orgId}
+			</if>
+			<if test="longitude != null">
+				AND longitude=#{longitude}
+			</if>
+			<if test="latitude != null">
+				AND latitude=#{latitude}
+			</if>
+			<if test="radius != null">
+				AND radius=#{radius}
+			</if>
+			<if test="isEnable != null">
+				AND is_enable=#{isEnable}
+			</if>
+			<if test="verifyStatus != null">
+				AND verify_status=#{verifyStatus}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据具体的地址信息获取有效的打卡位置(待审核和审核通过),其中isEnable代表打卡位置是否有效0/1,verifyStaus代表审核状态0(待审核)/1(审核通过)/2(审核未通过) -->
+	<select id="getPunchClockAvailablePosition" parameterType="map" resultMap="position">
+		select * from om_punch_position 
+		<where>
+			<if test="managerId != null">
+				AND manager_id=#{managerId}
+			</if>
+			<if test="orgId != null">
+				AND org_id=#{orgId}
+			</if>
+			<if test="longitude != null">
+				AND longitude=#{longitude}
+			</if>
+			<if test="latitude != null">
+				AND latitude=#{latitude}
+			</if>
+			<if test="radius != null">
+				AND radius=#{radius}
+			</if>
+			<if test="isEnable != null">
+				AND is_enable=1
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据ID获取部门打卡位置信息 -->
+	<select id="getPunchClockPositionById" parameterType="java.lang.Integer" resultMap="position">
+		select * from om_punch_position where id=#{id}
+	</select>
+	
+	<!-- 根据具体的地址信息获取有效的打卡位置(待审核和审核通过),其中isEnable代表打卡位置是否有效0/1,verifyStaus代表审核状态0(待审核)/1(审核通过)/2(审核未通过) -->
+	<select id="getPositionByParentOrgId" parameterType="map" resultMap="position">
+		select * from om_punch_position 
+		<where>
+			<if test="parentOrgId != null">
+				AND parent_org_id=#{parentOrgId}
+			</if>
+			<if test="isEnable != null">
+				AND is_enable=1
+			</if>
+			<if test="verifyStatus != null">
+				AND verify_status=0
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据工号查询部门管理人 -->
+	<select id="getManagerIdByEmpcode" parameterType="String" resultType="String">
+	  SELECT managerId FROM om_organization
+	  WHERE ORGID = (
+	     SELECT ORGID FROM om_employee WHERE EMPCODE = #{empcode} limit 1
+	  )
+	  limit 1
+	</select>
+	
+</mapper>

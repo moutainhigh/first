@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.deppon</groupId>
+		<artifactId>dpm</artifactId>
+		<version>1.0</version>
+	</parent>
+	<groupId>com.deppon</groupId>
+	<artifactId>dpm-login</artifactId>
+	<version>1.0.0</version>
+	<name>dpm-login</name>
+	<url>http://maven.apache.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<moduleContext>login</moduleContext>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-uums</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-tongxunlu</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-management</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-announce</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
+		<!-- UUMS-NEW  引入anps模块  用到里面service里查询人员的方法 -->
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-anps</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!-- UUMS-NEW  maven依赖jar包 -->
+		<dependency>
+			<groupId>com.deppon.uums</groupId>
+			<artifactId>uums-dubbo-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<!-- 新密码加密jar包 -->
+		<dependency>
+			<groupId>com.deppon.addressbook.third</groupId>
+			<artifactId>sun.misc.BASE64Decoder</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>ro.isdc.wro4j</groupId>
+				<artifactId>wro4j-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+
+	</build>
+</project>

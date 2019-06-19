@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.wfs.server.dao.workitems" >
+	<resultMap id="workitemslistVo" type="com.deppon.dpm.module.wfs.shared.vo.OaWorkItem">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="processinstid" column="processinstid"
+			jdbcType="DECIMAL" />
+		<result property="processinstname" column="processinstname" 
+			jdbcType="VARCHAR" />
+		<result property="createtime" column="createtime"
+			jdbcType="DATE" />
+		<result property="appler" column="appler" 
+			jdbcType="VARCHAR" />
+		<result property="department" column="department"
+			jdbcType="VARCHAR" />
+		<result property="flowtype" column="flowtype"
+			jdbcType="VARCHAR" />
+		<result property="syscode" column="syscode" 
+			jdbcType="VARCHAR" />
+		<result property="workitemid" column="workitemid" 
+			jdbcType="DECIMAL" />
+		<result property="busino" column="busino" 
+			jdbcType="VARCHAR" />
+		<result property="activitydefid" column="activitydefid" 
+			jdbcType="VARCHAR" />
+		<result property="activityinstid" column="activityinstid" 
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="WorkFlowVo" type="com.deppon.dpm.module.wfs.shared.domain.WorkflowInfo">
+		<result property="id" column="id"
+			jdbcType="DECIMAL" />
+			<result property="workflowname" column="workflowname"
+			jdbcType="VARCHAR" />
+			<result property="syscode" column="syscode"
+			jdbcType="VARCHAR" />
+			<result property="jspname" column="jspname"
+			jdbcType="VARCHAR" />
+			<result property="createtime" column="createtime"
+			jdbcType="DATE" />
+			<result property="className" column="className"
+			jdbcType="VARCHAR" />
+			<result property="entryProperty" column="entryProperty"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<!--<select id="getworkitemslist" resultMap="workitemslistVo" >
+		SELECT PROCESSINSTID, CREATETIME,  DEPARTMENT, APPLER, PROCESSINSTNAME,
+       		WORKITEMID, BUSINO, FLOWTYPE, ACTIVITYDEFID, ACTIVITYINSTID, SYSCODE
+  		FROM (SELECT A.PROCESSINSTID PROCESSINSTID,
+               A.APPDATE CREATETIME,
+               A.DEPARTMENT DEPARTMENT,
+               A.APPLER APPLER,
+              DECODE(A.SYSCODE,
+                      'FSSC',
+                      (B.CATALOGNAME || '-' || B.PROCESSINSTNAME),
+                      B.PROCESSINSTNAME) PROCESSINSTNAME,
+               B.WORKITEMID,
+               A.BUSINO,
+               B.PROCESSDEFNAME FLOWTYPE,
+               B.ACTIVITYDEFID,
+               B.ACTIVITYINSTID,
+               A.SYSCODE
+          FROM BPSDB.WFWORKITEM B
+         INNER JOIN BPSDB.T_BPMS_APPLYINFO A
+            ON A.PROCESSINSTID = B.PROCESSINSTID
+         WHERE B.ACTIVITYDEFID != 'Drafter'
+           AND A.ISEFFECTIVE = 1
+           AND A.CONDITION IN (2, 3)
+           AND A.PROCESSDEFNAME IN
+          		('com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.workInjuryMedical','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.mutualFundPayBill','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.unusualExpenses','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.WelfareFeeApply','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.verySpend','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.beInHospital','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.party','com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.welfareFunds','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.dinnerPartyCost','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.workInjuryTreatment','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.unusualAgentRefund','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.temporaryRentCar','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.travel','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.travel','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.wageApply','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.CRMClaimsPay','com.deppon.bpms.module.fssc.bpsdesign.zspayList.tenderBail','com.deppon.bpms.module.fssc.bpsdesign.zspayList.deposit','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.commcation','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.rentFee','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.CRMClaimsReimbursement','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.application','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.recruitment','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.socialSecrityPay','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.detachedWage','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.staffBearInsurance','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addInsurancePayment','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addPersonalPayBillTaxPayBill','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addSocialSecurityPayment','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.financeFee','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.tracostopr','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.findPoint','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.outsideTheCarCost','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.broadbandFeeHolding','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.phoneBillWithHolding','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.rentCarReimbursement','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.utilitiesWithHolding','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.moneyTransfers','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4BorrowCar','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.borrow4Car','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4Car','com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.empOfPrivateBow','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.SWExpAccount-WholeProEasy','com.deppon.bpms.module.fssc.bpsdesign.bankDrawbackBill.bankDrawbackBill','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.culturalActivity','com.deppon.bpms.module.foss.bpsdesign.borrowBill.newFiance','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.chummageCost','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.moneyTransfers','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.acceptanceBill','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.depositIn','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.depositOut','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.operationCostReimbursement','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4operation','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.activity','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.CommVehicl','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.mPGroupNetwork','com.deppon.bpms.module.lsp.bpsdesign.purchase.purchaseContractChange','com.deppon.bpms.module.lsp.bpsdesign.purchase.purchaseContract','com.deppon.bpms.module.lsp.bpsdesign.purchase.paymentApply','com.deppon.bpms.module.lsp.bpsdesign.warehouse.carApply','com.deppon.bpms.module.lsp.bpsdesign.purchase.scalingSingle','com.deppon.bpms.module.lsp.bpsdesign.purchase.scalingSingleChange','com.deppon.bpms.module.lsp.bpsdesign.projects.projectApproval','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixCarFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockFix','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockNotFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixBigDevice','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixCarTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.layoutDesignTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.layoutDesignFGou','com.deppon.bpms.module.lsp.bpsdesign.projects.projectFeasibilityAssessment','com.deppon.bpms.module.lsp.bpsdesign.projects.projectDesignChange','com.deppon.bpms.module.lsp.bpsdesign.projects.serviceApply','com.deppon.bpms.module.lsp.bpsdesign.vehicle.maintenanceSingle','com.deppon.bpms.module.lsp.bpsdesign.projects.projectLdChange','com.deppon.bpms.module.lsp.bpsdesign.projects.projectStateApply','com.deppon.bpms.module.lsp.bpsdesign.projects.projectPlan','com.deppon.bpms.module.lsp.bpsdesign.vehicle.vehiclesUpdatedApplicationForm','com.deppon.bpms.module.lsp.bpsdesign.purchase.stockUpSafeguard','com.deppon.bpms.module.lsp.bpsdesign.projects.finalAccounts','com.deppon.bpms.module.lsp.bpsdesign.projects.projectSettlement','com.deppon.bpms.module.lsp.bpsdesign.warehouse.newPointSuppliesApply','com.deppon.bpms.module.lsp.bpsdesign.purchase.stockUpApply','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.purchase.evaluationRequestForm','com.deppon.bpms.module.lsp.bpsdesign.projects.finalAccountsApply','com.deppon.bpms.module.lsp.bpsdesign.projects.repairSettlement','com.deppon.bpms.module.lsp.bpsdesign.purchase.supplierCheck','com.deppon.bpms.module.lsp.bpsdesign.purchase.supplierDispose','com.deppon.bpms.module.lsp.bpsdesign.projects.projectDesign','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.projects.projectApply','com.deppon.bpms.module.lsp.bpsdesign.projects.projectBudgetAdjust','com.deppon.bpms.module.lsp.bpsdesign.projects.projectBudgetDetail','com.deppon.bpms.module.lsp.bpsdesign.purchase.requestConfirmation','com.deppon.bpms.module.lsp.bpsdesign.projects.projectSearchSource','com.deppon.bpms.module.lsp.bpsdesign.purchase.RFQBill','com.deppon.bpms.module.wfs.bpsdesign.personnel.overtimePayApply','com.deppon.bpms.module.wfs.bpsdesign.personnel.externalStudy','com.deppon.bpms.module.wfs.bpsdesign.personnel.dismissal','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.litigationLawyers','com.deppon.bpms.module.wfs.bpsdesign.strategy.assessmentScheme','com.deppon.bpms.module.wfs.bpsdesign.finance.budgetData','com.deppon.bpms.module.wfs.bpsdesign.personnel.repairAttendance','com.deppon.bpms.module.wfs.bpsdesign.business.sellEncourage','com.deppon.bpms.module.wfs.bpsdesign.personnel.qualificationApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.carGoTransContract','com.deppon.bpms.module.wfs.bpsdesign.performance.assessreduce','com.deppon.bpms.module.wfs.bpsdesign.finance.BankAccount','com.deppon.bpms.module.wfs.bpsdesign.operation.marketingActivities','com.deppon.bpms.module.wfs.bpsdesign.personnel.dataProvide','com.deppon.bpms.module.wfs.bpsdesign.personnel.trainNeedsORChange','com.deppon.bpms.module.wfs.bpsdesign.finance.specialFundsProject','com.deppon.bpms.module.wfs.bpsdesign.personnel.warrant','com.deppon.bpms.module.wfs.bpsdesign.strategy.assessreduce','com.deppon.bpms.module.wfs.bpsdesign.personnel.newDeptApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.actRegistrationApp','com.deppon.bpms.module.wfs.bpsdesign.logistics.learnCar','com.deppon.bpms.module.wfs.bpsdesign.business.marketResearch','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.borrowSealApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.realContractBorrow','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.admitapply','com.deppon.bpms.module.wfs.bpsdesign.personnel.addPostApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.truckPartBuyMaintain','com.deppon.bpms.module.wfs.bpsdesign.logistics.empDorm','com.deppon.bpms.module.wfs.bpsdesign.business.planningDesignApply','com.deppon.bpms.module.wfs.bpsdesign.operation.longDisDriverAgingBreaks','com.deppon.bpms.module.wfs.bpsdesign.operation.centralizedPick','com.deppon.bpms.module.wfs.bpsdesign.personnel.staffReturnToHR','com.deppon.bpms.module.wfs.bpsdesign.personnel.curriculumDevelopmentUpdateAudit','com.deppon.bpms.module.wfs.bpsdesign.operation.online','com.deppon.bpms.module.wfs.bpsdesign.business.problemFeedback','com.deppon.bpms.module.wfs.bpsdesign.personnel.paymentWageinfo','com.deppon.bpms.module.wfs.bpsdesign.personnel.welfarePaymentApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.ruleApproval','com.deppon.bpms.module.crm.bpsdesign.administLegal.legalRepresentSignApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.checkFileApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.siteRent','com.deppon.bpms.module.wfs.bpsdesign.strategy.inspectionDataSubmit','com.deppon.bpms.module.wfs.bpsdesign.strategy.commissionMakeOrChange','com.deppon.bpms.module.wfs.bpsdesign.contract.storeRent','com.deppon.bpms.module.wfs.bpsdesign.finance.loanPaymentApply','com.deppon.bpms.module.wfs.bpsdesign.finance.runfinance','com.deppon.bpms.module.wfs.bpsdesign.logistics.sealCarveApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.courtRelocation','com.deppon.bpms.module.wfs.bpsdesign.personnel.coreFilePublish','com.deppon.bpms.module.wfs.bpsdesign.it.systemDataChangeApply','com.deppon.bpms.module.wfs.bpsdesign.personnel.assessmentScheme','com.deppon.bpms.module.wfs.bpsdesign.personnel.recommendNewEmp','com.deppon.bpms.module.wfs.bpsdesign.personnel.managerGrowthStagePass','com.deppon.bpms.module.wfs.bpsdesign.operation.personnelOutside','com.deppon.bpms.module.wfs.bpsdesign.operation.otherSideLinePoxy','com.deppon.bpms.module.wfs.bpsdesign.business.foundPickbillQueryTeam','com.deppon.bpms.module.wfs.bpsdesign.business.productAdjustment','com.deppon.bpms.module.wfs.bpsdesign.express.expNewPilotOutlets','com.deppon.bpms.module.wfs.bpsdesign.personnel.resignation','com.deppon.bpms.module.wfs.bpsdesign.business.webinfoPublish','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignAppLTL','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignEidtExpress','com.deppon.bpms.module.crm.bpsdesign.claims.generalclaims','com.deppon.bpms.module.crm.bpsdesign.operate.multiReparation','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignAppExpress','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignEidtLTL','com.deppon.bpms.module.crm.bpsdesign.administLegal.attributionChangContract','com.deppon.bpms.module.crm.bpsdesign.administLegal.bindingContract','com.deppon.bpms.module.fins.bpsdesign.baddebt.busiBadDebts','com.deppon.bpms.module.fins.bpsdesign.baddebt.nonBusinessBadDebts','com.deppon.bpms.module.nhr.bpsdesign.personnel.positiveApplication','com.deppon.bpms.module.nhr.bpsdesign.personnel.returnDomicileOfOrigin','com.deppon.bpms.module.nhr.bpsdesign.personnel.employeeTransactionApply','com.deppon.bpms.module.nhr.bpsdesign.personnel.addEmpApply','com.deppon.bpms.module.nhr.bpsdesign.personnel.leaveDaysOff','com.deppon.bpms.module.wdgh.bpsdesign.operate.businessDepartmentInfoUpdateWorkflow','com.deppon.bpms.module.wdgh.bpsdesign.operate.networkToCancel','com.deppon.bpms.module.wdgh.bpsdesign.operate.pickupDeliveryScopeAddApplyWorkflow','com.deppon.bpms.module.wdgh.bpsdesign.operate.newPlaceInfoSubmitApply','com.deppon.bpms.module.wdgh.bpsdesign.operate.salesDepartmentRentApply','com.deppon.bpms.module.wdgh.bpsdesign.operate.buildAndMove','com.deppon.bpms.module.acms.bpsdesign.company.zzbuAndSubCompanyChange','com.deppon.bpms.module.acms.bpsdesign.company.subsidiaryChangeCancell', 'com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.workInjuryMedical','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.mutualFundPayBill','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.unusualExpenses','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.WelfareFeeApply','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.verySpend','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.beInHospital','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.party','com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.welfareFunds','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.dinnerPartyCost','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.workInjuryTreatment','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.unusualAgentRefund','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.temporaryRentCar','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.travel','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.travel','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.wageApply','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.CRMClaimsPay','com.deppon.bpms.module.fssc.bpsdesign.zspayList.tenderBail','com.deppon.bpms.module.fssc.bpsdesign.zspayList.deposit','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.commcation','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.rentFee','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.CRMClaimsReimbursement','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.application','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.recruitment','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.socialSecrityPay','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.detachedWage','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.staffBearInsurance','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addInsurancePayment','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addPersonalPayBillTaxPayBill','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addSocialSecurityPayment','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.financeFee','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.tracostopr','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.findPoint','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.outsideTheCarCost','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.broadbandFeeHolding','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.phoneBillWithHolding','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.rentCarReimbursement','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.utilitiesWithHolding','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.moneyTransfers','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4BorrowCar','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.borrow4Car','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4Car','com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.empOfPrivateBow','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.SWExpAccount-WholeProEasy','com.deppon.bpms.module.fssc.bpsdesign.bankDrawbackBill.bankDrawbackBill','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.culturalActivity','com.deppon.bpms.module.foss.bpsdesign.borrowBill.newFiance','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.chummageCost','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.moneyTransfers','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.acceptanceBill','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.depositIn','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.depositOut','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.operationCostReimbursement','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4operation','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.activity','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.CommVehicl','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.mPGroupNetwork','com.deppon.bpms.module.lsp.bpsdesign.purchase.purchaseContractChange','com.deppon.bpms.module.lsp.bpsdesign.purchase.purchaseContract','com.deppon.bpms.module.lsp.bpsdesign.purchase.paymentApply','com.deppon.bpms.module.lsp.bpsdesign.warehouse.carApply','com.deppon.bpms.module.lsp.bpsdesign.purchase.scalingSingle','com.deppon.bpms.module.lsp.bpsdesign.purchase.scalingSingleChange','com.deppon.bpms.module.lsp.bpsdesign.projects.projectApproval','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixCarFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockFix','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockNotFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixBigDevice','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixCarTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.layoutDesignTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.layoutDesignFGou','com.deppon.bpms.module.lsp.bpsdesign.projects.projectFeasibilityAssessment','com.deppon.bpms.module.lsp.bpsdesign.projects.projectDesignChange','com.deppon.bpms.module.lsp.bpsdesign.projects.serviceApply','com.deppon.bpms.module.lsp.bpsdesign.vehicle.maintenanceSingle','com.deppon.bpms.module.lsp.bpsdesign.projects.projectLdChange','com.deppon.bpms.module.lsp.bpsdesign.projects.projectStateApply','com.deppon.bpms.module.lsp.bpsdesign.projects.projectPlan','com.deppon.bpms.module.lsp.bpsdesign.vehicle.vehiclesUpdatedApplicationForm','com.deppon.bpms.module.lsp.bpsdesign.purchase.stockUpSafeguard','com.deppon.bpms.module.lsp.bpsdesign.projects.finalAccounts','com.deppon.bpms.module.lsp.bpsdesign.projects.projectSettlement','com.deppon.bpms.module.lsp.bpsdesign.warehouse.newPointSuppliesApply','com.deppon.bpms.module.lsp.bpsdesign.purchase.stockUpApply','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.purchase.evaluationRequestForm','com.deppon.bpms.module.lsp.bpsdesign.projects.finalAccountsApply','com.deppon.bpms.module.lsp.bpsdesign.projects.repairSettlement','com.deppon.bpms.module.lsp.bpsdesign.purchase.supplierCheck','com.deppon.bpms.module.lsp.bpsdesign.purchase.supplierDispose','com.deppon.bpms.module.lsp.bpsdesign.projects.projectDesign','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.projects.projectApply','com.deppon.bpms.module.lsp.bpsdesign.projects.projectBudgetAdjust','com.deppon.bpms.module.lsp.bpsdesign.projects.projectBudgetDetail','com.deppon.bpms.module.lsp.bpsdesign.purchase.requestConfirmation','com.deppon.bpms.module.lsp.bpsdesign.projects.projectSearchSource','com.deppon.bpms.module.lsp.bpsdesign.purchase.RFQBill','com.deppon.bpms.module.wfs.bpsdesign.personnel.overtimePayApply','com.deppon.bpms.module.wfs.bpsdesign.personnel.externalStudy','com.deppon.bpms.module.wfs.bpsdesign.personnel.dismissal','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.litigationLawyers','com.deppon.bpms.module.wfs.bpsdesign.strategy.assessmentScheme','com.deppon.bpms.module.wfs.bpsdesign.finance.budgetData','com.deppon.bpms.module.wfs.bpsdesign.personnel.repairAttendance','com.deppon.bpms.module.wfs.bpsdesign.business.sellEncourage','com.deppon.bpms.module.wfs.bpsdesign.personnel.qualificationApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.carGoTransContract','com.deppon.bpms.module.wfs.bpsdesign.performance.assessreduce','com.deppon.bpms.module.wfs.bpsdesign.finance.BankAccount','com.deppon.bpms.module.wfs.bpsdesign.operation.marketingActivities','com.deppon.bpms.module.wfs.bpsdesign.personnel.dataProvide','com.deppon.bpms.module.wfs.bpsdesign.personnel.trainNeedsORChange','com.deppon.bpms.module.wfs.bpsdesign.finance.specialFundsProject','com.deppon.bpms.module.wfs.bpsdesign.personnel.warrant','com.deppon.bpms.module.wfs.bpsdesign.strategy.assessreduce','com.deppon.bpms.module.wfs.bpsdesign.personnel.newDeptApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.actRegistrationApp','com.deppon.bpms.module.wfs.bpsdesign.logistics.learnCar','com.deppon.bpms.module.wfs.bpsdesign.business.marketResearch','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.borrowSealApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.realContractBorrow','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.admitapply','com.deppon.bpms.module.wfs.bpsdesign.personnel.addPostApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.truckPartBuyMaintain','com.deppon.bpms.module.wfs.bpsdesign.logistics.empDorm','com.deppon.bpms.module.wfs.bpsdesign.business.planningDesignApply','com.deppon.bpms.module.wfs.bpsdesign.operation.longDisDriverAgingBreaks','com.deppon.bpms.module.wfs.bpsdesign.operation.centralizedPick','com.deppon.bpms.module.wfs.bpsdesign.personnel.staffReturnToHR','com.deppon.bpms.module.wfs.bpsdesign.personnel.curriculumDevelopmentUpdateAudit','com.deppon.bpms.module.wfs.bpsdesign.operation.online','com.deppon.bpms.module.wfs.bpsdesign.business.problemFeedback','com.deppon.bpms.module.wfs.bpsdesign.personnel.paymentWageinfo','com.deppon.bpms.module.wfs.bpsdesign.personnel.welfarePaymentApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.ruleApproval','com.deppon.bpms.module.crm.bpsdesign.administLegal.legalRepresentSignApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.checkFileApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.siteRent','com.deppon.bpms.module.wfs.bpsdesign.strategy.inspectionDataSubmit','com.deppon.bpms.module.wfs.bpsdesign.strategy.commissionMakeOrChange','com.deppon.bpms.module.wfs.bpsdesign.contract.storeRent','com.deppon.bpms.module.wfs.bpsdesign.finance.loanPaymentApply','com.deppon.bpms.module.wfs.bpsdesign.finance.runfinance','com.deppon.bpms.module.wfs.bpsdesign.logistics.sealCarveApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.courtRelocation','com.deppon.bpms.module.wfs.bpsdesign.personnel.coreFilePublish','com.deppon.bpms.module.wfs.bpsdesign.it.systemDataChangeApply','com.deppon.bpms.module.wfs.bpsdesign.personnel.assessmentScheme','com.deppon.bpms.module.wfs.bpsdesign.personnel.recommendNewEmp','com.deppon.bpms.module.wfs.bpsdesign.personnel.managerGrowthStagePass','com.deppon.bpms.module.wfs.bpsdesign.operation.personnelOutside','com.deppon.bpms.module.wfs.bpsdesign.operation.otherSideLinePoxy','com.deppon.bpms.module.wfs.bpsdesign.business.foundPickbillQueryTeam','com.deppon.bpms.module.wfs.bpsdesign.business.productAdjustment','com.deppon.bpms.module.wfs.bpsdesign.express.expNewPilotOutlets','com.deppon.bpms.module.wfs.bpsdesign.personnel.resignation','com.deppon.bpms.module.wfs.bpsdesign.business.webinfoPublish','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignAppLTL','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignEidtExpress','com.deppon.bpms.module.crm.bpsdesign.claims.generalclaims','com.deppon.bpms.module.crm.bpsdesign.operate.multiReparation','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignAppExpress','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignEidtLTL','com.deppon.bpms.module.crm.bpsdesign.administLegal.attributionChangContract','com.deppon.bpms.module.crm.bpsdesign.administLegal.bindingContract','com.deppon.bpms.module.fins.bpsdesign.baddebt.busiBadDebts','com.deppon.bpms.module.fins.bpsdesign.baddebt.nonBusinessBadDebts','com.deppon.bpms.module.nhr.bpsdesign.personnel.positiveApplication','com.deppon.bpms.module.nhr.bpsdesign.personnel.returnDomicileOfOrigin','com.deppon.bpms.module.nhr.bpsdesign.personnel.employeeTransactionApply','com.deppon.bpms.module.nhr.bpsdesign.personnel.addEmpApply','com.deppon.bpms.module.nhr.bpsdesign.personnel.leaveDaysOff','com.deppon.bpms.module.wdgh.bpsdesign.operate.businessDepartmentInfoUpdateWorkflow','com.deppon.bpms.module.wdgh.bpsdesign.operate.networkToCancel','com.deppon.bpms.module.wdgh.bpsdesign.operate.pickupDeliveryScopeAddApplyWorkflow','com.deppon.bpms.module.wdgh.bpsdesign.operate.newPlaceInfoSubmitApply','com.deppon.bpms.module.wdgh.bpsdesign.operate.salesDepartmentRentApply','com.deppon.bpms.module.wdgh.bpsdesign.operate.buildAndMove','com.deppon.bpms.module.acms.bpsdesign.company.zzbuAndSubCompanyChange','com.deppon.bpms.module.acms.bpsdesign.company.subsidiaryChangeCancell')
+			AND B.PARTICIPANT = #{userId,jdbcType=VARCHAR}
+           AND B.CURRENTSTATE = 10
+        UNION
+        SELECT A.PROCESSINSTID PROCESSINSTID,
+               A.APPDATE CREATETIME,
+               A.DEPARTMENT DEPARTMENT,
+               A.APPLER APPLER,
+               DECODE(A.SYSCODE,
+                      'FSSC',
+                      (B.CATALOGNAME || '-' || B.PROCESSINSTNAME),
+                      B.PROCESSINSTNAME) PROCESSINSTNAME,
+               B.WORKITEMID,
+               A.BUSINO,
+               B.PROCESSDEFNAME FLOWTYPE,
+               B.ACTIVITYDEFID,
+               B.ACTIVITYINSTID,
+               A.SYSCODE
+          FROM BPSDB.WFWIPARTICIPANT WI, BPSDB.WFWORKITEM B
+         INNER JOIN BPSDB.T_BPMS_APPLYINFO A
+            ON A.PROCESSINSTID = B.PROCESSINSTID
+         WHERE WI.WORKITEMID = B.WORKITEMID
+           AND B.ACTIVITYDEFID != 'Drafter'
+           AND A.ISEFFECTIVE = 1
+           AND A.CONDITION IN (2, 3)
+           AND A.PROCESSDEFNAME IN
+          		('com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.workInjuryMedical','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.mutualFundPayBill','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.unusualExpenses','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.WelfareFeeApply','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.verySpend','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.beInHospital','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.party','com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.welfareFunds','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.dinnerPartyCost','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.workInjuryTreatment','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.unusualAgentRefund','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.temporaryRentCar','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.travel','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.travel','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.wageApply','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.CRMClaimsPay','com.deppon.bpms.module.fssc.bpsdesign.zspayList.tenderBail','com.deppon.bpms.module.fssc.bpsdesign.zspayList.deposit','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.commcation','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.rentFee','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.CRMClaimsReimbursement','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.application','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.recruitment','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.socialSecrityPay','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.detachedWage','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.staffBearInsurance','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addInsurancePayment','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addPersonalPayBillTaxPayBill','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addSocialSecurityPayment','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.financeFee','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.tracostopr','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.findPoint','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.outsideTheCarCost','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.broadbandFeeHolding','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.phoneBillWithHolding','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.rentCarReimbursement','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.utilitiesWithHolding','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.moneyTransfers','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4BorrowCar','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.borrow4Car','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4Car','com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.empOfPrivateBow','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.SWExpAccount-WholeProEasy','com.deppon.bpms.module.fssc.bpsdesign.bankDrawbackBill.bankDrawbackBill','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.culturalActivity','com.deppon.bpms.module.foss.bpsdesign.borrowBill.newFiance','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.chummageCost','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.moneyTransfers','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.acceptanceBill','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.depositIn','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.depositOut','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.operationCostReimbursement','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4operation','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.activity','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.CommVehicl','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.mPGroupNetwork','com.deppon.bpms.module.lsp.bpsdesign.purchase.purchaseContractChange','com.deppon.bpms.module.lsp.bpsdesign.purchase.purchaseContract','com.deppon.bpms.module.lsp.bpsdesign.purchase.paymentApply','com.deppon.bpms.module.lsp.bpsdesign.warehouse.carApply','com.deppon.bpms.module.lsp.bpsdesign.purchase.scalingSingle','com.deppon.bpms.module.lsp.bpsdesign.purchase.scalingSingleChange','com.deppon.bpms.module.lsp.bpsdesign.projects.projectApproval','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixCarFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockFix','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockNotFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixBigDevice','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixCarTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.layoutDesignTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.layoutDesignFGou','com.deppon.bpms.module.lsp.bpsdesign.projects.projectFeasibilityAssessment','com.deppon.bpms.module.lsp.bpsdesign.projects.projectDesignChange','com.deppon.bpms.module.lsp.bpsdesign.projects.serviceApply','com.deppon.bpms.module.lsp.bpsdesign.vehicle.maintenanceSingle','com.deppon.bpms.module.lsp.bpsdesign.projects.projectLdChange','com.deppon.bpms.module.lsp.bpsdesign.projects.projectStateApply','com.deppon.bpms.module.lsp.bpsdesign.projects.projectPlan','com.deppon.bpms.module.lsp.bpsdesign.vehicle.vehiclesUpdatedApplicationForm','com.deppon.bpms.module.lsp.bpsdesign.purchase.stockUpSafeguard','com.deppon.bpms.module.lsp.bpsdesign.projects.finalAccounts','com.deppon.bpms.module.lsp.bpsdesign.projects.projectSettlement','com.deppon.bpms.module.lsp.bpsdesign.warehouse.newPointSuppliesApply','com.deppon.bpms.module.lsp.bpsdesign.purchase.stockUpApply','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.purchase.evaluationRequestForm','com.deppon.bpms.module.lsp.bpsdesign.projects.finalAccountsApply','com.deppon.bpms.module.lsp.bpsdesign.projects.repairSettlement','com.deppon.bpms.module.lsp.bpsdesign.purchase.supplierCheck','com.deppon.bpms.module.lsp.bpsdesign.purchase.supplierDispose','com.deppon.bpms.module.lsp.bpsdesign.projects.projectDesign','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.projects.projectApply','com.deppon.bpms.module.lsp.bpsdesign.projects.projectBudgetAdjust','com.deppon.bpms.module.lsp.bpsdesign.projects.projectBudgetDetail','com.deppon.bpms.module.lsp.bpsdesign.purchase.requestConfirmation','com.deppon.bpms.module.lsp.bpsdesign.projects.projectSearchSource','com.deppon.bpms.module.lsp.bpsdesign.purchase.RFQBill','com.deppon.bpms.module.wfs.bpsdesign.personnel.overtimePayApply','com.deppon.bpms.module.wfs.bpsdesign.personnel.externalStudy','com.deppon.bpms.module.wfs.bpsdesign.personnel.dismissal','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.litigationLawyers','com.deppon.bpms.module.wfs.bpsdesign.strategy.assessmentScheme','com.deppon.bpms.module.wfs.bpsdesign.finance.budgetData','com.deppon.bpms.module.wfs.bpsdesign.personnel.repairAttendance','com.deppon.bpms.module.wfs.bpsdesign.business.sellEncourage','com.deppon.bpms.module.wfs.bpsdesign.personnel.qualificationApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.carGoTransContract','com.deppon.bpms.module.wfs.bpsdesign.performance.assessreduce','com.deppon.bpms.module.wfs.bpsdesign.finance.BankAccount','com.deppon.bpms.module.wfs.bpsdesign.operation.marketingActivities','com.deppon.bpms.module.wfs.bpsdesign.personnel.dataProvide','com.deppon.bpms.module.wfs.bpsdesign.personnel.trainNeedsORChange','com.deppon.bpms.module.wfs.bpsdesign.finance.specialFundsProject','com.deppon.bpms.module.wfs.bpsdesign.personnel.warrant','com.deppon.bpms.module.wfs.bpsdesign.strategy.assessreduce','com.deppon.bpms.module.wfs.bpsdesign.personnel.newDeptApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.actRegistrationApp','com.deppon.bpms.module.wfs.bpsdesign.logistics.learnCar','com.deppon.bpms.module.wfs.bpsdesign.business.marketResearch','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.borrowSealApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.realContractBorrow','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.admitapply','com.deppon.bpms.module.wfs.bpsdesign.personnel.addPostApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.truckPartBuyMaintain','com.deppon.bpms.module.wfs.bpsdesign.logistics.empDorm','com.deppon.bpms.module.wfs.bpsdesign.business.planningDesignApply','com.deppon.bpms.module.wfs.bpsdesign.operation.longDisDriverAgingBreaks','com.deppon.bpms.module.wfs.bpsdesign.operation.centralizedPick','com.deppon.bpms.module.wfs.bpsdesign.personnel.staffReturnToHR','com.deppon.bpms.module.wfs.bpsdesign.personnel.curriculumDevelopmentUpdateAudit','com.deppon.bpms.module.wfs.bpsdesign.operation.online','com.deppon.bpms.module.wfs.bpsdesign.business.problemFeedback','com.deppon.bpms.module.wfs.bpsdesign.personnel.paymentWageinfo','com.deppon.bpms.module.wfs.bpsdesign.personnel.welfarePaymentApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.ruleApproval','com.deppon.bpms.module.crm.bpsdesign.administLegal.legalRepresentSignApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.checkFileApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.siteRent','com.deppon.bpms.module.wfs.bpsdesign.strategy.inspectionDataSubmit','com.deppon.bpms.module.wfs.bpsdesign.strategy.commissionMakeOrChange','com.deppon.bpms.module.wfs.bpsdesign.contract.storeRent','com.deppon.bpms.module.wfs.bpsdesign.finance.loanPaymentApply','com.deppon.bpms.module.wfs.bpsdesign.finance.runfinance','com.deppon.bpms.module.wfs.bpsdesign.logistics.sealCarveApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.courtRelocation','com.deppon.bpms.module.wfs.bpsdesign.personnel.coreFilePublish','com.deppon.bpms.module.wfs.bpsdesign.it.systemDataChangeApply','com.deppon.bpms.module.wfs.bpsdesign.personnel.assessmentScheme','com.deppon.bpms.module.wfs.bpsdesign.personnel.recommendNewEmp','com.deppon.bpms.module.wfs.bpsdesign.personnel.managerGrowthStagePass','com.deppon.bpms.module.wfs.bpsdesign.operation.personnelOutside','com.deppon.bpms.module.wfs.bpsdesign.operation.otherSideLinePoxy','com.deppon.bpms.module.wfs.bpsdesign.business.foundPickbillQueryTeam','com.deppon.bpms.module.wfs.bpsdesign.business.productAdjustment','com.deppon.bpms.module.wfs.bpsdesign.express.expNewPilotOutlets','com.deppon.bpms.module.wfs.bpsdesign.personnel.resignation','com.deppon.bpms.module.wfs.bpsdesign.business.webinfoPublish','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignAppLTL','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignEidtExpress','com.deppon.bpms.module.crm.bpsdesign.claims.generalclaims','com.deppon.bpms.module.crm.bpsdesign.operate.multiReparation','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignAppExpress','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignEidtLTL','com.deppon.bpms.module.crm.bpsdesign.administLegal.attributionChangContract','com.deppon.bpms.module.crm.bpsdesign.administLegal.bindingContract','com.deppon.bpms.module.fins.bpsdesign.baddebt.busiBadDebts','com.deppon.bpms.module.fins.bpsdesign.baddebt.nonBusinessBadDebts','com.deppon.bpms.module.nhr.bpsdesign.personnel.positiveApplication','com.deppon.bpms.module.nhr.bpsdesign.personnel.returnDomicileOfOrigin','com.deppon.bpms.module.nhr.bpsdesign.personnel.employeeTransactionApply','com.deppon.bpms.module.nhr.bpsdesign.personnel.addEmpApply','com.deppon.bpms.module.nhr.bpsdesign.personnel.leaveDaysOff','com.deppon.bpms.module.wdgh.bpsdesign.operate.businessDepartmentInfoUpdateWorkflow','com.deppon.bpms.module.wdgh.bpsdesign.operate.networkToCancel','com.deppon.bpms.module.wdgh.bpsdesign.operate.pickupDeliveryScopeAddApplyWorkflow','com.deppon.bpms.module.wdgh.bpsdesign.operate.newPlaceInfoSubmitApply','com.deppon.bpms.module.wdgh.bpsdesign.operate.salesDepartmentRentApply','com.deppon.bpms.module.wdgh.bpsdesign.operate.buildAndMove','com.deppon.bpms.module.acms.bpsdesign.company.zzbuAndSubCompanyChange','com.deppon.bpms.module.acms.bpsdesign.company.subsidiaryChangeCancell', 'com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.workInjuryMedical','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.mutualFundPayBill','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.unusualExpenses','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.WelfareFeeApply','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.verySpend','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.beInHospital','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.party','com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.welfareFunds','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.dinnerPartyCost','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.workInjuryTreatment','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.unusualAgentRefund','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.temporaryRentCar','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.travel','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.travel','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.wageApply','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.CRMClaimsPay','com.deppon.bpms.module.fssc.bpsdesign.zspayList.tenderBail','com.deppon.bpms.module.fssc.bpsdesign.zspayList.deposit','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.commcation','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.rentFee','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.CRMClaimsReimbursement','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.application','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.recruitment','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.socialSecrityPay','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.detachedWage','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.staffBearInsurance','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addInsurancePayment','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addPersonalPayBillTaxPayBill','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.addSocialSecurityPayment','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.financeFee','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.tracostopr','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.findPoint','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.outsideTheCarCost','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.broadbandFeeHolding','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.phoneBillWithHolding','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.rentCarReimbursement','com.deppon.bpms.module.fssc.bpsdesign.accruedToBill.utilitiesWithHolding','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.moneyTransfers','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4BorrowCar','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.borrow4Car','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4Car','com.deppon.bpms.module.fssc.bpsdesign.empJieKuanChan.empOfPrivateBow','com.deppon.bpms.module.fssc.bpsdesign.salaryWelfareBill.SWExpAccount-WholeProEasy','com.deppon.bpms.module.fssc.bpsdesign.bankDrawbackBill.bankDrawbackBill','com.deppon.bpms.module.fssc.bpsdesign.priApplyRepbill.culturalActivity','com.deppon.bpms.module.foss.bpsdesign.borrowBill.newFiance','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.chummageCost','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.moneyTransfers','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.acceptanceBill','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.depositIn','com.deppon.bpms.module.fssc.bpsdesign.capitalOperation.depositOut','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.operationCostReimbursement','com.deppon.bpms.module.fssc.bpsdesign.fossAccountBill.pay4operation','com.deppon.bpms.module.fssc.bpsdesign.spCampaignbill.activity','com.deppon.bpms.module.fssc.bpsdesign.dailyRepbill.CommVehicl','com.deppon.bpms.module.fssc.bpsdesign.paymentOrder.mPGroupNetwork','com.deppon.bpms.module.lsp.bpsdesign.purchase.purchaseContractChange','com.deppon.bpms.module.lsp.bpsdesign.purchase.purchaseContract','com.deppon.bpms.module.lsp.bpsdesign.purchase.paymentApply','com.deppon.bpms.module.lsp.bpsdesign.warehouse.carApply','com.deppon.bpms.module.lsp.bpsdesign.purchase.scalingSingle','com.deppon.bpms.module.lsp.bpsdesign.purchase.scalingSingleChange','com.deppon.bpms.module.lsp.bpsdesign.projects.projectApproval','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixCarFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockFix','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockNotFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixBigDevice','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixCarTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixFGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.layoutDesignTGou','com.deppon.bpms.module.lsp.bpsdesign.warehouse.layoutDesignFGou','com.deppon.bpms.module.lsp.bpsdesign.projects.projectFeasibilityAssessment','com.deppon.bpms.module.lsp.bpsdesign.projects.projectDesignChange','com.deppon.bpms.module.lsp.bpsdesign.projects.serviceApply','com.deppon.bpms.module.lsp.bpsdesign.vehicle.maintenanceSingle','com.deppon.bpms.module.lsp.bpsdesign.projects.projectLdChange','com.deppon.bpms.module.lsp.bpsdesign.projects.projectStateApply','com.deppon.bpms.module.lsp.bpsdesign.projects.projectPlan','com.deppon.bpms.module.lsp.bpsdesign.vehicle.vehiclesUpdatedApplicationForm','com.deppon.bpms.module.lsp.bpsdesign.purchase.stockUpSafeguard','com.deppon.bpms.module.lsp.bpsdesign.projects.finalAccounts','com.deppon.bpms.module.lsp.bpsdesign.projects.projectSettlement','com.deppon.bpms.module.lsp.bpsdesign.warehouse.newPointSuppliesApply','com.deppon.bpms.module.lsp.bpsdesign.purchase.stockUpApply','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.purchase.evaluationRequestForm','com.deppon.bpms.module.lsp.bpsdesign.projects.finalAccountsApply','com.deppon.bpms.module.lsp.bpsdesign.projects.repairSettlement','com.deppon.bpms.module.lsp.bpsdesign.purchase.supplierCheck','com.deppon.bpms.module.lsp.bpsdesign.purchase.supplierDispose','com.deppon.bpms.module.lsp.bpsdesign.projects.projectDesign','com.deppon.bpms.module.lsp.bpsdesign.warehouse.dailyGoodsNotStockNotFixFGou','com.deppon.bpms.module.lsp.bpsdesign.projects.projectApply','com.deppon.bpms.module.lsp.bpsdesign.projects.projectBudgetAdjust','com.deppon.bpms.module.lsp.bpsdesign.projects.projectBudgetDetail','com.deppon.bpms.module.lsp.bpsdesign.purchase.requestConfirmation','com.deppon.bpms.module.lsp.bpsdesign.projects.projectSearchSource','com.deppon.bpms.module.lsp.bpsdesign.purchase.RFQBill','com.deppon.bpms.module.wfs.bpsdesign.personnel.overtimePayApply','com.deppon.bpms.module.wfs.bpsdesign.personnel.externalStudy','com.deppon.bpms.module.wfs.bpsdesign.personnel.dismissal','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.litigationLawyers','com.deppon.bpms.module.wfs.bpsdesign.strategy.assessmentScheme','com.deppon.bpms.module.wfs.bpsdesign.finance.budgetData','com.deppon.bpms.module.wfs.bpsdesign.personnel.repairAttendance','com.deppon.bpms.module.wfs.bpsdesign.business.sellEncourage','com.deppon.bpms.module.wfs.bpsdesign.personnel.qualificationApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.carGoTransContract','com.deppon.bpms.module.wfs.bpsdesign.performance.assessreduce','com.deppon.bpms.module.wfs.bpsdesign.finance.BankAccount','com.deppon.bpms.module.wfs.bpsdesign.operation.marketingActivities','com.deppon.bpms.module.wfs.bpsdesign.personnel.dataProvide','com.deppon.bpms.module.wfs.bpsdesign.personnel.trainNeedsORChange','com.deppon.bpms.module.wfs.bpsdesign.finance.specialFundsProject','com.deppon.bpms.module.wfs.bpsdesign.personnel.warrant','com.deppon.bpms.module.wfs.bpsdesign.strategy.assessreduce','com.deppon.bpms.module.wfs.bpsdesign.personnel.newDeptApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.actRegistrationApp','com.deppon.bpms.module.wfs.bpsdesign.logistics.learnCar','com.deppon.bpms.module.wfs.bpsdesign.business.marketResearch','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.borrowSealApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.realContractBorrow','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.admitapply','com.deppon.bpms.module.wfs.bpsdesign.personnel.addPostApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.truckPartBuyMaintain','com.deppon.bpms.module.wfs.bpsdesign.logistics.empDorm','com.deppon.bpms.module.wfs.bpsdesign.business.planningDesignApply','com.deppon.bpms.module.wfs.bpsdesign.operation.longDisDriverAgingBreaks','com.deppon.bpms.module.wfs.bpsdesign.operation.centralizedPick','com.deppon.bpms.module.wfs.bpsdesign.personnel.staffReturnToHR','com.deppon.bpms.module.wfs.bpsdesign.personnel.curriculumDevelopmentUpdateAudit','com.deppon.bpms.module.wfs.bpsdesign.operation.online','com.deppon.bpms.module.wfs.bpsdesign.business.problemFeedback','com.deppon.bpms.module.wfs.bpsdesign.personnel.paymentWageinfo','com.deppon.bpms.module.wfs.bpsdesign.personnel.welfarePaymentApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.ruleApproval','com.deppon.bpms.module.crm.bpsdesign.administLegal.legalRepresentSignApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.checkFileApply','com.deppon.bpms.module.wfs.bpsdesign.administrationLegal.siteRent','com.deppon.bpms.module.wfs.bpsdesign.strategy.inspectionDataSubmit','com.deppon.bpms.module.wfs.bpsdesign.strategy.commissionMakeOrChange','com.deppon.bpms.module.wfs.bpsdesign.contract.storeRent','com.deppon.bpms.module.wfs.bpsdesign.finance.loanPaymentApply','com.deppon.bpms.module.wfs.bpsdesign.finance.runfinance','com.deppon.bpms.module.wfs.bpsdesign.logistics.sealCarveApply','com.deppon.bpms.module.wfs.bpsdesign.logistics.courtRelocation','com.deppon.bpms.module.wfs.bpsdesign.personnel.coreFilePublish','com.deppon.bpms.module.wfs.bpsdesign.it.systemDataChangeApply','com.deppon.bpms.module.wfs.bpsdesign.personnel.assessmentScheme','com.deppon.bpms.module.wfs.bpsdesign.personnel.recommendNewEmp','com.deppon.bpms.module.wfs.bpsdesign.personnel.managerGrowthStagePass','com.deppon.bpms.module.wfs.bpsdesign.operation.personnelOutside','com.deppon.bpms.module.wfs.bpsdesign.operation.otherSideLinePoxy','com.deppon.bpms.module.wfs.bpsdesign.business.foundPickbillQueryTeam','com.deppon.bpms.module.wfs.bpsdesign.business.productAdjustment','com.deppon.bpms.module.wfs.bpsdesign.express.expNewPilotOutlets','com.deppon.bpms.module.wfs.bpsdesign.personnel.resignation','com.deppon.bpms.module.wfs.bpsdesign.business.webinfoPublish','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignAppLTL','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignEidtExpress','com.deppon.bpms.module.crm.bpsdesign.claims.generalclaims','com.deppon.bpms.module.crm.bpsdesign.operate.multiReparation','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignAppExpress','com.deppon.bpms.module.crm.bpsdesign.administLegal.monCustSignEidtLTL','com.deppon.bpms.module.crm.bpsdesign.administLegal.attributionChangContract','com.deppon.bpms.module.crm.bpsdesign.administLegal.bindingContract','com.deppon.bpms.module.fins.bpsdesign.baddebt.busiBadDebts','com.deppon.bpms.module.fins.bpsdesign.baddebt.nonBusinessBadDebts','com.deppon.bpms.module.nhr.bpsdesign.personnel.positiveApplication','com.deppon.bpms.module.nhr.bpsdesign.personnel.returnDomicileOfOrigin','com.deppon.bpms.module.nhr.bpsdesign.personnel.employeeTransactionApply','com.deppon.bpms.module.nhr.bpsdesign.personnel.addEmpApply','com.deppon.bpms.module.nhr.bpsdesign.personnel.leaveDaysOff','com.deppon.bpms.module.wdgh.bpsdesign.operate.businessDepartmentInfoUpdateWorkflow','com.deppon.bpms.module.wdgh.bpsdesign.operate.networkToCancel','com.deppon.bpms.module.wdgh.bpsdesign.operate.pickupDeliveryScopeAddApplyWorkflow','com.deppon.bpms.module.wdgh.bpsdesign.operate.newPlaceInfoSubmitApply','com.deppon.bpms.module.wdgh.bpsdesign.operate.salesDepartmentRentApply','com.deppon.bpms.module.wdgh.bpsdesign.operate.buildAndMove','com.deppon.bpms.module.acms.bpsdesign.company.zzbuAndSubCompanyChange','com.deppon.bpms.module.acms.bpsdesign.company.subsidiaryChangeCancell')
+			AND B.CURRENTSTATE = 4
+           AND WI.PARTICIPANTID = #{userId,jdbcType=VARCHAR}) BB
+ 		ORDER BY BB.CREATETIME ASC	
+	</select>-->
+	<!--获得所有工作流-->
+	<!--<select id="queryAllWorkFlow" resultMap="WorkFlowVo" >
+		SELECT id, workflowname, syscode,jspname,createtime,classname,entryProperty FROM dpmon_workflow  WHERE isdelete = '0'
+	</select>
+	<select id="queryWorkFlow" resultMap="WorkFlowVo" >
+		SELECT id, workflowname, syscode,jspname,createtime,classname,entryProperty FROM dpmon_workflow  WHERE isdelete = '0' and workflowname=#{workflowname,jdbcType=VARCHAR}
+	</select>-->
+	<insert id="addWfsMonitor" parameterType="com.deppon.dpm.module.wfs.shared.vo.WfsMonitorVo">
+		insert into
+		t_workflow_monitor(userId,workflowname,type,begindate,enddate,issuccess,remark,remark2)values(#{userId},#{workflowname},#{type},#{bdateStr},#{edateStr},#{issuccess},#{remark},#{remark2})
+	</insert>
+	<insert id="insertTaxInfo" parameterType="com.deppon.dpm.module.wfs.shared.domain.TaxInfoEntity">
+	    insert into
+	    t_workflow_taxinfo
+	    (
+	     taxRate
+	    ,taxItems
+	    ,nominaAmount
+	    ,isTaxes
+	    ,applyDept
+	    ,taxType
+	    ,activitydefid
+	    ,busino
+	    ,flowtype
+	    ,processinstid
+	    ,paymentAmount
+	    )
+	    values
+	    (
+	    #{taxRate}
+	    ,#{taxItemName}
+	    ,#{contractAmount}
+	    ,#{stampDuty}
+	    ,#{declareDepartmentName}
+	    ,#{paymentMethod}
+	    ,#{activitydefid}
+	    ,#{busino}
+	    ,#{flowtype}
+	    ,#{processinstid}
+	    ,#{paymentAmount}
+	    )
+	</insert>
+	<select id="selectTaxinfo" parameterType="java.lang.String" resultType="com.deppon.dpm.module.wfs.shared.domain.TaxInfoEntity">
+	    select 
+	     taxRate
+        ,taxItems as taxItemName
+        ,nominaAmount as contractAmount
+        ,isTaxes as stampDuty
+        ,applyDept as declareDepartmentName
+        ,taxType as paymentMethod
+        ,paymentAmount
+        from 
+        t_workflow_taxinfo
+        where 
+        busino = #{busino}
+        ORDER BY taxId desc LIMIT 1
+	</select>
+	<select id="selectDepartment" parameterType="java.lang.String" resultType="com.deppon.dpm.module.wfs.shared.domain.DepEntity">
+        select 
+         FINASYSCODE AS orgCode,
+         ORGNAME AS orgName
+        from 
+        om_organization
+        where 
+        ORGNAME LIKE CONCAT(CONCAT('%', #{text}), '%')
+        AND LENGTH(FINASYSCODE) > 0
+        ORDER BY ORGID desc LIMIT 200
+    </select>
+    <!-- 合同部门人员查询 -->
+    <select id="selectEmp" parameterType="java.lang.String" resultType="com.deppon.dpm.module.wfs.shared.domain.EmpEntity">
+        SELECT a.FINASYSCODE,
+       		   a.ORGNAME,
+			   b.empcode,
+			   b.empname,
+			   b.jobname
+ 		FROM om_organization  a
+			LEFT JOIN om_employee b
+			on a.orgid=b.orgid
+			and b.EMPSTATUS='on'
+			and a.finasyscode='DP09003'
+		where 
+				b.empcode like CONCAT(CONCAT('%', #{emp}), '%') 
+			or  b.empname LIKE CONCAT(CONCAT('%', #{emp}),'%')
+    </select>
+    <!-- 根据userId查询部门code -->
+    <select id="getDeptCode" parameterType="java.lang.String" resultType="java.lang.String">
+    	SELECT a.FINASYSCODE AS orgCode from om_organization a where a.ORGID =(
+ 			SELECT b.ORGID from om_employee b  where b.empcode=#{userId} and  b.EMPSTATUS='on' )
+    </select>
+    
+    <!-- NHR人员选择器 -->
+    <select id="queryUserInfoWithPage" parameterType="com.deppon.dpm.module.wfs.shared.vo.NhrQueryParamVo" resultType="com.deppon.dpm.module.wfs.shared.domain.nhr.NhrQueryUserInfo">
+        SELECT t.empcode empCode,
+        	t.empname empName,
+        	t.JOBNAME jobName,
+        	t.JOBGROUPS jobGroups,
+        	t.JOBLEVEL jobLevel, 
+        	tt.ORGID orgId,
+			tt.ORGNAME orgName
+        FROM om_employee t 
+		LEFT JOIN om_organization tt on t.ORGID = tt.ORGID 
+		WHERE EMPSTATUS = 'on' 
+			<if test="queryCode != null and queryCode != ''">
+				and t.empcode= #{queryCode} 
+			</if>
+			<if test="queryName != null and queryName != ''">
+				and t.empname like CONCAT('%', #{queryName}, '%') 
+			</if>
+			<if test="queryType == 1">
+				and t.JOBGROUPS <![CDATA[<>]]> '管理族群' 
+			</if>
+			<if test="queryType == 2">
+				and t.JOBGROUPS = '管理族群' and t.JOBLEVEL <![CDATA[<=]]> #{jobLevel} and t.JOBLEVEL not in ('C','D','c','d')
+			</if>
+			<if test="queryType == 3">
+				and t.JOBGROUPS = '管理族群' and t.JOBLEVEL not in ('C','c')
+			</if>
+			<if test="queryType == 4">
+				and t.JOBGROUPS = '管理族群' 
+			</if>
+    </select>
+
+	<!-- 泛微工作流 跳转详情页面对应表 -->
+	<select id="queryWfsPageInfo"
+		resultType='com.deppon.dpm.module.wfs.shared.domain.WorkflowPageInfo'>
+		SELECT workflowId, workflowName, workflowStatus, workflowPage FROM
+		om_new_workflow t WHERE t.workflowStatus='on';
+	</select>
+    
+    <!-- 根据前端传来的工号数组 返回对应的头像地址 -->
+	<select id="queryPicPathByUserids" parameterType='java.util.List' resultType='com.deppon.dpm.module.wfs.shared.domain.NwfsPicPathEntity'>
+		SELECT pt.empCode empCode, et.GENDER gender, pt.pictPath picPath FROM
+		emp_pic pt
+		LEFT JOIN om_employee et ON et.empcode=pt.empCode
+		WHERE pt.empCode IN
+		<foreach collection="list" index="index"  item="item" open="(" separator="," close=")">
+		#{item}
+		</foreach>
+	</select>
+	
+	<!-- 插入接口监控信息 -->
+	<insert id="insertMonitor" parameterType="com.deppon.dpm.module.wfs.shared.domain.WorkflowMonitorEntity">
+	    insert into
+	    wfs_exception_monitor
+	    (
+	     empCode,
+	     jobLevel,
+	     workflowId,
+	     isSuccess,
+	     errorInfo,
+	     methodtime_cops,
+	     methodtime_total,
+	     interfaceName,
+	     resultLength,
+	     createTime
+	    )
+	    values
+	    (
+	    #{empCode},
+	    #{jobLevel},
+	    #{workflowId},
+	    #{isSuccess},
+	    #{errorInfo},
+	    #{methodtimeCops},
+	    #{methodtimeTotal},
+	    #{interfaceName},
+	    #{resultLength},
+	    NOW()
+	    )
+	</insert>
+	
+	<insert id="insertApprovalMonitor" parameterType="com.deppon.dpm.module.wfs.shared.domain.WorkflowMonitorEntity">
+	    insert into
+	    wfs_approval_monitor
+	    (
+	     empCode,
+	     jobLevel,
+	     workflowId,
+	     workflowName,
+	     sysCode,
+	     approvalOption,
+	     rejectNode,
+	     result,
+	     isSuccess,
+	     errorInfo,
+	     interfaceName,
+	     createTime
+	    )
+	    values
+	    (
+	    #{empCode},
+	    #{jobLevel},
+	    #{workflowId},
+	    #{workflowName},
+	    #{sysCode},
+	    #{approvalOption},
+	    #{rejectNode},
+	    #{result},
+	    #{isSuccess},
+	    #{errorInfo},
+	    #{interfaceName},
+	    NOW()
+	    )
+	</insert>
+	<!-- 工作流监控信息  新表 -->
+	<insert id="insertApprovalNewMonitor" parameterType="com.deppon.dpm.module.wfs.shared.domain.WorkflowNewMonitorEntity">
+	    insert into
+	    wfs_new_monitor
+	    (
+	     userId,
+	     jobLevel,
+	     workflowId,
+	     requestId,
+	     workflowName,
+	     sysCode,
+	     status,
+	     approvalOption,
+	     remark,
+	     result,
+	     isSuccess,
+	     data,
+	     errorInfo,
+	     interfaceName,
+	     rejectNode,
+	     methodTime,
+	     fileDocId,
+	     fileName,
+	     filePath,
+	     fileOpenCount,
+	     ui_type,
+	     createTime,
+	     remark1,
+	     remark2,
+	     remark3
+	    )
+	    values
+	    (
+	    #{userId},
+	    #{jobLevel},
+	    #{workflowId},
+	    #{requestId},
+	    #{workflowName},
+	    #{sysCode},
+	    #{status},
+	    #{approvalOption},
+	    #{remark},
+	    #{result},
+	    #{isSuccess},
+	    #{data},
+	    #{errorInfo},
+	    #{interfaceName},
+	    #{rejectNode},
+	    #{methodTime},
+	    #{fileDocId},
+	    #{fileName},
+	    #{filePath},
+	    #{fileOpenCount},
+	    #{ui_type},
+	    NOW(),
+	    #{remark1},
+	    #{remark2},
+	    #{remark3}
+	    )
+	</insert>
+	<!-- 等级10以上监控表 -->
+	<insert id="insertLevelMonitor" parameterType="com.deppon.dpm.module.wfs.shared.domain.WorkflowLevelMonitorEntity">
+	    insert into
+	    wfs_level_monitor
+	    (
+	     userId,
+	     jobLevel,
+	     workflowId,
+	     workflowName,
+	     approvalOption,
+	     isSuccess,
+	     result,
+	     errorInfo,
+	     createTime
+	    )
+	    values
+	    (
+	    #{userId},
+	    #{jobLevel},
+	    #{workflowId},
+	    #{workflowName},
+	    #{approvalOption},
+	    #{isSuccess},
+	    #{result},
+	    #{errorInfo},
+	    NOW()
+	    )
+	</insert>
+	
+    <!-- 根据工号 查询等级10以上表 监控信息 匹配待办 不展示工作流 -->
+    <select id="queryBandApproveMonitor" parameterType='java.lang.String' resultType="com.deppon.dpm.module.wfs.shared.domain.WorkflowLevelMonitorEntity">
+		SELECT * from wfs_level_monitor where userId = #{userId};
+	</select>
+	
+	<delete id="deleteLevelMonitor" parameterType="java.lang.String" >
+  	 DELETE FROM wfs_level_monitor WHERE workflowName = #{workflowName}
+  	</delete>
+  
+    <select id="queryEmployeeInfo" parameterType='java.lang.String' resultType='com.deppon.dpm.module.wfs.shared.domain.EmployeeInfo'>
+    	SELECT t.empcode,t.empname FROM om_employee t WHERE t.empcode = #{empCode};
+    </select>
+    
+    <select id="getJoblevel" parameterType='java.lang.String' resultType='java.lang.String'>
+    	SELECT t.joblevel FROM om_employee t WHERE t.empcode = #{userId};
+    </select>
+    
+    <select id="getJobName" parameterType='java.lang.String' resultType='java.lang.String'>
+    	SELECT t.jobname FROM om_employee t WHERE t.empcode = #{userId};
+    </select>
+    
+    <select id="getPartnerWid" resultType='java.lang.String'>
+       SELECT workflowId FROM om_new_workflow WHERE workflowName = '合伙人资质审核';
+    </select>
+    
+    <!-- 新增一条工作流 -->
+    <insert id="insertNWorkflow" parameterType="com.deppon.dpm.module.wfs.shared.domain.NWorkflowInfoEntity">
+        insert into
+	    om_new_workflow
+	    (
+	     workflowId,
+	     workflowName,
+	     workflowStatus,
+	     createTime,
+	     workflowPage
+	    )
+	    values
+	    (
+	    #{workflowId},
+	    #{workflowName},
+	    'on',
+	    NOW(),
+	    #{workflowPage}
+	    )
+    </insert>
+    
+    <!-- 更改一条工作流状态 -->
+    <update id="updateNWorkflowStatus" parameterType="com.deppon.dpm.module.wfs.shared.domain.NWorkflowInfoEntity">
+        update om_new_workflow
+        <set>
+           <if test="workflowId != null and workflowId != ''">
+              workflowStatus = #{workflowStatus}
+	       </if>
+        </set>
+        where workflowId = #{workflowId}
+    </update>
+    <!-- 查询B10表 <10 等级 不展示工作流 -->
+    <select id="queryBandApproveEntity" resultType="com.deppon.dpm.module.wfs.shared.domain.BandApproveEntity">
+		SELECT workflowId, workflowName, workflowStatus, syscode, jobLevel FROM
+		band_approve b WHERE b.workflowStatus='off';
+	</select>
+	<!-- 根据workflowid查询等级 -->
+	<select id="getJoblevelByworkFlowId" parameterType='java.lang.String' resultType='java.lang.String'>
+    	SELECT b.jobLevel FROM band_approve b WHERE b.workflowId = #{workflowId};
+    </select>
+</mapper>

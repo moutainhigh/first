@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.employee">
+	<resultMap id="empVo" type="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="empId" column="empId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="empCode" column="empCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="empName" column="empName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="mobileNo" column="mobileNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gender" column="gender" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="birthDate" column="birthDate" javaType="String"
+			jdbcType="DATE" />
+		<result property="empStatus" column="empStatus" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardNo" column="cardNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardType" column="cardType" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="pEmail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobName" column="jobName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobLevel" column="jobLevel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobDuty" column="jobDuty" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobSequence" column="jobSequence" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="tel" column="tel" javaType="String" jdbcType="VARCHAR" />
+		<result property="address" column="address" javaType="String"
+			jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="emp_param">
+		empid,empCode ,empName,mobileNo,pEmail
+		as email,jobName,jobLevel,
+		jobDuty,org.orgName,org.orgId,gender,tel
+	</sql>
+	<select id="getEmps" resultMap="empVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org
+            ON org.orgid = emp.orgid
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on'
+			<if test="empId!=0">
+				and emp.empid=#{empId}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode LIKE #{empCode}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode = #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND emp.empName LIKE #{empName}
+			</if>
+			<if test="mobileNo!=null and mobileNo!=''">
+				AND emp.mobileNo LIKE #{mobileNo}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND emp.orgName LIKE #{orgName}
+			</if>
+			<if test="orgId!=0">
+				AND org.orgId LIKE #{orgId}
+			</if>
+		</where>
+	  <![CDATA[
+            order by emp.ORGID ,empid  ]]>
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+	</select>
+	<delete id="delete" parameterType="int">
+          <![CDATA[
+             delete from om_employee where empid = #{id}
+          ]]>
+	</delete>
+	<update id="update" parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		update om_employee set empcode
+		=
+		#{empCode}, empname = #{empName}, gender = #{gender} , birthdate =
+		#{birthDate} , empstatus = #{empStatus} , cardtype = #{cardType} ,
+		mobileno = #{mobileNo} , pemail = #{email} , orgid
+		=
+		#{orgId} , jobname
+		= #{jobName} , joblevel = #{jobLevel}, jobsequence
+		=
+		#{jobSequence},
+		jobduty = #{jobDuty} where empId
+		= #{empId}
+	</update>
+	<select id="getEmpsSize" resultType="java.lang.Integer"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+        <![CDATA[
+            SELECT count(1)
+        ]]> 
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org
+            ON org.orgid = emp.orgid
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on'
+			<if test="empId!=0">
+				and emp.empid=#{empId}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode LIKE #{empCode}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode = #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND emp.empName LIKE #{empName}
+			</if>
+			<if test="mobileNo!=null and mobileNo!=''">
+				AND emp.mobileNo LIKE #{mobileNo}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND emp.orgName LIKE #{orgName}
+			</if>
+			<if test="orgId!=0">
+				AND org.orgId LIKE #{orgId}
+			</if>
+		</where>
+	</select>
+	<select id="getEmpByOrgIdCount" resultType="java.lang.Integer"
+		parameterType="java.util.Map">
+        <![CDATA[
+            SELECT count(1)
+        ]]> 
+        <![CDATA[
+            FROM om_employee emp 
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' 
+			AND emp.orgId = #{pid} 
+		</where>
+	</select>
+</mapper>

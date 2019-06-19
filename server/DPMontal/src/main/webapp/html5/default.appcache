@@ -1,0 +1,37 @@
+CACHE MANIFEST
+#2014-12-16 v 08
+js/calendar/calendar.css
+js/calendar/calendar.js
+js/calendar/fastclick.js
+js/calendar/festival.js
+js/calendar/nl.js
+
+CACHE:
+js/bootstrap/css/bootstrap-switch.min.css
+js/bootstrap/css/bootstrap-theme.css
+js/bootstrap/css/bootstrap-theme.css.map
+js/bootstrap/css/bootstrap-theme.min.css
+js/bootstrap/css/bootstrap.css
+js/bootstrap/css/bootstrap.css.map
+js/bootstrap/css/bootstrap.min.css
+js/bootstrap/fonts/glyphicons-halflings-regular.eot
+js/bootstrap/fonts/glyphicons-halflings-regular.svg
+js/bootstrap/fonts/glyphicons-halflings-regular.ttf
+js/bootstrap/fonts/glyphicons-halflings-regular.woff
+js/bootstrap/js/bootstrap-switch.min.js
+js/bootstrap/js/bootstrap.js
+js/bootstrap/js/bootstrap.min.js
+js/ionic/css/ionic.min.css
+js/ionic/css/ionic.css.svntmp
+js/ionic/fonts/ionicons.eot
+js/ionic/fonts/ionicons.svg
+js/ionic/fonts/ionicons.ttf
+js/ionic/fonts/ionicons.woff
+js/ionic/js/ionic.bundle.js
+
+NETWORK:
+js/controllers.js
+js/app.js
+js/services.js
+css/style.css
+*

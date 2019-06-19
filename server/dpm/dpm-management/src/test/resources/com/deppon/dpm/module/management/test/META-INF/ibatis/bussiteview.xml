@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.bussiteview" >
+	<select id="getSiteNameAndState" 
+	    resultType="com.deppon.dpm.module.management.shared.domain.BusSiteView">
+			SELECT * FROM bus_site_view
+		</select>
+		
+	<!-- 获取所有的时间 -->
+	<select id="getTimeByAll" resultType="com.deppon.dpm.module.management.shared.domain.BusSiteView">
+	    SELECT start_date timeDate FROM bus_line_info GROUP BY timeDate HAVING timeDate > '12:00:00'
+	</select>
+		
+		<!-- 得到途径时间 -->
+	<select id="getSiteByRouteTime" resultType="com.deppon.dpm.module.management.shared.domain.BusSiteInfoByClick">
+	    SELECT start_date routeTime FROM 
+	    (SELECT a.site_id, b.start_date FROM 
+	    bus_line_of_site a INNER JOIN bus_line_info b ON a.line_id = b.id 
+	WHERE a.site_id = #{id}) d WHERE  
+	<if test="timeType=='AM'">
+	  <![CDATA[d.start_date < '12:00:00']]>
+	</if>
+	<if test="timeType=='PM'">
+	  <![CDATA[d.start_date >= '12:00:00']]>
+	</if>
+	GROUP BY d.start_date
+	</select>
+	
+	<!-- 得到公司线路详情 -->
+	<select id="getSiteByLineInfo" resultType="com.deppon.dpm.module.management.shared.domain.BusSiteInfoByClick">
+	    SELECT LINEID lineId ,LINENAME lineName,startName,STARTDATE startDate,
+ 		ENDNAME endName,SITEID siteId FROM bus_manager_view WHERE 
+ 		<if test="timeType=='AM'">
+ 		    startName = #{startName}
+	    	and <![CDATA[STARTDATE < '12:00:00']]>
+		</if>
+		<if test="timeType=='PM'">
+		    endName = #{endName}
+	    	and <![CDATA[STARTDATE >= '12:00:00']]>
+		</if>
+	</select>
+	
+	<!-- 得到供应商信息 -->
+	<select id="getSiteByApplyInfo" resultType="com.deppon.dpm.module.management.shared.domain.BusSiteInfoByClick">
+	    
+	    SELECT apply_name applyName,user_name userName,tel FROM bus_line_info WHERE id in (
+		(SELECT lineId id FROM bus_one_message_view WHERE SITEID = #{id} 
+		<if test="timeType=='AM'">
+	    	and <![CDATA[STARTDATE < '12:00:00']]>
+		</if>
+		<if test="timeType=='PM'">
+	    	and <![CDATA[STARTDATE >= '12:00:00']]>
+		</if>
+		))
+	</select>
+	
+	<!-- 根据站点id得到站点名称和地址 -->
+	<select id="getSiteAddressAndSiteName" resultType="com.deppon.dpm.module.management.shared.domain.BusSiteInfoByClick">
+	     SELECT site_name,address FROM bus_site_info WHERE site_name = #{siteName}
+	</select>
+	
+	<!-- 查询所有的消息信息 -->
+	<select id="getMessageAll" resultType="com.deppon.dpm.module.management.shared.domain.BusMessageEntity">
+	    SELECT * FROM bus_message WHERE DATE(createDate)=DATE(NOW())
+	</select>
+	
+	<!-- 插入评价管理建议 -->
+	<select id="insertEvaluationAdvice" parameterType="com.deppon.dpm.module.management.shared.domain.BusEvaluationAdviceEntity">
+	    INSERT INTO bus_user_retroaction (userNo,userScore,content,photo,siteName,createDate,createBy,photo1,photo2,photo3,photo4)
+	     VALUES(#{userNo},
+	    		#{userScore},
+	    		#{content},
+	    		#{photo},
+	    		#{siteName},
+	    		#{createDate},
+	    		#{createBy},
+	    		#{photo1},
+	    		#{photo2},
+	    		#{photo3},
+	    		#{photo4})
+	</select>
+	
+	<!-- 显示所有的建议站点信息 -->
+	<select id="getOpenLineAndNewsSite" resultType="com.deppon.dpm.module.management.shared.domain.BusOpenLineAndNewsSiteEntity">
+	    SELECT a.`siteName` siteName,a.`isAct` isAct,b.`userNo` userNo,
+	    SUM(b.`hits`) hits,b.`siteId` siteId,a.`id` id,b.`createDate` createDate 
+	 FROM bus_news_site a LEFT JOIN bus_open_line b ON a.`id`=b.`siteId`
+ 	GROUP BY a.`id`
+	</select>
+	
+	<!-- 根据时间查询评价管理表信息 -->
+	<select id="queryBusUserRetroaction" parameterType="com.deppon.dpm.module.management.shared.domain.BusUserRetroactionEntity"  resultType="java.lang.Integer">
+	    SELECT id FROM bus_user_retroaction WHERE createDate=#{createDate}
+	</select>
+	
+	<!-- 查询小红点 -->
+	<select id="queryBusCentreAdvice" resultType="int">
+	    SELECT COUNT(1) FROM bus_centre_advice where userNo = #{userNo,jdbcType=VARCHAR}
+	</select>
+	<select id="queryBusEvaluationAdvice" resultType="int">
+	    SELECT COUNT(1) FROM bus_evaluation_advice where userNo = #{userNo,jdbcType=VARCHAR}
+	</select>
+	<select id="queryBusEvaluationManage" resultType="int">
+	    SELECT COUNT(1) FROM bus_evaluation_manage where userNo = #{userNo,jdbcType=VARCHAR}
+	</select>
+	<!-- 更新小红点状态 -->
+</mapper>

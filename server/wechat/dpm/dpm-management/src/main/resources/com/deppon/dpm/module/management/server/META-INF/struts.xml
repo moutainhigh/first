@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="dpm-management" namespace="/dpm-management"
+		extends="foss-default">
+		<!-- 模块主页面 -->
+
+		<interceptors>
+			<interceptor name="checkUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor" />
+			<interceptor name="myinterceptor"
+				class="com.deppon.dpm.tongxunlu.server.action.MyInterceptor"></interceptor>
+		</interceptors>
+		
+		<!-- 应用详情 -->
+		<action name="appDetail_*" class="appDetailAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+		    <interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" /> 
+			<result name="error" type="json"></result>
+			<result name="success" type="dispatcher">/appdetail/pages/appDetail.jsp
+			</result>
+			<result name="insertDetail" type="dispatcher">/appdetail/pages/blank.jsp</result>
+		</action>
+
+		<action name="calendar_*" class="calendarAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="email_*" class="emailAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">4997152</param>
+			</interceptor-ref>
+		</action>
+
+		<action name="store_*" class="applyStoreAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="calendar_getCalendarPlan" class="calendarPlanAction"
+			method="getCalendarPlan">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="it_*" method="{1}" 
+			class="terminalInformationAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result type="json"></result>
+			<interceptor-ref name="fileUpload">
+				<param name="maximumSize">4997152</param>
+			</interceptor-ref>
+		</action>
+	</package>
+</struts>

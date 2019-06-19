@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			http://www.springframework.org/schema/util
+			http://www.springframework.org/schema/util/spring-util-3.0.xsd" 
+			default-autowire="byName" default-lazy-init="true">
+
+	<!--接收请求 -->
+	<bean id="uumsAdminOrgListener" class="com.deppon.foss.module.sync.business.server.UumsAdminOrgListener" >
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+	</bean>
+	<bean id="uumsEmployeeListenner" class="com.deppon.foss.module.sync.business.server.UumsEmployeeListenner">
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+	</bean>
+	
+	<bean id="tongxunLuService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.TongxunLuService">
+		<property name="webUrl" value="https://dpm.deppon.com:8881/dpm"></property>
+		<property name="orgDao" ref="orgDao"></property>
+		<property name="empDao" ref="empDao"></property>
+		<property name="systemConfigDao" ref = "systemConfigDao"></property>
+		<property name="personlyImageService" ref = "personlyImageService"></property>
+	</bean>
+	
+	<bean id="empDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.EmployeeDao">
+		<property name="template" ref="jdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="orgDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.OrganizationDao">
+		<property name="template" ref="jdbcTemplate" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+	
+	<bean id="systemConfigService" class="com.deppon.dpm.tongxunlu.server.service.impl.SystemConfigService">
+		<property name="systemConfigDao" ref="systemConfigDao"></property>
+	</bean>
+	
+	<bean id="systemConfigDao"
+		class="com.deppon.dpm.tongxunlu.server.dao.impl.SystemConfigDao">
+		<property name="template" ref="jdbcTemplate" />
+	</bean>
+	
+	<bean id="personlyImageService" class="com.deppon.dpm.tongxunlu.server.service.impl.PersonlyImageService">
+		<property name="personlyImageDao" ref="personlyImageDao"></property>
+		<property name="photoAddressService" ref="photoAddressService"></property>
+		<property name="webUrl" value="http://192.168.67.47:8080/dpm"></property>
+	</bean>
+	
+	<bean id="personlyImageDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.PersonlyImageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<!-- 图片存储地址 -->
+	<bean id="photoAddressService"
+		class="com.deppon.dpm.module.common.server.service.impl.PhotoAddressService">
+		<property name="headPortraitAddress" value="/dpmfile/headPhoto"></property>
+		<property name="taskPhotoAddress" value="/dpmfile"></property>
+		<property name="feedBackAddress" value="/dpmfile"></property>
+		<property name="welcomeAddress" value="/dpmfile/welcome"/>
+		<property name="serverHostPort" value="http://192.168.67.47:8080/dpm/"/>
+	</bean>
+	
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- <property name="configLocation" value="com/deppon/dpm/module/announce/test/META-INF/ibatis.xml" /> -->
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/ibatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.68.118:3306/app" />
+		<property name="username" value="mysql1" />
+		<property name="password" value="mysql1" />
+	</bean>
+
+</beans>

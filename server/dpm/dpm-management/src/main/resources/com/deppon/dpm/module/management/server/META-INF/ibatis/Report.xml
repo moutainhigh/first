@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.report">
+	<!-- 根据工号查询部门编号 -->
+	<select id="selectDeptId" parameterType="String" resultType="java.lang.Integer">
+	  SELECT E.ORGID FROM om_employee E where E.EMPCODE= #{empCode} 
+	</select>
+	
+	<!-- 提交评价移动装态更新 -->
+	<update id="updateAppraise" parameterType="com.deppon.dpm.module.management.shared.domain.AppraiseEntity">
+	    <![CDATA[
+	    UPDATE T_REPORT_APPRAISE
+	    SET APPRAISE_STATUS = '1'
+	       ,FAIL_REASON = #{failReason}
+	       ,FINISH_DATE = NOW()
+	       ,ISSOLVE = #{isSolve}
+	       ,APPRAISE_LEVEL = #{appraiseLevel}
+	    WHERE
+	        ORDERCODE = #{orderCode}
+	    ]]> 
+	</update>
+	
+	<!-- 插入待确认数据 -->
+	<insert id="insertAppraise" parameterType="com.deppon.dpm.module.management.shared.domain.AppraiseEntity">
+	    INSERT IGNORE T_REPORT_APPRAISE
+	    (
+	        ORDERCODE
+	       ,CURRENTUSER_CODE
+	       ,CURRENTUSER_NAME
+	       ,ISSOLVE
+	       ,REPORT_TYPE
+	       ,APPRAISE_STATUS
+	       ,APPRAISE_LEVEL
+	       ,CONFIRM_DATE
+	    )
+	    VALUES
+	    (
+	        #{orderCode, jdbcType=VARCHAR}
+	       ,#{currentUserCode, jdbcType=VARCHAR}
+	       ,#{currentUserName, jdbcType=VARCHAR}
+	       ,#{isSolve, jdbcType=VARCHAR}
+	       ,#{reportType, jdbcType=VARCHAR}
+           ,'0'
+           ,''
+           ,from_unixtime(#{confirmDate} / 1000)
+	    )
+	</insert>
+	
+	<!-- 查询待确认件数 -->
+	<select id="selectAppraiseCount" parameterType="String" resultType="java.lang.Integer">
+	    <![CDATA[
+		    SELECT 
+		       COUNT(CURRENTUSER_CODE) AS appCount 
+		    FROM 
+		       T_REPORT_APPRAISE
+		    WHERE
+		       CURRENTUSER_CODE = #{currentUserCode}
+		    AND
+		       APPRAISE_STATUS = '0'
+	    ]]> 
+	</select>
+	
+	<!-- 监控数据 -->
+	<insert id="insertMonitorData" parameterType="com.deppon.dpm.module.management.shared.domain.AppraiseEntity">
+	     INSERT T_ITREPORT_MONITOR
+        (
+            ORDERCODE
+           ,OPERATION_USER
+           ,OPERATION_TYPE
+           ,OPERATION_OS
+           ,OPERATION_TIME
+        )
+        VALUES
+        (
+            #{orderCode, jdbcType=VARCHAR}
+           ,#{currentUserCode, jdbcType=VARCHAR}
+           ,'0'
+           ,#{os, jdbcType=VARCHAR}
+           ,NOW()
+        )
+	</insert>
+</mapper>

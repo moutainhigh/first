@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="dpm-anps" namespace="/dpm-anps" extends="foss-default">
+		<!-- 模块主页面 -->
+		<interceptors>
+			<interceptor name="checkUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor" />
+		</interceptors>
+		<action name="anps_*" method="{1}" 
+			class="receiveObject">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		
+
+		<action name="noticeSearch_*" method="{1}" 
+			class="noticeSearch">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		
+		<!-- 公文action -->
+		<action name="notice_*" method="{1}" 
+			class="noticeMessageAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+			<!-- <interceptor-ref name="fileUpload">
+				<param name="maximumSize">4997152</param>
+			</interceptor-ref> -->
+			
+		</action>
+		
+		<!-- 群组 -->
+		<action name="noticeGroup_*" class="noticeGroupAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+		    <interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<action name="anps_*" method="{1}" 
+			class="receiveObject">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		
+		<action name="noticeSearch_*" method="{1}" 
+			class="noticeSearch">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		
+		
+
+		<action name="noticeSearch_*" method="{1}" 
+			class="noticeSearch">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		
+		<!-- 群组 -->
+		<action name="noticeGroup_*" class="noticeGroupAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+		    <!-- <interceptor-ref name="checkUrlInterceptor" /> -->
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+	</package>
+</struts>

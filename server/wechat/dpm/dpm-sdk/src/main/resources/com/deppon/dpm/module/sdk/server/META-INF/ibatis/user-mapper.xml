@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dpm.user">
+
+	<resultMap id="userResultMap" 
+		type="com.deppon.dmp.module.sdk.shared.domain.UserEntity">
+		<id property="id" column="id" jdbcType="INTEGER"/>
+		<result property="userId" column="userid" jdbcType="VARCHAR" />
+		<result property="token" column="token" jdbcType="VARCHAR" />
+		<result property="deviceType" column="devicetype" jdbcType="VARCHAR" />
+		<result property="sysCode" column="syscode" jdbcType="VARCHAR" />
+	</resultMap>
+	
+     <select id="queryAllUser" resultType="String"
+     	parameterType="String" >
+     	<![CDATA[
+     	select userid
+     	from push_user
+     	where syscode = #{sysCode}
+     	]]>
+     </select>
+     
+</mapper>

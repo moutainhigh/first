@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="uums" namespace="/uums"
+		extends="foss-default">
+		<!-- *******************************区域模块 ACTION***************************************-->
+		<!-- 价格区域模块主页面 -->
+		<action name="functionManagementIndex" >
+			<result name="success">functionManagement.jsp</result>
+		</action>
+		<action name="permissionsManagementIndex" >
+			<result name="success">permissionsManagement.jsp</result>
+		</action>
+		<action name="versionManagementIndex" class="versionAction" method="intoVersion">
+			<result name="success">versionManagement.jsp</result>
+		</action>
+		<action name="logManagementIndex">
+			<result name="success">logManagement.jsp</result>
+		</action>
+		<action name="selectLimitShow" class="logAction" method="selectLimitShow">
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<!-- 添加修改功能数据 -->
+		<action name="insertOrUpdate" class="authorityFunctionAction" method="insertOrUpdate" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="selectlimit" class="authorityFunctionAction" method="selectlimit" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="delete" class="authorityFunctionAction" method="delete" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		
+		<!-- 添加修改权限数据 -->
+		<action name="insertOrUpdateRole" class="roleAction" method="insertOrUpdate" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="selectlimitRole" class="roleAction" method="selectlimit" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="deleteRole" class="roleAction" method="delete" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="selectRoleLimitRR" class="roleResourceAction" method="selectRoleLimitRR" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="selectlimitRR" class="roleResourceAction" method="selectlimitRR" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="insertOrUpdateRR" class="roleResourceAction" method="insertOrUpdateRR" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<!--版本 1128 gcl-->
+		<action name="selectVersion" class="versionAction" method="selectVersion" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+		<action name="updateVersion" class="versionAction" method="updateVersion" >
+			<result name="success" type="json" />
+			<result name="error" type="json" />
+		</action>
+	</package>
+</struts>

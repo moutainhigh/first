@@ -1,0 +1,13 @@
+<ion-view view-title='人员信息同步'>
+  <ion-content class='wechatLogin'>
+        <img src="../image/logo.jpg" width="175" height="100" />
+		<div id = 'superPerson'>
+			<input id="userId" class="inp-login inp-username" type="text" ng-model="sysInfo.sysUserId" placeholder="输入工号" autocomplete="off"  style="width:333px; height: 25px;"></input>
+			<br /><br />
+			<button class="button" ng-click="createUserInfo()">
+  				无法登录处理
+  				<p style="color:red; margin-top: 0px;">（操作后相关信息，群和聊天记录会删除，谨慎操作）</p>
+			</button>
+		</div>
+   </ion-content>
+</ion-view>

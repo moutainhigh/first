@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procverify">
+	<select id="checkProcSubmit" resultType="java.lang.Integer">
+		  <![CDATA[ 
+		  SELECT IF(bc.id >= ac.`code`,'1','2') as mark
+		   FROM
+			(
+			select COUNT(p.origItemCode) as code from proc_check_standardinfo p where p.isDel=0)ac ,
+			
+			(
+			SELECT COUNT(b.id) as id from proc_check_score b WHERE b.recordId in
+			 (
+			SELECT c.id from proc_check_record c
+			WHERE c.isSubmit='N'  and  c.addressCode=#{name}
+			))bc
+		 ]]>
+
+	</select>
+</mapper>

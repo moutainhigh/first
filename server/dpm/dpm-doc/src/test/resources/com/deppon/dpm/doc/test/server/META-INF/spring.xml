@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+	default-autowire="byName">
+	<!-- <context:property-placeholder location="classpath*:dpap-config.properties" /> -->
+		
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+   		<!--  使用locations属性定义多个配置文件 -->
+        <property name="locations">
+             <list>
+                 <value>classpath:com/deppon/dpm/doc/test/server/META-INF/spring-config.properties</value>
+             </list>
+    	</property>
+    </bean>
+    
+    <!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- <property name="configLocation" value="com/deppon/dpm/module/announce/test/META-INF/ibatis.xml" /> -->
+		<property name="mapperLocations"
+			value="classpath:com/deppon/dpm/**/META-INF/ibatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+		
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.68.118:3306/app" />
+		<property name="username" value="mysql1" />
+		<property name="password" value="mysql1" />
+	</bean>
+			
+	<bean id="personidDao"
+		class="com.deppon.dpm.doc.server.dao.impl.PersonIDDao" />	
+	<bean id="didiOrderDao"
+		class="com.deppon.dpm.doc.server.dao.impl.DidiOrderDao" />	
+	<bean id="didiTicketDao"
+		class="com.deppon.dpm.doc.server.dao.impl.DidiTicketDao" />	
+	<bean id="didiCitiesDao"
+		class="com.deppon.dpm.doc.server.dao.impl.DidiCitiesDao" />	
+	<bean id="personalCenterDao"
+		class="com.deppon.dpm.doc.server.dao.impl.PersonalCenterDao" />	
+	<bean id="pageFunctionDao"
+		class="com.deppon.dpm.doc.server.dao.impl.PageFunctionDao" />	
+	<bean id="addMessageDao"
+		class="com.deppon.dpm.doc.server.dao.impl.AddMessageDao" />	
+	<!-- 备案人Dao -->
+	<bean id="keepOnRecordDao"
+		class="com.deppon.dpm.doc.server.dao.impl.KeepOnRecordDao" />	
+	<!-- 拜访客户Dao -->
+	<bean id="VisitCustomerDao"
+		class="com.deppon.dpm.doc.server.dao.impl.VisitCustomerDao" />
+	<!-- 公款存户Dao -->
+	<bean id="DepositorDao"
+		class="com.deppon.dpm.doc.server.dao.impl.DepositorDao" />
+	<!-- 参加会议Dao -->
+	<bean id="AttendMeetingDao"
+		class="com.deppon.dpm.doc.server.dao.impl.AttendMeetingDao" />
+	<!-- 人员选择Dao -->
+	<bean id="ChoosePersonDao"
+		class="com.deppon.dpm.doc.server.dao.impl.ChoosePersonDao" />
+	<!-- 日程DAO -->
+	<!-- <bean id="calendarDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.CalendarDao" /> -->
+<!-- 	<bean id="didijpushdao"
+		class="com.deppon.dpm.doc.server.dao.impl.DiDiJPushDao" /> -->	
+	 <bean id="didirecordDao"
+		class="com.deppon.dpm.doc.server.dao.impl.DiDiRecordDao" /> 
+		<!-- 预约订单查询 -->
+	<bean id="orderMessageDao"
+		class="com.deppon.dpm.doc.server.dao.impl.OrderMessageDao" /> 
+	<bean id="orderMessageService"
+		class="com.deppon.dpm.doc.server.service.impl.OrderMessageService">
+		<property name="orderMessageDao" ref="orderMessageDao"></property>
+	</bean>
+	 <bean id="didirecordService"
+		class="com.deppon.dpm.doc.server.service.impl.DiDiRecordService">
+		<property name="didirecordDao" ref="didirecordDao"></property>
+	</bean> 
+
+
+	<bean id="receiveobjectservice"
+		class="com.deppon.dpm.module.anps.server.service.impl.ReceiveObjectService">
+	</bean>	
+
+	<bean id="didipushservice"
+		class="com.deppon.dpm.doc.server.service.impl.DiDiPushService">
+	</bean>	
+	<bean id="didiCitiesService"
+		class="com.deppon.dpm.doc.server.service.impl.DidiCitiesService">
+		<property name="didiCitiesDao" ref="didiCitiesDao"></property>
+	</bean>
+	<bean id="personIDService"
+		class="com.deppon.dpm.doc.server.service.impl.PersonIDService">
+		<property name="personiddao" ref="personidDao"></property>
+	</bean>
+	<bean id="didiOrderService"
+		class="com.deppon.dpm.doc.server.service.impl.DidiOrderService">
+		<property name="didiOrderDao" ref="didiOrderDao"></property>
+	</bean>
+	<bean id="didiTicketService"
+		class="com.deppon.dpm.doc.server.service.impl.DidiTicketService">
+		<property name="didiTicketDao" ref="didiTicketDao"></property>
+	</bean>
+	<bean id="personalCenterService"
+		class="com.deppon.dpm.doc.server.service.impl.PersonalCenterService">
+		<property name="personalCenterDao" ref="personalCenterDao"></property>
+	</bean>
+	<bean id="occupyBudgetService"
+		class="com.deppon.dpm.doc.server.service.impl.OccupyBudgetService">
+		<property name="addmessageservice" ref="addmessageservice"></property>
+		<property name="receiveobjectservice" ref="receiveobjectservice"></property>
+		<!-- <property name="jPushNewService" ref="jPushNewService"></property> -->
+		<property name="budgetupdurl" value="${budgetupdurl}" />
+		<property name="budgetqryurl" value="${budgetqryurl}" />
+		<property name="respcertifurl" value="${respcertifurl}" />
+	</bean>
+	<bean id="pagefunctionservice"
+		class="com.deppon.dpm.doc.server.service.impl.PageFunctionService">
+		<property name="pageFunctionDao" ref="pageFunctionDao"></property>
+	</bean>
+	<bean id="addmessageservice"
+		class="com.deppon.dpm.doc.server.service.impl.AddMessageService">
+		<property name="addMessageDao" ref="addMessageDao"></property>
+	</bean>
+	
+	<!-- 备案人service -->
+	<bean id="keepOnRecordService"
+		class="com.deppon.dpm.doc.server.service.impl.KeepOnRecordService">
+		<property name="keepOnRecordDao" ref="keepOnRecordDao"></property>
+	</bean>
+	<!-- 拜访客户service -->
+	<bean id="VisitCustomerService"
+		class="com.deppon.dpm.doc.server.service.impl.VisitCustomerService">
+		<property name="VisitCustomerDao" ref="VisitCustomerDao"></property>
+	</bean>
+	<!-- 公款存户service -->
+	<bean id="DepositorService"
+		class="com.deppon.dpm.doc.server.service.impl.DepositorService">
+		<property name="DepositorDao" ref="DepositorDao"></property>
+	</bean>
+	<!-- 参加会议service -->
+	<bean id="AttendMeetingService"
+		class="com.deppon.dpm.doc.server.service.impl.AttendMeetingService">
+		<property name="AttendMeetingDao" ref="AttendMeetingDao"></property>
+	</bean>
+	<!-- 选择人员service -->
+	<bean id="ChoosePersonService" 
+		class="com.deppon.dpm.doc.server.service.impl.ChoosePersonService">
+		<property name="ChoosePersonDao" ref="ChoosePersonDao"></property>
+	</bean>
+		
+	<!-- <bean id="didiTicketAction" class="com.deppon.dpm.doc.server.action.DidiTicketAction"
+		scope="prototype">
+		<property name="didiTicketService" ref="didiTicketService" />
+		<property name="didi_client_id" value="c436453d71716c7ccbfc59860f4738d9_test" />
+		<property name="didi_client_secret" value="029f58a00a52f1c94530cfed3d2b18e8" />
+		<property name="didi_key" value="6a8dA12981ce2FB8fd1a" />
+		<property name="didi_pubiphone" value="11000009422" />
+		<property name="didi_didiurl" value="https://api.es.xiaojukeji.com/webapp/" />
+	</bean>
+	<bean id="orderStatusAction" class="com.deppon.dpm.doc.server.action.OrderStatusAction"
+		scope="prototype">
+		<property name="didiOrderService" ref="didiOrderService"></property>
+		<property name="occupyBudgetService" ref="occupyBudgetService"></property>
+		<property name="didiTicketService" ref="didiTicketService" />
+		<property name="didi_client_id" value="c436453d71716c7ccbfc59860f4738d9_test" />
+		<property name="didi_client_secret" value="029f58a00a52f1c94530cfed3d2b18e8" />
+		<property name="didi_key" value="6a8dA12981ce2FB8fd1a" />
+		<property name="didi_pubiphone" value="11000009422" />
+		<property name="didi_didiurl" value="https://api.es.xiaojukeji.com/webapp/" />
+		<property name="didi_didiorderurl" value="https://api.es.xiaojukeji.com/v1/" />
+	</bean>
+
+	<bean id="personalcenteraction" class="com.deppon.dpm.doc.server.action.PersonalCenterAction"
+		scope="prototype">
+		<property name="personalCenterService" ref="personalCenterService"></property>
+	</bean>
+	
+	<bean id="pageFunctionaction" class="com.deppon.dpm.doc.server.action.PageFunctionAction"
+		scope="prototype">
+		<property name="pagefunctionservice" ref="pagefunctionservice"></property>
+	</bean>
+	
+	<bean id="MessageShowAction" class="com.deppon.dpm.doc.server.action.MessageShowAction"
+		scope="prototype">
+		<property name="addmessageservice" ref="addmessageservice"></property>
+	</bean>
+
+	<bean id="personidcheckaction" class="com.deppon.dpm.doc.server.action.PersonIDCheckAction"
+		scope="prototype">
+		<property name="personIDService" ref="personIDService"></property>
+		<property name="budgetqryurl" value="http://192.168.20.148:8080/fssc/webservice/budgetForDD/query" />
+		<property name="addmessageservice" ref="addmessageservice"></property>
+
+	</bean> -->
+
+
+</beans>

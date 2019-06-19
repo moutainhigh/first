@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>dpm</artifactId>
+		<groupId>com.deppon</groupId>
+		<version>1.0</version>
+	</parent>
+
+	<artifactId>dpm-common</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0.0</version>
+	<name>dpm-common</name>
+	<dependencies>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		
+		<dependency>
+  			<groupId>com.esafenet.dll</groupId> 
+  			<artifactId>dlp-decrypt</artifactId> 
+  			<version>0.0.3</version> 
+ 		 </dependency>
+	</dependencies>
+</project>

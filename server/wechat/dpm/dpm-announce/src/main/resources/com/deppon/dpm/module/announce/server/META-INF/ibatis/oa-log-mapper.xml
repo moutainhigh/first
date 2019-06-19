@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.announce.shared.domain.AnnounceLogEntity" >
+  	<insert id="insert" parameterType="com.deppon.dpm.module.announce.shared.domain.AnnounceLogEntity" >
+	    INSERT INTO T_APP_ANNOUNCE_LOG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="requestparam != null" >
+        REQUESTPARAM,
+      </if>
+      <if test="status != null" >
+       	STATUS,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="requestparam != null" >
+        #{requestparam,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+   	</insert>
+   	
+</mapper>

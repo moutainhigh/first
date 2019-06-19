@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.impl.BootyCallDao">
+
+	<resultMap id="bootyEntity"
+		type="com.deppon.dpm.tongxunlu.shared.domain.BootyEntity">
+		<result property="userId" column="userId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="name" column="name" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="headImage" column="headImage" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="telNumber" column="telNumber" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gender" column="gender" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="publishBootyCallInfo" parameterType="com.deppon.dpm.tongxunlu.shared.domain.BootyCallEntity">
+		insert into booty_call_info 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">
+				userId,
+			</if>
+			<if test="dataType != null and dataType != ''">
+				data_type,
+			</if>
+			<if test="dataAddress != null and dataAddress != ''">
+				data_address,
+			</if>
+			<if test="dataEmpCode != null and dataEmpCode != ''">
+				data_empCode,
+			</if>
+			<if test="dataGender != null and dataGender != ''">
+				data_gender,
+			</if>
+			<if test="dataTime != null and dataTime != ''">
+				data_time,
+			</if>
+			<if test="dataSubject != null and dataSubject != ''">
+				data_subject,
+			</if>
+			<if test="dataCreateTime == null or dataCreateTime == ''">
+				data_create_time
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">
+				#{userId},
+			</if>
+			<if test="dataType != null and dataType != ''">
+				#{dataType},
+			</if>
+			<if test="dataAddress != null and dataAddress != ''">
+				#{dataAddress},
+			</if>
+			<if test="dataEmpCode != null and dataEmpCode != ''">
+				#{dataEmpCode},
+			</if>
+			<if test="dataGender != null and dataGender != ''">
+				#{dataGender},
+			</if>
+			<if test="dataTime != null and dataTime != ''">
+				#{dataTime},
+			</if>
+			<if test="dataSubject != null and dataSubject != ''">
+				#{dataSubject},
+			</if>
+			<if test="dataCreateTime == null or dataCreateTime == ''">
+				now()
+			</if>
+		</trim>
+	</insert>
+	
+	<select id="getBootyCallInfo" parameterType="map" resultType="map">
+		SELECT bc.userId,bc.id,ep.pictPath,oe.empName,bc.data_type,bc.data_time,bc.data_gender,
+			   bc.data_address,bc.data_subject,bc.data_empCode,oe.gender 
+		FROM booty_call_info bc 
+		LEFT JOIN emp_pic ep ON bc.userId = ep.empCode 
+		LEFT JOIN om_employee oe ON bc.userId = oe.empCode 
+		<where>
+			oe.EMPSTATUS = 'on' 
+			<if test="userId != null and userId != ''">
+				<choose>
+					<when test="null == isMyself or isMyself == ''">
+						AND bc.userId &lt;> #{userId}
+					</when>
+					<otherwise>
+						AND bc.userId = #{userId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="gender != null and gender != ''">
+				AND oe.gender = #{gender}
+			</if>
+			<if test="type != null and type != ''">
+				AND bc.data_type = #{type,jdbcType=VARCHAR}
+			</if>
+			<if test="intervalDay != null and intervalDay != ''">
+				<choose>
+					<when test="intervalDay == 0">
+						AND bc.data_time 
+						BETWEEN str_to_date(now(), '%Y-%m-%d %H:%i:%s') 
+						AND str_to_date(DATE_SUB(curdate(), INTERVAL - 1 DAY),'%Y-%m-%d %H:%i:%s') 
+					</when>
+					<when test="intervalDay == 1">
+						AND bc.data_time 
+						BETWEEN str_to_date(DATE_SUB(curdate(), INTERVAL - 1 DAY), '%Y-%m-%d %H:%i:%s') 
+						AND str_to_date(DATE_SUB(curdate(), INTERVAL - 2 DAY),'%Y-%m-%d %H:%i:%s') 
+					</when>
+					<otherwise>
+						AND bc.data_time 
+						BETWEEN str_to_date(now(), '%Y-%m-%d %H:%i:%s')
+						AND str_to_date(DATE_SUB(curdate(), INTERVAL - 7 DAY),'%Y-%m-%d %H:%i:%s') 
+					</otherwise>
+				</choose>
+			</if>
+			<if test="intervalDay == null or intervalDay == ''">
+				AND bc.data_time > str_to_date(now(), '%Y-%m-%d %H:%i:%s') 
+			</if>			
+		</where>
+		order by bc.data_create_time desc limit #{start},#{pageSize}
+	</select>
+	
+	<update id="joinBootyCall" parameterType="map">
+		update booty_call_info set data_empCode = #{dataEmpCode} where id = #{dateId}
+	</update>
+	
+	<select id="getJoinedPerson" parameterType="int" resultType="string">
+		select data_empCode from booty_call_info where id = #{id}
+	</select>
+	
+	<select id="queryJoinEmpsByEmpCodes" parameterType="map" resultMap="bootyEntity">
+		SELECT
+			emp.empcode userId,
+			empName name,
+			MOBILENO telNumber,
+			org.orgName orgName,
+			gender,
+			pic.pictPath headImage
+		FROM
+			om_employee emp
+			LEFT JOIN om_organization org ON org.orgid = emp.orgid
+			LEFT JOIN emp_pic pic ON pic.empCode = emp.empcode
+		WHERE
+			emp.empcode IN
+			<foreach collection="ress" item="empcode" open="(" close=")" separator=",">
+				#{empcode}
+			</foreach>
+			AND emp.empstatus = 'on'
+	</select>
+</mapper>

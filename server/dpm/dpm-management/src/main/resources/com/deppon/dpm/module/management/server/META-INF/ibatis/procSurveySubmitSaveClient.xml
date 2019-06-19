@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.dpm.module.management.server.dao.busmanager.ProcSurveySubmitSaveClientDao">
+	
+	<!--保存图片表信息 -->
+	<insert id="saveNativeToPhoto" parameterType="com.deppon.dpm.module.management.shared.domain.ProcSurveySubmitSaveClientEntity">
+	   insert into proc_survey_photo(check_id,create_date,create_no,mark,note,photo1,photo2,photo3,photo4,photo5,address)
+                       values(#{checkId},
+                          NOW(),
+                          #{userNo},
+                          #{integratedEvaluation},
+                          #{specialNeeds},
+                          #{photo1},
+                          #{photo2},
+                          #{photo3},
+                          #{photo4},
+                          #{photo5},
+                          #{location}
+                          ) 
+	   
+	</insert>
+	
+	<!--保存关系表信息 -->
+	<insert id="saveNativeToRelation" 
+	       parameterType="java.util.List">
+	       
+           insert into proc_survey_submit(check_id,msg_id,create_date) 
+                values
+                   <foreach collection="list"  item="item" index="index" separator="," >
+			       ( #{item.checkId},
+			         #{item.id},
+			         NOW())
+		           </foreach>
+	</insert>
+	
+	<!-- 得到功能栏代码值-->
+	<update id="updateTaskStatus">
+	  update proc_survey_check set check_state=2 where id=#{checkId}
+	</update>
+	<!-- 查询图片地址 -->
+	<select id="checkNativeToPhoto"
+		resultType="java.lang.Integer">
+			<![CDATA[
+			   select count(*) from proc_survey_photo 
+			      where check_id=#{checkId}
+			    
+			]]>
+	</select>
+	<!--保存pc联调错误log  moduleCode后面后面加的-->
+	<insert id="saveToPCLog" 
+	       parameterType="com.deppon.dpm.module.management.shared.domain.ProcSurveySubmitSaveClientEntity">
+	       insert into man_log(userNo,createDate,resultInfo,moduleName,moduleCode) 
+	          values(#{userNo},now(),#{message},#{module},'0001')
+          
+	</insert>
+	<!--保存pc联调错误log 之前-->
+	<insert id="saveToPCLogBefore" 
+	       parameterType="com.deppon.dpm.module.management.shared.domain.ProcSurveySubmitSaveClientEntity">
+	       insert into man_log(userNo,createDate,pkyContent,moduleName,moduleCode) 
+	          values(#{userNo},now(),#{pkyContent},#{module},'0001')
+          
+	</insert>
+</mapper>
+	

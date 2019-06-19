@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.lsp.server.dao.stocktask">
+<!-- 原来的 -->
+<!-- <resultMap type="com.deppon.dpm.module.lsp.shared.domain.StockTaskingEntity" id="StockResultMap">
+	<result column="STOCK_TASKING_NUMBER" property="stockTaskingNumber" jdbcType="VARCHAR" />
+	<result column="ISLEADER" property="isLeader" jdbcType="VARCHAR" />
+</resultMap> -->
+<!-- 第十二迭代 -->
+<resultMap type="com.deppon.dpm.module.lsp.shared.domain.StockTaskingEntity" id="StockResultMap">
+	<result column="STOCK_TASKING_NUMBER" property="stockTaskingNumber" jdbcType="VARCHAR" />
+	<!-- 9.24 -->
+	<result column="useDeptName" property="deptName"  jdbcType="VARCHAR" />
+	<result column="STOCK_END_DATE" property="stockTaskingEndDate" jdbcType="TIMESTAMP" />
+	<result column="ISLEADER" property="isLeader" jdbcType="VARCHAR" />
+</resultMap>
+<resultMap type="com.deppon.dpm.module.lsp.shared.domain.StockByEndDateEntity" id="StockDateList">
+	<result column="STOCK_END_DATE" property="stockEndDate" jdbcType="TIMESTAMP" />
+</resultMap>
+
+<insert id="insert"
+		parameterType="com.deppon.dpm.module.lsp.shared.domain.StockTaskingNotice">
+		<!-- 9.10 -->
+		<!-- INSERT INTO
+			STOCK_TASK(STOCK_TASKING_NUMBER,STOCK_TASKING_NAME,STOCK_EMP_CODE,STOCK_END_DATE,STATUS)
+		values(#{stockTaskingNumber,jdbcType=VARCHAR},
+					#{stockTaskingName,jdbcType=VARCHAR},
+					#{stockTaskingEmpCode,jdbcType=VARCHAR}
+			,from_unixtime(#{stockTaskingEndDate,jdbcType=TIMESTAMP}/1000),0) -->
+		<!-- 9.24 -->
+		INSERT INTO
+			STOCK_TASK(STOCK_TASKING_NUMBER,STOCK_TASKING_NAME,useDeptName,useDeptCode,STOCK_EMP_CODE,STOCK_END_DATE,STATUS)
+		values(#{stockTaskingNumber,jdbcType=VARCHAR},
+					#{stockTaskingName,jdbcType=VARCHAR},
+					#{useDeptName,jdbcType=VARCHAR},
+					#{useDeptCode,jdbcType=VARCHAR},
+					#{stockTaskingEmpCode,jdbcType=VARCHAR}
+			,from_unixtime(#{stockTaskingEndDate,jdbcType=TIMESTAMP}/1000),0)
+	</insert>
+	
+	<!-- <select id="getStockTaskNumber" resultType="String"
+		parameterType="String">
+        <![CDATA[
+            SELECT S.STOCK_TASKING_NUMBER
+        ]]> 
+        <![CDATA[
+            FROM STOCK_TASK S 
+        ]]>
+		对于查询条件，可以通过where标签进行定义
+		<where>
+			S.STATUS=0 
+			AND S.STOCK_EMP_CODE = #{empCode} 
+		</where>
+	</select> -->
+	<!-- 原来的语句 -->
+	<!-- <select id="getStockTaskNumber" 
+		resultMap="StockResultMap">
+		SELECT STOCK_TASKING_NUMBER, if(RIGHT(stock_emp_code,6)= #{empCode},"Y","N") AS ISLEADER from stock_task where stock_emp_code  like CONCAT('%',#{empCode,jdbcType=VARCHAR},'%')
+        <![CDATA[
+             SELECT STOCK_TASKING_NUMBER, if(RIGHT(stock_emp_code,#{codeLength})= #{empCode},"Y","N") AS ISLEADER from stock_task where STATUS=0  and stock_emp_code  like CONCAT('%',#{empCode,jdbcType=VARCHAR},'%')
+             
+        ]]>
+	</select>  -->
+	<!-- 第十二迭代更改语句 -->
+	<select id="getStockTaskNumber" 
+		resultMap="StockResultMap">
+		<!-- 9.10 -->
+		<!--  <![CDATA[
+             SELECT STOCK_TASKING_NUMBER,STOCK_END_DATE ,if(RIGHT(stock_emp_code,#{codeLength})= #{empCode},"Y","N") AS ISLEADER 
+	from stock_task where STATUS=0  and stock_emp_code  like CONCAT('%',#{empCode,jdbcType=VARCHAR},'%')  
+	ORDER BY STOCK_END_DATE DESC              
+        ]]> -->
+		<!-- 9.24 -->		
+        <![CDATA[
+             SELECT STOCK_TASKING_NUMBER,useDeptName,STOCK_END_DATE ,if(RIGHT(stock_emp_code,#{codeLength})= #{empCode},"Y","N") AS ISLEADER 
+	from stock_task where STATUS=0  and stock_emp_code  like CONCAT('%',#{empCode,jdbcType=VARCHAR},'%')  
+	ORDER BY STOCK_END_DATE DESC              
+        ]]>
+	</select> 	
+	<!-- 根据结束时间来分组 -->
+	<select id="groupByEndDate" resultMap="StockDateList">
+		SELECT STOCK_END_DATE	from stock_task  where STATUS=0  
+		 and stock_emp_code  like CONCAT('%',#{empCode,jdbcType=VARCHAR},'%')
+		GROUP BY STOCK_END_DATE ORDER BY STOCK_END_DATE DESC  
+	</select>	
+	<update id="updateStockTaskBystockTaskingNumber" parameterType="String">
+		update stock_task set STATUS=1
+		where STOCK_TASKING_NUMBER=#{stockTaskingNumber,jdbcType=VARCHAR}
+	</update>
+	<!-- 插入资产更新信息 -->
+	<insert id="insertAssetsRenew"
+		parameterType="com.deppon.dpm.module.lsp.shared.domain.PushAssetClearScrapeEntity">
+		INSERT INTO
+			ASSETS_RENEW(FNUMBER,DOC_NO,TP_NAME,ASSET_CODING,REMARK,DEPARTMENT,MANAGEMENT_CODE,FIXED_ASSETS_NAME,USE_STATUS,BELONG_COMPANY,APPLICANT_CODE,APPLICANT,AUDITOR,ARRIVE_TIME,STATE)
+		values(#{fnumber,jdbcType=VARCHAR},#{docNo,jdbcType=VARCHAR},#{tpName,jdbcType=VARCHAR}
+		,#{assetCoding,jdbcType=VARCHAR}
+		,#{remark,jdbcType=VARCHAR}
+		,#{department,jdbcType=VARCHAR}
+		,#{managementCode,jdbcType=VARCHAR}
+		,#{fixedAssetsName,jdbcType=VARCHAR}
+		,#{useStatus,jdbcType=VARCHAR}
+		,#{belongCompany,jdbcType=VARCHAR}
+		,#{applicantCode,jdbcType=VARCHAR}
+		,#{applicant,jdbcType=VARCHAR}
+		,#{auditor,jdbcType=VARCHAR}
+		,from_unixtime(#{beginAuditDate,jdbcType=DATE})
+		,#{state,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="updateAssetsRenew" parameterType="com.deppon.dpm.module.lsp.shared.domain.PushAssetClearScrapeEntity">
+		UPDATE ASSETS_RENEW SET AUDITOR = #{auditor,jdbcType=VARCHAR} 
+		, ARRIVE_TIME = from_unixtime(#{beginAuditDate,jdbcType=DATE})
+		, STATE = #{state,jdbcType=VARCHAR}
+        where FNUMBER = #{fnumber,jdbcType=VARCHAR}	
+	</update>
+	<!-- 查询更新任务是否有重复 -->
+	<select id="queryIsRepeat"  resultType="Integer"  parameterType="com.deppon.dpm.module.lsp.shared.domain.PushAssetClearScrapeEntity">
+		SELECT count(*)  from assets_renew as ar where ar.fnumber=#{fnumber,jdbcType=VARCHAR}  
+	</select>
+	<!-- 查询更新资产的明细 -->
+	<select id="selectAssetDetail" parameterType="String" 
+	        resultType="com.deppon.dpm.module.lsp.shared.domain.PushAssetClearScrapeEntity">
+	   <![CDATA[
+	   SELECT 
+	       FNUMBER         fnumber
+	      ,DOC_NO          docNo
+	      ,TP_NAME         tpName
+	      ,ASSET_CODING    assetCoding
+	      ,REMARK          remark
+	      ,DEPARTMENT      department
+	      ,MANAGEMENT_CODE managementCode
+	      ,FIXED_ASSETS_NAME fixedAssetsName
+	      ,USE_STATUS      useStatus
+	      ,BELONG_COMPANY  belongCompany
+	   FROM
+	       ASSETS_RENEW 
+	   WHERE FNUMBER = #{fnumber}
+	   ]]>
+	</select>
+	<resultMap id="AssetsRenewVo" type="com.deppon.dpm.module.lsp.shared.domain.PushAssetClearScrapeEntity">
+		<result property="fnumber" column="fnumber"
+			jdbcType="VARCHAR" />
+			<result property="managementCode" column="management_Code"
+			jdbcType="VARCHAR" />
+			<result property="applicant" column="APPLICANT"
+			jdbcType="VARCHAR" />
+			<result property="belongCompany" column="arrive_time"
+			jdbcType="VARCHAR" /><!--日期 yyyy mm dd-->
+			<result property="department" column="arrive_time2"
+			jdbcType="VARCHAR" /><!--日期 hh mm ss-->
+			<result property="state" column="STATE"
+			jdbcType="VARCHAR" /><!--是否是最后一个审批节点-->
+	</resultMap>
+	<!--根据工号 获得 固定资产更新列表 -->
+	<select id="queryAssetsRenewList" resultMap="AssetsRenewVo" >
+		  <![CDATA[ 
+		    select r.fnumber,r.management_Code,r.APPLICANT,DATE_FORMAT(r.arrive_time,'%Y-%m-%d ') arrive_time,DATE_FORMAT(r.arrive_time,'%H:%i:%S') arrive_time2,r.STATE from assets_renew r 
+			where r.AUDITOR like CONCAT('%',#{auditor,jdbcType=VARCHAR},'%')  order by arrive_time desc
+		 ]]>
+		
+	</select>
+	<!--根据工号 获得 固定资产更新数量-->
+	<select id="queryAssetsRenewCount" resultType="java.lang.Integer" >
+		  <![CDATA[ 
+		    select count(r.fnumber) from assets_renew r 
+			where r.AUDITOR like CONCAT('%',#{auditor,jdbcType=VARCHAR},'%')  
+		 ]]>
+		
+	</select>
+	
+	<!-- 删除资产更新扫描确认或回退的任务 -->
+		<delete id="delete" parameterType="String">
+          <![CDATA[
+             delete from assets_renew where fnumber = #{fnumber} 
+          ]]>
+	</delete>
+	<select id="selectTimeOut" parameterType="String" resultType="java.lang.Integer">
+		<![CDATA[ 
+		SELECT COUNT(s.STOCK_TASKING_NUMBER) FROM stock_task s 
+		    WHERE DATE_FORMAT(s.STOCK_END_DATE,'%Y-%m-%d')>= DATE_FORMAT(NOW(),'%Y-%m-%d') 
+		    AND  
+		    S.STOCK_TASKING_NUMBER=#{stockTaskingFnumber}
+		 ]]>
+	</select>
+	<delete id="deleteStockTask" parameterType="String">
+	 	<![CDATA[
+			DELETE FROM stock_task  WHERE STOCK_TASKING_NUMBER=#{stockTaskingFnumber}
+		]]>
+	</delete>
+	<!-- 查询部门负责人同一部门下的所有在职员工工号 -->
+	<select id="selectEmpCodeList" parameterType="String" resultType="String">
+	  <![CDATA[ 
+	  	SELECT o.empcode from om_employee o  
+	  	where o.orgid = ( SELECT e.ORGID FROM om_employee e where e.EMPCODE=#{empCode} and e.empstatus='on')
+	  	 and o.EMPCODE!=#{empCode} and o.EMPSTATUS='on' 
+	  ]]>
+	</select>
+	
+	<!--查询固定资产是否有任务  -->
+	<select id="queryFixedAssetsCount" parameterType="String" resultType="java.lang.Integer">
+		SELECT sum(a.cou) from (
+		   select count(s.STOCK_TASKING_NUMBER) cou from stock_task s where s.stock_emp_code like CONCAT('%',#{empCode,jdbcType=VARCHAR},'%') and s.STATUS=0   
+    		union all 
+		   select count(r.fnumber) cou from assets_renew r where r.AUDITOR like CONCAT('%',#{empCode,jdbcType=VARCHAR},'%')) a
+	</select>
+	
+	<!-- PC端回退盘点工作流后修改盘点任务状态为未提交 -->
+	<update id="updateStockTaskStatus" parameterType="String">
+		update stock_task set STATUS=0 
+		where STOCK_TASKING_NUMBER=#{stockTaskingNumber,jdbcType=VARCHAR}
+	</update>
+</mapper>

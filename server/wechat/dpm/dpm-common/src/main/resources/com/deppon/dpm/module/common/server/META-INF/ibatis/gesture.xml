@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.GestureDao">
+	<resultMap id="gestureEntity"
+		type="com.deppon.dpm.module.common.shared.domain.GestureEntity">
+		<result property="userId" column="user_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gustureStatus" column="gusture_status" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gusturePassword" column="g_password" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="updateTime" column="update_time"/>
+	</resultMap>
+
+	<select id="queryByEmpcode" parameterType="string" resultMap="gestureEntity">
+		SELECT * FROM om_gesture_password WHERE user_id = #{userId}
+	</select>
+	
+	<delete id="deleteByEmpcode" parameterType="string">
+		DELETE FROM om_gesture_password WHERE user_id = #{userId}
+	</delete>
+	
+	<update id="update" parameterType="com.deppon.dpm.module.common.shared.domain.GestureEntity">
+		UPDATE om_gesture_password
+		<set>
+			<if test="gustureStatus != null and gustureStatus != ''">
+				gusture_status = #{gustureStatus},
+			</if>
+			<if test="gusturePassword != null and gusturePassword != ''">
+				g_password = #{gusturePassword},
+			</if>
+				update_time = NOW()
+		</set>
+		where user_id = #{userId}
+	</update>
+</mapper>

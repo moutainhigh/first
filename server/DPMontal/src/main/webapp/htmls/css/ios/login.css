@@ -1,0 +1,34 @@
+@charset "utf-8";
+/* ios login style */
+
+div#one { background:#373c64; font-size:32px; width:100%; min-height:960px; overflow:hidden;}
+#div1 { width:100%; margin:0 auto; height:240px; overflow:hidden;}
+#div1 .logo { width:233px; height:240px; background:url(../../images/ios_login_logo.jpg) no-repeat; float:left;}
+#div1 .title { width:289px; height:44px; line-height:44px; padding-top:196px; background:url(../../images/ios_login_title.jpg) no-repeat right 25px; float:right; margin-right:50px; font-size:44px; color:#fff; letter-spacing:10px;}
+#div2 { width:80%; margin:80px auto;}
+#div2 table { width:100%; color:#fff;}
+#div2 table tr { white-space:nowrap;}
+#div2 table th { width:110px; font-weight:normal; text-align:right;}
+#div2 table td { text-align:left;}
+#div2 table td.space1 { height:70px;}
+#div2 table td.space2 { height:60px;}
+.text { width:100%; border:1px solid #373c64; border-bottom-color:#fff; background:transparent; text-align:center; color:#faaf19; font-size:24px; height:36px; line-height:36px;}
+.text:focus { border-bottom-color:#6bf;}
+.loginBtn { 
+	padding:15px 50px; font-size:32px; border:4px solid #253262; color:#273b6c;
+	border-radius:25px; -webkit-border-radius:25px; -moz-border-radius:25px;
+	background:linear-gradient(#fbc256, #ea8716);
+	background:-webkit-linear-gradient(#fbc256, #ea8716);
+	background:-moz-linear-gradient(#fbc256, #ea8716);
+	background:-ms-linear-gradient(#fbc256, #ea8716);
+	background:-o-linear-gradient(#fbc256, #ea8716);
+	text-shadow:0 1px 1px rgba(255,255,255,.9);
+}
+.loginBtn:hover {
+	background:linear-gradient(#ea8716, #fbc256);
+	background:-webkit-linear-gradient(#ea8716, #fbc256);
+	background:-moz-linear-gradient(#ea8716, #fbc256);
+	background:-ms-linear-gradient(#ea8716, #fbc256);
+	background:-o-linear-gradient(#ea8716, #fbc256);
+	text-shadow:0 1px 1px rgba(255,255,255,.9);
+}

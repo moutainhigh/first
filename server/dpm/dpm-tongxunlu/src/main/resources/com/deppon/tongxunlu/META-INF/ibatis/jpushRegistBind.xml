@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.impl.JPushRegistBindDao">
+	<select id="queryRegistIdByUserIds" parameterType="list" resultType="string">
+		SELECT regist_id from jpush_regist_bind WHERE user_id in
+		<foreach collection="array" item="userId" open="(" separator="," close=")">
+			#{userId}
+		</foreach>
+	</select>
+	
+	<select id="queryByRegistId" parameterType="string" resultType="com.deppon.dpm.tongxunlu.shared.domain.JPushRegistBindEntity">
+		SELECT
+			regist_id registId,
+			user_id userId,
+			tag,
+			create_time createTime,
+			update_time updateTime
+		FROM
+			jpush_regist_bind
+		WHERE
+			regist_id = #{registId}
+	</select>
+	
+	<insert id="save" parameterType="com.deppon.dpm.tongxunlu.shared.domain.JPushRegistBindEntity">
+		insert into jpush_regist_bind VALUES (#{registId},#{userId},#{tag},NOW(),NOW())
+	</insert>
+	
+	<update id="update" parameterType="com.deppon.dpm.tongxunlu.shared.domain.JPushRegistBindEntity">
+		UPDATE jpush_regist_bind 
+		<set>
+			user_id = #{userId},
+			<if test="tag != null and tag != ''">
+				tag = #{tag},
+			</if>
+			update_time = now()
+		</set> 
+		WHERE regist_id = #{registId}
+	</update>
+	
+	<select id="queryJpushRegistIdsByJoblevels" parameterType="list" resultType="string">
+		select a.regist_id from jpush_regist_bind a inner join (
+			SELECT empcode from om_employee where JOBLEVEL in
+			<foreach collection="array" item="joblevel" open="(" separator="," close=")">
+				#{joblevel}
+			</foreach>
+			AND EMPSTATUS = 'on'
+		) b on a.user_id = b.empcode
+	</select>
+	
+	<select id="queryJpushRegistIdsByJobnames" parameterType="list" resultType="string">
+		select a.regist_id from jpush_regist_bind a inner join (
+			SELECT empcode from om_employee where JOBNAME in
+			<foreach collection="array" item="jobname" open="(" separator="," close=")">
+				#{jobname}
+			</foreach>
+			AND EMPSTATUS = 'on'
+		) b on a.user_id = b.empcode
+	</select>
+	
+	<select id="queryJpushRegistIdsByPrimaryDepts" parameterType="list" resultType="string">
+		select a.regist_id from jpush_regist_bind a inner join (
+			SELECT a.empcode from om_employee a INNER JOIN om_organization b ON a.ORGID = b.ORGID  AND
+			<foreach collection="array" item="orgId" open="(" close=")" separator=" OR ">
+				b.DEPTSEQ LIKE '.103.104.${orgId}%'
+			</foreach>
+			AND a.EMPSTATUS = 'on'
+		) b on a.user_id = b.empcode
+	</select>
+	
+	<insert id="saveLogoutInfo" parameterType="map">
+		insert into jpush_logout_monitor(user_id,regist_id,create_time,update_time) VALUES (#{userId},#{registId},NOW(),NOW());
+	</insert>
+</mapper>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.fssc.server.dao.priorapplication">
+    
+    <!-- 插入事前申请单数据 -->
+	<insert id="insertPriorApplicationEntity" parameterType="com.deppon.dpm.module.fssc.shared.domain.PriorApplicationEntity">
+	    insert into travel_advance_apply(claimNo,auditState,state,applyDate,applyEmpNo,totalCost)
+	     values(#{claimNo,jdbcType=VARCHAR},
+	     #{auditState,jdbcType=VARCHAR},
+	     #{state,jdbcType=INTEGER},
+	     #{applyDate,jdbcType=DATE},
+	     #{applyEmpNo,jdbcType=VARCHAR},
+	     #{totalCost,jdbcType=FLOAT})
+	</insert>
+	
+	<!-- 插入明细信息 -->
+	<insert id="insertDetailInfoEntity" parameterType="com.deppon.dpm.module.fssc.shared.domain.DetailInfoEntity">
+	    insert into travel_apply_detail(claimNo,claimLineId,scNo,scName) 
+	    values(#{claimNo,jdbcType=VARCHAR},
+	    #{claimLineId,jdbcType=VARCHAR},
+	    #{scNo,jdbcType=VARCHAR},
+	    #{scName,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 插入航班订单信息 -->
+	<insert id="insertFlightOrderInfoEntity" parameterType="com.deppon.dpm.module.fssc.shared.domain.FlightOrderInfoEntity">
+	    insert into travel_flight_order(claimLineId,orderNo,orderState,costCenterNo,costCenterName,bizOccurStartDate,bizOccurEndDate,highestLev,empName,empNo,empLve,destination,planAmount,startCity,endCity,discountStandard) 
+	    values(#{claimLineId,jdbcType=VARCHAR},
+	    #{orderNo,jdbcType=VARCHAR},
+	    4,
+	    #{costCenterNo,jdbcType=VARCHAR},
+	    #{costCenterName,jdbcType=VARCHAR},
+	    #{bizOccurStartDate,jdbcType=DATE},
+	    #{bizOccurEndDate,jdbcType=DATE},
+	    #{highestLev,jdbcType=INTEGER},
+	    #{empName,jdbcType=VARCHAR},
+	    #{empNo,jdbcType=VARCHAR},
+	    #{empLve,jdbcType=INTEGER},
+	    #{destination,jdbcType=VARCHAR},
+	    #{planAmount,jdbcType=FLOAT},
+	    #{startCity,jdbcType=VARCHAR},
+	    #{endCity,jdbcType=VARCHAR},
+	    #{discountStandard,jdbcType=VARCHAR});
+	</insert>
+	
+	<!-- 更新航班订单信息的状态 -->
+	<update id="updateFlightOrderInfoEntityByOrderState" parameterType="com.deppon.dpm.module.fssc.shared.domain.FlightOrderInfoEntity">
+	    update travel_flight_order set orderState = #{orderState,jdbcType=VARCHAR},
+	    orderNo = #{orderNo,jdbcType=VARCHAR} 
+	    where claimLineId = #{claimLineId,jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 插入酒店订单信息 -->
+	<insert id="insertHotelOrderInfoEntity" parameterType="com.deppon.dpm.module.fssc.shared.domain.HotelOrderInfoEntity">
+	    insert into travel_hotel_order(claimLineId,orderNo,orderState,costCenterNo,costCenterName,bizOccurStartDate,bizOccurEndDate,highestLev,empName,empNo,empLve,planAmount,stayCity,costStandard,stayDays) 
+	    values(#{claimLineId,jdbcType=VARCHAR},
+	    #{orderNo,jdbcType=VARCHAR},
+	    4,
+	    #{costCenterNo,jdbcType=VARCHAR},
+	    #{costCenterName,jdbcType=VARCHAR},
+	    #{bizOccurStartDate,jdbcType=DATE},
+	    #{bizOccurEndDate,jdbcType=DATE},
+	    #{highestLev,jdbcType=INTEGER},
+	    #{empName,jdbcType=VARCHAR},
+	    #{empNo,jdbcType=VARCHAR},
+	    #{empLve,jdbcType=INTEGER},
+	    #{planAmount,jdbcType=FLOAT},
+	    #{stayCity,jdbcType=VARCHAR},
+	    #{costStandard,jdbcType=VARCHAR},
+	    #{stayDays,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 更新酒店订单信息的状态 -->
+	<update id="updateHotelOrderInfoEntityByOrderState" parameterType="com.deppon.dpm.module.fssc.shared.domain.HotelOrderInfoEntity">
+	    update travel_hotel_order set orderState = #{orderState,jdbcType=VARCHAR},
+	    orderNo = #{orderNo,jdbcType=VARCHAR} 
+	    where claimLineId = #{claimLineId,jdbcType=VARCHAR}
+	</update>
+</mapper>

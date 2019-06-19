@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.dpm.module.management.server.dao.reserveManageCancel">
+
+	<!-- 预订管理羽毛球和瑜伽室的取消预订和提前结束 曹嵩 cs -->
+	<update id="upStatus"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity">
+		update reserve_manage_date
+		set updateTime = now(),
+		`status` = #{status}
+		where id = #{id}
+	</update>
+
+	<!-- 管理员查询所有已预订的信息 曹嵩 cs -->
+	<select id="getReservationManagList"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity"
+		resultType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity">
+		<![CDATA[
+		select
+		a.id id,a.PlayroomId playRoomId,a.userNo userNo,a.userName userName,
+		a.userphone userphone,b.roomName roomName,
+		DATE_FORMAT(a.startTime,'%T') startTime,
+		DATE_FORMAT(a.endTime,'%T') endTime,a.`status` status
+		from reserve_manage_date a inner join
+		reserve_manage_playroom b
+		on a.PlayroomId = b.id WHERE b.areaName = #{areaName}
+		and b.siteMark = #{siteMark} and date(a.startTime)= CURDATE() and a.`status` = 0
+		GROUP BY PlayroomId HAVING MIN(a.startTime) ORDER BY a.startTime,a.endTime
+		]]>
+	</select>
+</mapper>

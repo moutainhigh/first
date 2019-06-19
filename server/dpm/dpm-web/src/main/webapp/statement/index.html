@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>对账</title>
+    <link rel="icon" href="https://ca.deppon.com/cubc/image/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./js/layui/css/layui.css">
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+        
+    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">业务单</li>
+            <li>对账单生成</li>
+            <li>对账单</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <blockquote class="layui-elem-quote layui-text">
+                    	查询
+                </blockquote>
+                <div class="pdl20">
+                    <form class="layui-form layui-form-pane" action="">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label">日期选择</label>
+                                <div class="layui-input-block" style="width: 100px;">
+                                    <input type="text" name="date1" id="date1" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button class="layui-btn" lay-submit="" lay-filter="query">查询</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="queryResultBox">
+                        <blockquote class="layui-elem-quote layui-text">
+                            	查询结果
+                        </blockquote>
+                        <div class="queryResultTable">
+                            <div class="pdl20">
+                                <table id="demo" lay-filter="tableTool"></table>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <div class="layui-tab-item">
+                <div class="">
+                    <blockquote class="layui-elem-quote layui-text">
+                        	导入文件
+                    </blockquote>
+                    <div class="pdl20">
+                        <form class="layui-form layui-form-pane" action="">
+                            <div class="layui-form-item">
+                                <div class="layui-inline">
+                                    <label class="layui-form-label">日期选择</label>
+                                    <div class="layui-input-block" style="width: 100px;">
+                                        <input type="text" name="date" id="date" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-inline btn-upload">
+                                    <div type="button" class="layui-btn layui-btn-normal  " id="">
+                                        <i class="layui-icon"></i>选择文件
+                                        <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="filt" id="files">
+                                    </div>
+                                </div>
+                                <div class="layui-inline fileerrorTip fileNameBox"></div>
+                                <div class="layui-inline showFileName fileNameBox"></div>
+                                
+                                <div class="layui-inline">
+                                    <!-- <button type="button" class="layui-btn" id="upload2">开始导入</button> -->
+                                    <button class="layui-btn" lay-submit="" lay-filter="demo1">开始导入</button>
+                                </div>
+                                <div class="layui-inline">
+                                    <!-- <button type="button" class="layui-btn" id="upload2">开始导入</button> -->
+                                    <button class="layui-btn" lay-submit="" lay-filter="demo2">财务信息导入</button>
+                                </div>
+                                <div class="layui-inline">
+                                    <button class="layui-btn" lay-submit=""  lay-filter="account_Statement">生成对账单</button>
+                                </div>
+                                <div class="layui-inline">
+                                    <button class="layui-btn" lay-submit=""  lay-filter="search_Statement">查询</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="queryResultBox1">
+                        <blockquote class="layui-elem-quote layui-text">
+                            	查询结果
+                        </blockquote>
+                        <div class="queryResultTable">
+                            <div class="pdl20">
+                                <table id="demo3" lay-filter="tableTool"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-tab-item">
+                <div class="search">
+                    <blockquote class="layui-elem-quote layui-text">
+                        	查询
+                    </blockquote>
+                    <form class="layui-form fl" action="">
+                        <div class="layui-form-item fuzzy_search" >
+                                <div class="fl mgr10">
+                                    <input type="text" name="fuzzy"  placeholder="财务子公司" autocomplete="off" class="layui-input fl">
+                                    <input type="text" name="state"   placeholder="状态" autocomplete="off" class="layui-input fl">
+                                    <input type="text" name="time" placeholder="日期" lay-verify="required" id="test13" autocomplete="off" class="layui-input fl">
+                                    <button class="layui-btn fl" name="fuzzy" lay-submit="" lay-filter="fuzzyQuery">查询</button>
+                                    <button class="layui-btn fl" name="fuzzy" lay-submit="" lay-filter="batchGenerateWorkFlow">一键生成工作流</button>
+                                </div>
+                        </div>
+                    </form>
+                    <form class="layui-form  fl" action="">
+                        <div class="layui-form-item fuzzy_search" >
+                            <div class="fl mgr10">
+                                <input type="text" name="date1" id="test14" lay-verify="required" placeholder="日期" autocomplete="off" class="layui-input fl">
+                                <button class="layui-btn fl" lay-submit="" lay-filter="summary">汇总</button>
+                                <button class="layui-btn fl" lay-submit="" lay-filter="getSummaryExcel">生成报表</button>
+                            </div>  
+                        </div>
+                    </form>
+                </div>
+                <div class="queryResultBox4">
+                    <blockquote class="layui-elem-quote layui-text">
+                        	查询结果
+                    </blockquote>
+                    <div class="queryResultTable">
+                        <div class="pdl20">
+                            <table id="demo4" lay-filter="tableTool"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="layui-tab-item">内容4</div>
+            <div class="layui-tab-item">内容5</div> -->
+        </div>
+    </div>
+    <ul class="operationLayer">
+            <form class="layui-form layui-table" action="" lay-filter="example">
+                <div class="layui-form-item mgt20">
+                    <label class="layui-form-label">德邦金额原数据</label>
+                    <div class="layui-input-block recordstateBox">
+                        <input disabled="disabled" type="text" name="depponPrice" placeholder="请输入" autocomplete="off" class="layui-input">
+                        <input type="hidden" name="id">
+                    </div>
+                </div>
+                <div class="layui-form-item mgt20">
+                    <label class="layui-form-label">德邦金额修改为</label>
+                    <div class="layui-input-block recordstateBox">
+                        <input type="text" name="amount1" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item mgt20">
+                        <label class="layui-form-label">最小金额原数据</label>
+                        <div class="layui-input-block recordstateBox">
+                            <input disabled="disabled" type="text" name="lowerPrice" placeholder="请输入" autocomplete="off" class="layui-input">
+                            <input type="hidden" name="id">
+                        </div>
+                    </div>
+                    <div class="layui-form-item mgt20">
+                        <label class="layui-form-label">最小金额修改为</label>
+                        <div class="layui-input-block recordstateBox">
+                            <input type="text" name="amount2" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                
+                <li class="item">
+                    <div class="layui-form-item layui-col-xs5 layui-col-md-offset4" style="text-align: center;">
+                        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="editDate">修改</button>
+                    </div>
+                </li>
+            </form>
+        </ul>
+        <div class="viewDetails">
+            <ul class="financeSubsidiary">    
+                <li class="fl company">    
+                </li>
+                <li class="fl money" >   
+                </li>
+                <li class="fl workflow_status" >   
+                </li>
+            </ul>
+            <div class="queryResultTable6">
+                <div class="pdl20">
+                    <table id="demo5" lay-filter="tableTool"></table>
+                </div>
+            </div>
+        </div>
+</body>
+<script src="./js/layui/layui.js"></script>
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-del" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="barDemo1">
+    
+        <a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-del" lay-event="detail" lay-filter="viewdetails">查看详情</a>
+    {{#  if(d.workFlowStatus !== '不同意' && d.status !== '已发送' ){ }}
+            <a class="layui-btn layui-btn-xs l_work" lay-event="yes" lay-data="{id: 'idTest'}">是</a>
+    {{#  } else { }}
+            <a class="layui-btn layui-btn-xs layui-btn-disabled l_work"  lay-data="{id: 'idTest'}">是</a>
+    {{#  } }}
+    
+  </script>
+<script src="./js/account.js"></script>
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+
+        //…
+    });
+   
+</script>
+
+</html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.doc.server.dao.DiDiPointDao">
+
+    <resultMap id="didiPointResult" type="com.deppon.dpm.doc.server.vo.DiDiPointVo">
+		<result column="id" property="id" />
+		<result column="content" property="content" />
+		<result column="status" property="status" />
+		<result column="createtime" property="createtime" />	
+		<result column="startdate" property="startdate" />
+		<result column="enddate" property="enddate" />
+		<result column="joblevel" property="joblevel" />
+		<result column="updatetime" property="updatetime" />
+	</resultMap>
+	
+	<select id="getpoint" resultMap="didiPointResult">
+	    SELECT * FROM didi_hppoint 
+	    WHERE status = 'on' 
+	    ORDER BY createtime DESC
+	    LIMIT 1
+	</select>
+	
+	<select id="getAllpoint" resultMap="didiPointResult" parameterType="map">
+	    SELECT * FROM didi_hppoint
+	    ORDER BY createtime DESC
+	    limit #{start},#{pageSize}
+	</select>
+	
+	<select id="getCount" resultType="Integer">
+	    SELECT count(*) FROM didi_hppoint
+	</select>
+	
+	<insert id="insertPoint" parameterType="com.deppon.dpm.doc.server.vo.DiDiPointVo">
+	    INSERT INTO `didi_hppoint` (
+	    `content`,
+	    `status`,
+	    `createtime`,
+	    `startdate`,
+	    `enddate`,
+	    `joblevel`,
+	    `updatetime`
+	    )
+	    VALUES
+	    (
+	    #{content},
+	    'on',
+	    NOW(),
+	    #{startdate},
+	    #{enddate},
+	    #{joblevel},
+	    NOW()
+	    )
+	</insert>
+	
+	<update id="updateState" parameterType="Integer">
+        UPDATE didi_hppoint SET `status` = 'off' 
+        WHERE id = #{pointId}
+    </update>
+	
+</mapper>

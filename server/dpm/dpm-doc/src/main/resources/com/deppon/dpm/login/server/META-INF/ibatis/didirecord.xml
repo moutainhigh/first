@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.doc.server.dao.DidiRecordDAO">
+	<resultMap id="didirecordResult" type="com.deppon.dpm.doc.server.vo.DiDiRecordVO">
+		<result column="userId" property="userId" />
+		<result column="userName" property="userName" />
+		<result column="dept" property="dept" />
+		<result column="recordtime" property="recordtime" />
+		<result column="recordtype" property="recordtype" />
+		<result column="taxidate" property="taxidate" />
+		<result column="fromName" property="fromName" />
+		<result column="toName" property="toName" />
+		<result column="amount" property="amount" />
+		<result column="recordpic" property="recordpic" />
+		<result column="recordstate" property="recordstate" />
+		<result column="comment" property="comment" />
+		<result column="id" property="id" />
+		<result column="carremark" property="carremark" />	
+		<result column="remark" property="remark" />	
+		<result column="userPic" property="userPic" />		
+	</resultMap>
+	<!--表名-->
+	<sql id="table_name">
+		DIDI_RECORD
+	</sql>
+	
+	<!-- 条件 -->
+	<sql id="keepOnRecord_condition">
+		<if test="id != null"> and id = #{id}</if>
+		<if test="userId != null"> and userId = #{userId,jdbcType=VARCHAR}</if>
+		<if test="userName != null"> and userName = #{userName,jdbcType=VARCHAR}</if>
+		<if test="dept != null"> and dept = #{dept,jdbcType=VARCHAR}</if>
+		<if test="recordtime != null"> and recordtime = #{recordtime,jdbcType=VARCHAR}</if>
+		<if test="recordtype != null and recordtype != ''  and recordtype != 'null'"> and recordtype = #{recordtype,jdbcType=VARCHAR}</if>
+		<if test="taxidate != null"> and taxidate = #{taxidate,jdbcType=VARCHAR}</if>
+		<if test="fromName != null"> and fromName = #{fromName,jdbcType=VARCHAR}</if>
+		<if test="toName != null"> and toName = #{toName,jdbcType=VARCHAR}</if>
+		<if test="amount != null"> and amount = #{amount,jdbcType=VARCHAR}</if>
+		<if test="recordpic != null"> and recordpic = #{recordpic,jdbcType=VARCHAR}</if>
+		<if test="recordstate != null  and recordstate != '' and recordstate != 'null'"> and recordstate = #{recordstate,jdbcType=VARCHAR}</if>
+		<if test="comment != null"> and comment = #{comment,jdbcType=VARCHAR}</if>
+		<if test="starttime != null">and recordtime &gt;= #{starttime,jdbcType=VARCHAR} </if>
+		<if test="endtime != null">and recordtime &lt;= #{endtime,jdbcType=VARCHAR} </if>
+	</sql>
+	
+	<!-- 根据备案人ID查询 -->
+	<select id="queryKeepRecordById" parameterType="java.util.Map" resultMap="didirecordResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where userId=#{userId} 
+	</select>
+	
+	<!-- 查询全部 -->
+	<select id="queryDidiRecordAll" parameterType="java.util.Map" resultMap="didirecordResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> 
+	</select>
+	
+	<!-- 移动端根据条件分页查询 -->
+	<select id="queryRecordByConditionMobile" parameterType="java.util.Map" resultMap="didirecordResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 1=1
+		<include refid="keepOnRecord_condition" /> 
+		order by recordstate asc,recordtime desc
+		LIMIT  #{requestbeginNum},#{limit}
+	</select>
+	
+	<!-- PC端根据条件分页查询 -->
+	<select id="queryRecordByConditionPC" parameterType="java.util.Map" resultMap="didirecordResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 1=1
+		<include refid="keepOnRecord_condition"/>
+		order by recordstate asc,recordtime desc
+		LIMIT  #{requestbeginNum},#{limit}
+	</select>
+	
+	<!-- 移动端根据条件无分页查询 返回总数List-->
+	<select id="queryRecordByConditionMobileInt" parameterType="java.util.Map" resultMap="didirecordResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 1=1
+		<include refid="keepOnRecord_condition" /> 
+		order by recordstate asc,recordtime desc
+	</select>
+	
+	<!-- PC端根据条件无分页查询 返回总数List -->
+	<select id="queryRecordByConditionPCInt" parameterType="java.util.Map" resultMap="didirecordResult">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		<include refid="keepOnRecord_condition"/>
+		order by recordstate asc,recordtime desc
+	</select>
+	
+	
+	<!-- 审核结果 返回总数List -->
+	<select id="queryrecordall" parameterType="java.util.Map" resultMap="didirecordResult">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 
+		recordtype in 
+		<foreach item="recordtypeList" index="index" collection="recordtypeList" open="(" separator="," close=")">
+			#{recordtypeList}
+		</foreach> 
+		and recordstate in 
+		<foreach item="recordstateList" index="index" collection="recordstateList" open="(" separator="," close=")">
+			#{recordstateList}
+		</foreach>  and  userId = #{userId, jdbcType=VARCHAR} 
+		order by recordstate asc,recordtime desc
+	</select>
+	
+	<!-- 审核结果 分页List -->
+	<select id="query" parameterType="java.util.Map" resultMap="didirecordResult">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 
+		recordtype in 
+		<foreach item="recordtypeList" index="index" collection="recordtypeList" open="(" separator="," close=")">
+			#{recordtypeList}
+		</foreach> 
+		and recordstate in 
+		<foreach item="recordstateList" index="index" collection="recordstateList" open="(" separator="," close=")">
+			#{recordstateList}
+		</foreach> and  userId = #{userId, jdbcType=VARCHAR} 
+		order by recordstate asc,recordtime desc
+		LIMIT  #{beginNum},#{limit}
+	</select>
+	
+	
+	
+	
+	
+	<sql id="columns">
+		userId, userName, dept, recordtime, recordtype, taxidate, fromName, toName, amount, recordpic, recordstate, comment, id 
+		,carremark ,remark , userPic
+	</sql>
+	<!--插入数据-->
+	<insert id="insertDidiRecord" parameterType="com.deppon.dpm.doc.server.vo.DiDiRecordVO">
+		insert into <include refid="table_name" /> ( <include refid="columns" /> )
+		values(#{userId, jdbcType=VARCHAR}, 
+		#{userName, jdbcType=VARCHAR}, 
+		#{dept, jdbcType=VARCHAR}, 
+		#{recordtime, jdbcType=VARCHAR}, 
+		#{recordtype, jdbcType=VARCHAR},
+		 #{taxidate, jdbcType=VARCHAR}, 
+		 #{fromName, jdbcType=VARCHAR}, 
+		 #{toName, jdbcType=VARCHAR}, 
+		 #{amount, jdbcType=VARCHAR},
+		 #{recordpic, jdbcType=VARCHAR}, 
+		 #{recordstate, jdbcType=VARCHAR}, 
+		 #{comment, jdbcType=VARCHAR},  
+		 #{id, jdbcType=VARCHAR}, 
+		 #{carremark, jdbcType=VARCHAR},
+		  #{remark, jdbcType=VARCHAR} , 
+		  #{userPic, jdbcType=VARCHAR}
+		  )
+	</insert>
+
+	
+	<update id="updateDidiRecord" parameterType="map" >
+	   UPDATE <include refid="table_name" />  SET
+	        recordstate = #{recordstate,jdbcType=VARCHAR} ,
+	        comment = #{comment,jdbcType=VARCHAR} 
+       WHERE id =  #{id,jdbcType=VARCHAR} 
+	</update>
+	
+</mapper>

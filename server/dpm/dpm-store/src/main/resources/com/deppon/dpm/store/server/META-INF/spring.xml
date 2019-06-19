@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			
+			http://www.springframework.org/schema/task  
+		http://www.springframework.org/schema/task/spring-task-3.0.xsd
+			
+			http://www.springframework.org/schema/util
+			http://www.springframework.org/schema/util/spring-util-3.0.xsd
+			">
+	<!--dao  start-->
+	 <bean id="StoreDynamicsDao" class="com.deppon.dpm.store.server.dao.impl.StoreDynamicsDao"></bean>
+	 <bean id="StoreMarkDao" class="com.deppon.dpm.store.server.dao.impl.StoreMarkDao"></bean>
+	<!--  <bean id="StoreModDao" class="com.deppon.dpm.store.server.dao.impl.StoreModDao"></bean> -->
+	 <bean id="StoreTaskDao" class="com.deppon.dpm.store.server.dao.impl.StoreTaskDao"></bean>
+	 <bean id="StoreTaskSublistDao" class="com.deppon.dpm.store.server.dao.impl.StoreTaskSublistDao"></bean>
+	 <bean id="SelectAllDeptDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.SelectAllDeptDao"></bean>
+	 <bean id="StoreListDao" class="com.deppon.dpm.store.server.dao.impl.StoreListDao"></bean>
+	 <bean id="QueryTaskInfoDao" class="com.deppon.dpm.store.server.dao.impl.QueryTaskInfoDao"></bean>
+	  <!-- 任务详情DAO -->
+	 <bean id="InspectionModuleDao" class="com.deppon.dpm.store.server.dao.impl.InspectionModuleDao"></bean>
+	 <!-- 考核评价DAO -->
+	 <bean id="CheckEvaluateDao" class="com.deppon.dpm.store.server.dao.impl.CheckEvaluateDao"></bean>
+	 <!-- 更新榜单Dao -->
+	 <bean id="updateListDao" class="com.deppon.dpm.store.server.dao.impl.UpdateListDao"></bean>
+	 <!-- 任务管理Dao -->
+	 <bean id="taskManageDao" class="com.deppon.dpm.store.server.dao.impl.TaskManageDao"></bean>
+
+	<!--service  stare-->
+	<bean id="StoreDynamicsService" class="com.deppon.dpm.store.server.service.impl.StoreDynamicsService">
+		<property name="storeDynamicsDao" ref="StoreDynamicsDao"></property>
+	</bean>
+	<bean id="StoreMarkService" class="com.deppon.dpm.store.server.service.impl.StoreMarkService">
+		<property name="storeMarkDao" ref="StoreMarkDao"></property>
+<!-- 		<property name="storeDynamicsDao" ref="StoreDynamicsDao"></property> -->
+		<property name="storeTaskSublistDao" ref="StoreTaskSublistDao"></property>
+	</bean>
+	<!-- <bean id="StoreModService" class="com.deppon.dpm.store.server.service.impl.StoreModService">
+		<property name="storeModDao" ref="StoreModDao"></property>
+	</bean> -->
+	<bean id="StoreTaskService" class="com.deppon.dpm.store.server.service.impl.StoreTaskService">
+		<property name="storeTaskDao" ref="StoreTaskDao"></property>
+		<property name="storeTaskSublistDao" ref="StoreTaskSublistDao"></property>
+<!-- 		<property name="storeDynamicsDao" ref="StoreDynamicsDao"></property> -->
+		<property name="storeMarkDao" ref="StoreMarkDao"></property>
+	</bean>
+	<bean id="StoreTaskSublistService" class="com.deppon.dpm.store.server.service.impl.StoreTaskSublistService">
+		<property name="storeTaskSublistDao" ref="StoreTaskSublistDao"></property>
+	</bean>
+	<bean id="SelectAllDeptService" class="com.deppon.dpm.tongxunlu.server.service.impl.SelectAllDeptService">
+		<property name="selectAllDeptDao" ref="SelectAllDeptDao"></property>
+	</bean>
+	<bean id="StoreListService" class="com.deppon.dpm.store.server.service.impl.StoreListService">
+		<property name="storeListDao" ref="StoreListDao"></property>
+	</bean>
+	<bean id="QueryTaskInfoService" class="com.deppon.dpm.store.server.service.impl.QueryTaskInfoService">
+		<property name="queryTaskInfoDao" ref="QueryTaskInfoDao"></property>
+		<property name="selectAllDeptDao" ref="SelectAllDeptDao"></property>
+		<property name="updateListDao" ref="updateListDao"></property>
+		<property name="SelectAllDeptService" ref="SelectAllDeptService"></property>
+	</bean>
+	<!-- 任务详情service -->
+	<bean id="inspectionModuleService" class="com.deppon.dpm.store.server.service.impl.InspectionModuleService">
+		<property name="InspectionModuleDao" ref="InspectionModuleDao"></property>
+		<property name="StoreMarkDao" ref="StoreMarkDao"></property>
+	</bean>
+	<!-- 考核评价 -->
+	<bean id="CheckEvaluateService" class="com.deppon.dpm.store.server.service.impl.CheckEvaluateService">
+		<property name="CheckEvaluateDao" ref="CheckEvaluateDao"></property>
+	</bean>
+	<!-- 任务管理 -->
+	<bean id="taskManageService" class="com.deppon.dpm.store.server.service.impl.TaskManageService">
+		<property name="taskManageDao" ref="taskManageDao"></property>
+	</bean>
+	
+	<!-- action stare -->
+	<bean id="storeTaskAction" class="com.deppon.dpm.store.server.action.StoreTaskAction" scope="prototype">
+		<property name="storeTaskService" ref="StoreTaskService"></property>
+		<property name="storeMarkService" ref="StoreMarkService"></property>
+	</bean>
+	<bean id="queryTaskInfoAction" class="com.deppon.dpm.store.server.action.QueryTaskInfoAction" scope="prototype">
+		<property name="storeTaskService" ref="StoreTaskService"></property>
+		<property name="selectAllDeptService" ref="SelectAllDeptService"></property>
+		<property name="queryTaskInfoService" ref="QueryTaskInfoService"></property>
+	</bean>
+	<bean id="storeListAction" class="com.deppon.dpm.store.server.action.StoreListAction" scope="prototype" >
+		<property name="selectAllDeptService" ref="SelectAllDeptService"></property>
+		<property name="storeListService" ref="StoreListService"></property>
+	</bean>
+	<!-- action end -->
+	<!-- 任务详情action -->
+	<bean id="InspectionModuleAction" class="com.deppon.dpm.store.server.action.InspectionModuleAction" scope="prototype">
+		<property name="inspectionModuleService" ref="inspectionModuleService"></property>
+		<property name="selectAllDeptService" ref="SelectAllDeptService"></property>
+		<property name="storeTaskService" ref="StoreTaskService"></property>
+	</bean>
+	<!-- 考核评价 -->
+	<bean id="CheckEvaluateAction" class="com.deppon.dpm.store.server.action.CheckEvaluateAction" scope="prototype">
+		<property name="CheckEvaluateService" ref="CheckEvaluateService"></property>
+		<property name="selectAllDeptService" ref="SelectAllDeptService"></property>
+	</bean>
+	<!-- 任务管理  -->
+	<bean id="TaskManageAction" class="com.deppon.dpm.store.server.action.TaskManageAction" scope="prototype">
+		<property name="taskManageService" ref="taskManageService"></property>
+	</bean>
+	
+	<!-- JOB 配置文件 start -->
+	<context:annotation-config />
+	
+	<context:component-scan base-package="com.deppon.dpm.store.server.job.*" />
+	<!-- JOB 配置文件end -->
+
+</beans>

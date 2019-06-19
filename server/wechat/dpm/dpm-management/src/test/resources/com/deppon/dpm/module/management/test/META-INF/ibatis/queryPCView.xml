@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.queryPCInfo">
+	<!-- 根据拼车类型，查询拼车信息列表(用于拼车首页) -->
+	<select id="queryPCListByType" parameterType="java.util.Map" 
+		resultType="com.deppon.dpm.module.management.shared.domain.ServeOriginatorsInfoEntity">
+		SELECT *,IF(partTime > NOW(),'1','0') as flag FROM serve_originators_info where origState = 0
+		and origType = #{origType} order by partTime
+		LIMIT #{pageStart},#{pageSize}
+	</select>
+
+	<!-- 我发起列表查询 根据报名截止时间倒序 -->
+	<select id="queryPCListByOrgiNo"
+		resultType="com.deppon.dpm.module.management.shared.domain.ServeOriginatorsInfoEntity">
+		SELECT * FROM serve_originators_info where origNo =
+		#{origNo} order by partTime DESC
+	</select>
+
+	<!-- 根据工号，获得我参与列表 -->
+	<select id="queryBMListByOrgiNo"
+		resultType="com.deppon.dpm.module.management.shared.domain.ServeParticipantsInfoEntity">
+		SELECT * FROM serve_participants_info where partNo =
+		#{origNo}
+	</select>
+
+	<!-- 根据id返回拼车列表 -->
+	<select id="queryPCListByIds"
+		resultType="com.deppon.dpm.module.management.shared.domain.ServeOriginatorsInfoEntity">
+
+		SELECT * FROM serve_originators_info where id in (
+	select origId from serve_participants_info where partNo = #{origNo} )
+		order by partTime 
+
+	</select>
+
+	<!-- 根据外键获得参与者列表-->
+	<select id="queryBMListById"
+		resultType="com.deppon.dpm.module.management.shared.domain.ServeParticipantsInfoEntity">
+		SELECT * FROM serve_participants_info where origId =
+		#{id}
+	</select>
+
+	<!-- 根据id返回拼车列表 -->
+	<select id="queryPCListById"
+		resultType="com.deppon.dpm.module.management.shared.domain.ServeOriginatorsInfoEntity">
+		SELECT * FROM serve_originators_info where
+		id = #{id}
+		order by partTime 
+	</select>
+
+	<!-- 获得拼车记录总数 -->
+	<select id="getCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT count(*) FROM serve_originators_info where origState = 0 and origType = #{origType}
+	</select>
+	
+	<!-- 获得参与者人数 -->
+	<select id="getPeoCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+		select count(*) from serve_participants_info  where origId = #{id}
+	</select>
+</mapper>

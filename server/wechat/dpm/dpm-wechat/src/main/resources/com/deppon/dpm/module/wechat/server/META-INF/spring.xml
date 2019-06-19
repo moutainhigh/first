@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:aop="http://www.springframework.org/schema/aop"  xmlns:cxf="http://cxf.apache.org/core"
+  xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+  xmlns:task="http://www.springframework.org/schema/task"  
+  
+  xsi:schemaLocation="
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context 
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd
+      http://www.springframework.org/schema/jee 
+      http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+      http://www.springframework.org/schema/tx 
+      http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+      http://www.springframework.org/schema/aop 
+      http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+      
+      http://www.springframework.org/schema/task  
+	  http://www.springframework.org/schema/task/spring-task-3.0.xsd 
+      
+      http://cxf.apache.org/core
+        http://cxf.apache.org/schemas/core.xsd
+        http://cxf.apache.org/jaxws
+        http://cxf.apache.org/schemas/jaxws.xsd
+        http://cxf.apache.org/jaxrs
+        http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<!--企业微信通讯录-->
+  	<bean id="wechatTongxunlu" class="com.deppon.dpm.module.wechat.server.action.WechatAction" scope="prototype">
+    	<property name="wechatService" ref="wechatService"/>
+  	</bean>
+	<bean id="wechatService" class="com.deppon.dpm.module.wechat.server.service.impl.WechatTongxunluService">
+    	<property name="wechatDao" ref="wechatDao"/>
+    	<property name="redisService" ref="redisService"/>
+    	
+    	<property name="corpid" value="${corpid}"/>
+    	<property name="corpsecret" value="${corpsecret}"/>
+    	<property name="messageSecret" value="${messageSecret}"/>
+    	<property name="tokenUrl" value="${tokenUrl}"/>
+    	<property name="csvUrl" value="${csvUrl}"/>
+    	<property name="departmentUrl" value="${departmentUrl}"/>
+    	<property name="userUrl" value="${userUrl}"/>
+    	<property name="resultUrl" value="${resultUrl}"/>
+    	<property name="userDeleteUrl" value="${userDeleteUrl}"/>
+    	<property name="WechatDepartmentUrl" value="${WechatDepartmentUrl}"/>
+    	<property name="WechatUserInfoUrl" value="${WechatUserInfoUrl}"/>
+    	<property name="wechatMessageSendUrl" value="${wechatMessageSendUrl}"/>
+    	<property name="updateUserUrl" value="${updateUserUrl}"/>
+    	<property name="createTagUrl" value="${createTagUrl}"/>
+    	<property name="createUserTagUrl" value="${createUserTagUrl}"/>
+    	<property name="createUserUrl" value="${createUserUrl}"/>
+    
+  	</bean>
+  	<bean id="wechatDao" class="com.deppon.dpm.module.wechat.server.dao.impl.WechatTongxunluDao">
+  	</bean>
+</beans>

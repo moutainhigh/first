@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.impl.PunchClockDao">
+
+
+	<resultMap
+		type="com.deppon.dpm.module.management.shared.domain.PunchClockEntity"
+		id="punchClock">
+		<result property="id" column="id" />
+		<result property="empCode" column="emp_code" />
+		<result property="clockTime" column="clock_time" />
+		<result property="goWorkTime" column="gowork_time" />
+		<result property="offWorkTime" column="offwork_time" />
+		<result property="goMoodScore" column="gomood_score" />
+		<result property="offMoodScore" column="offmood_score" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+
+	<!-- 查询任务列表 -->
+	<select id="select" parameterType="map" resultMap="punchClock"
+		resultType="com.deppon.dpm.module.management.shared.domain.PunchClockEntity">
+		select * from punch_clock
+		where emp_code = #{empCode}
+		and
+		clock_time=#{clockTime}
+	</select>
+	
+	<!-- list -->
+	<select id="selectList" parameterType="map" resultMap="punchClock"
+		resultType="com.deppon.dpm.module.management.shared.domain.PunchClockEntity">
+		select
+		CASE WHEN gowork_time = '' THEN '未打卡'
+		ELSE '已打卡' END as gowork_time,
+		CASE WHEN offwork_time = '' THEN '未打卡'
+		ELSE '已打卡' END as offwork_time,
+		clock_time,
+		gomood_score,
+		offmood_score
+		from punch_clock
+		where emp_code = #{empCode}
+		and DATE_FORMAT(create_time, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+		order by clock_time desc
+	</select>
+	
+	<insert id="insert">
+	  INSERT INTO punch_clock
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="empCode != null">
+				emp_code,
+			</if>
+			
+			<if test="clockTime != null">
+				clock_time,
+			</if>
+			<if test="goWorkTime != null">
+				gowork_time,
+			</if>
+			
+			<if test="offWorkTime != null">
+				offwork_time,
+			</if>
+			<if test="goMoodScore != null">
+				gomood_score,
+			</if>
+			<if test="offMoodScore != null">
+				offmood_score,
+			</if>
+			create_time,
+			update_time
+			
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="empCode != null ">
+				#{empCode},
+			</if>
+			<if test="clockTime != null">
+				#{clockTime},
+			</if>
+			<if test="goWorkTime != null">
+				#{goWorkTime},
+			</if>
+			<if test="offWorkTime != null">
+				#{offWorkTime},
+			</if>
+			<if test="goMoodScore != null">
+				#{goMoodScore},
+			</if>
+			<if test="offMoodScore != null">
+				#{offMoodScore},
+			</if>
+			NOW(),
+			NOW()
+			
+		</trim>
+	
+	</insert>
+	
+	<!-- 更新打卡时间 -->
+	<update id="update">
+	  update punch_clock
+		<set>
+			
+			<if test="offWorkTime != null">
+				offwork_time=#{offWorkTime},
+			</if>
+			<if test="goWorkTime != null">
+				gowork_time=#{goWorkTime},
+			</if>
+			<if test="goMoodScore != null">
+				gomood_score=#{goMoodScore},
+			</if>
+			<if test="offMoodScore != null">
+				offmood_score=#{offMoodScore},
+			</if>
+			update_time = NOW()
+		</set>
+		where emp_code = #{empCode}
+		and
+		clock_time=#{clockTime}
+	
+	
+	</update>
+
+
+</mapper>

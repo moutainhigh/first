@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.monitoractioninfo">
+
+	<!-- 插入action监控数据 -->
+	<insert id="insert"
+		parameterType="com.deppon.dpm.module.common.shared.domain.MonitorActionInfo">
+		INSERT INTO `data_monitor_actioninfo` 
+			(`create_time`, `action_url`, `duration`, `empcode`, 
+			`req_parameter`, `res_parameter`, `remark`) 
+		VALUES (now(), #{actionUrl},#{duration}, #{empCode}, 
+			#{reqParameter}, #{resParameter}, #{remark});
+	</insert>
+	
+	<!-- 获取需要监控的userid -->
+	<select id="queryMonitorEmpCodeList" resultType="string">
+		select empcode from om_empleader_config t where t.action_monitor = 'on'
+	</select>
+	
+	<!-- 根据条件查询模块在时间区间中的访问人数、访问次数 -->
+   <select id="queryModuleAccessNum" parameterType="com.deppon.dpm.module.common.shared.vo.ModuleAccessVo" 
+   		resultType="java.util.Map">
+   		SELECT COUNT(DISTINCT t.EMP_CODE) empNum,COUNT(1) frequency
+		FROM DATA_MONITOR t
+		LEFT JOIN t_mbi_auth_user_spacial s on t.emp_code = s.emp_code and s.usertype = 'spacial'
+		WHERE t.MONITOR_TYPE = #{monitorType,jdbcType=INTEGER}
+		  AND t.ACCESS_TIME <![CDATA[>=]]> #{beginDate} 
+		  AND t.ACCESS_TIME <![CDATA[<=]]> #{endDate} 
+		  AND s.emp_code is null
+   </select> 
+   
+   <!-- 根据条件查询模块在时间区间中的vp用户访问次数 -->
+   <select id="queryModuleAccessVpList" parameterType="com.deppon.dpm.module.common.shared.vo.ModuleAccessVo" 
+   		resultType="com.deppon.dpm.module.common.shared.domain.ModuleAccessVpInfo">
+   		SELECT s.vp_code vpCode,COUNT(1) frequency
+		FROM DATA_MONITOR t
+		LEFT JOIN t_mbi_auth_user_spacial s on t.emp_code = s.emp_code and s.usertype = 'vp'
+		WHERE t.MONITOR_TYPE = #{monitorType,jdbcType=INTEGER}
+		  AND t.ACCESS_TIME <![CDATA[>=]]> #{beginDate} 
+		  AND t.ACCESS_TIME <![CDATA[<=]]> #{endDate} 
+		  AND s.emp_code is not null GROUP BY s.vp_code
+   </select> 
+   
+   <!-- 根据条件查询模块在时间区间中的vp用户闪退列表 -->
+   <select id="queryModuleAccessVpBreakdownList" parameterType="com.deppon.dpm.module.common.shared.vo.ModuleAccessVo" 
+   		resultType="com.deppon.dpm.module.common.shared.domain.ModuleAccessVpInfo">
+   		SELECT s.vp_code vpCode,DATE_FORMAT(t.occurTime,'%Y-%m-%d %H:%i:%s') occurTime
+		FROM app_breakdown_info t
+		LEFT JOIN t_mbi_auth_user_spacial s on t.empCode = s.emp_code and s.usertype = 'vp'
+		WHERE t.occurTime <![CDATA[>=]]> #{beginDate} 
+		  AND t.occurTime <![CDATA[<=]]> #{endDate} 
+		  AND s.emp_code is not null 
+   </select> 
+	
+	<!-- 根据条件查询VP用户访问模块的时间明细 -->
+   <select id="queryModuleAccessVpInfoList" parameterType="com.deppon.dpm.module.common.shared.vo.ModuleAccessVo" 
+   		resultType="com.deppon.dpm.module.common.shared.domain.ModuleAccessVpInfo">
+   		SELECT s.vp_code vpCode,DATE_FORMAT(t.access_time,'%Y-%m-%d %H:%i:%s') accessTime
+		FROM DATA_MONITOR t
+		LEFT JOIN t_mbi_auth_user_spacial s on t.emp_code = s.emp_code and s.usertype = 'vp'
+		WHERE t.MONITOR_TYPE = #{monitorType,jdbcType=INTEGER}
+		  AND t.ACCESS_TIME <![CDATA[>=]]> #{beginDate} 
+		  AND t.ACCESS_TIME <![CDATA[<=]]> #{endDate} 
+		  AND s.emp_code is not null
+   </select> 
+	
+</mapper>

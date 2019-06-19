@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="
+	  http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context 
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd
+      http://www.springframework.org/schema/jee 
+      http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+      http://www.springframework.org/schema/tx 
+      http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+      http://www.springframework.org/schema/aop 
+      http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		  
+		  
+	  http://cxf.apache.org/core
+      http://cxf.apache.org/schemas/core.xsd
+      http://cxf.apache.org/jaxws
+      http://cxf.apache.org/schemas/jaxws.xsd
+      http://cxf.apache.org/jaxrs
+      http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<!-- <context:property-placeholder location="classpath*:spring-config.properties" /> -->
+
+	<!-- 每天晚上1点钟进行通讯录数据同步 -->
+	<!-- <bean id="quartzJob" class="com.deppon.dpm.tongxunlu.server.service.impl.QuartzJob"></bean>
+	<bean id="jobtask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="quartzJob" />
+		</property>
+		<property name="targetMethod">
+			<value>work</value>
+		</property>
+	</bean> -->
+	
+	<!-- 每天早上1点1分执行一次.开始执行一遍 -->
+	<!-- <bean id="doTime" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="jobtask" />
+		</property>
+		<property name="cronExpression">
+			<value>0 1 1 * * ?</value>
+		</property>
+	</bean> -->
+
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序 -->
+	<!-- <bean id="startQuertz" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="doTime" />
+			</list>
+		</property>
+	</bean> -->
+	<!-- 以上是同步配置. -->
+	
+	<!-- AOP监控action时长 -->
+	<bean id="monitorActionExecuteAop" class="com.deppon.dpm.module.common.server.interceptor.MonitorActionExecuteAop">
+		<property name="monitorActionInfoService" ref="monitorActionInfoService"/>
+		<property name="redisService" ref="redisService"/>
+	</bean>
+	 <aop:config proxy-target-class="true">
+	    <aop:aspect ref="monitorActionExecuteAop">
+	    <aop:around method="monitorAction" pointcut="@annotation(com.deppon.dpm.module.common.server.util.WhetherMonitorCutffPoint)"/>
+	    </aop:aspect>
+	</aop:config> 
+
+	<bean id="SpringQtzJob"
+		class="com.deppon.dpm.module.management.util.CleanAttachmentThread" />
+	<bean id="SpringQtzJobMethod"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="SpringQtzJob" />
+		</property>
+		<property name="targetMethod">  <!-- 要执行的方法名称 -->
+			<value>execute</value>
+		</property>
+	</bean>
+
+	<!-- ======================== 调度触发器 ======================== -->
+	<bean id="CronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="SpringQtzJobMethod"></property>
+		<property name="cronExpression" value="0 0 0/1 * * ?"></property>
+	</bean>
+	
+	<!-- ==============拉取通讯录休假信息的触发器（5分钟执行一次） start============ -->
+	<bean id="tongxunluFurloughTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="tongxunluFurloughJobDetail"></property>
+		<property name="cronExpression" value="0 */5 * * * ?"></property>
+	</bean>
+	<bean id="tongxunluFurloughJob" class="com.deppon.dpm.tongxunlu.server.job.TongxunluFurloughJob">
+		<property name="redisService" ref="redisService"/>
+		<property name="tongxunLuService" ref="tongxunLuService" />
+		<property name="tongxunluFurloughInfoUrl" value="${tongxunluFurloughInfoUrl}"/>
+	</bean>
+	<bean id="tongxunluFurloughJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="tongxunluFurloughJob" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean>
+	<!-- ==============拉取通讯录休假信息的触发器（5分钟执行一次） end============ -->
+	
+	<!-- ==============清理消息中心2周以前的数据（1小时执行一次） start============ -->
+	<bean id="msgCentreCleanTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="msgCentreCleanJobDetail"></property>
+		<property name="cronExpression" value="0 0 0/1 * * ?"></property>
+	</bean>
+	<bean id="msgCentreCleanJob" class="com.deppon.dpm.tongxunlu.server.job.MsgCentreCleanJob">
+		<property name="msgCentreService" ref="jpushMsgCentreService"/>
+	</bean>
+	<bean id="msgCentreCleanJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="msgCentreCleanJob" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean>
+	<!-- ==============清理消息中心2周以前的数据（1小时执行一次） end============ -->
+	
+	<!-- ==============定时更新企业微信部门信息（每天晚上20：00及早上08：00执行） start============ -->
+	<bean id="wechatDepartmentUpdateTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="wechatDepaertmentJobDetail"></property>
+		<!--每天 00 ：00  00：08 执行一次更新部门  -->
+		<property name="cronExpression" value="0 59 11,23 * * ?"></property>
+	</bean>
+	<bean id="departmentJob" class="com.deppon.dpm.module.wechat.server.job.WechatDepartmentUpdateJob">
+		<property name="wechatService" ref="wechatService"/>
+	</bean>
+	<bean id="wechatDepaertmentJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="departmentJob" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean>
+	<!-- ==============定时更新企业微信部门信息（每天晚上24：00及早上08：00执行） end============== -->
+	
+	<!-- ==============定时更新企业微信员工信息（每天晚上24：15及早上08：15执行） start============ -->
+	<bean id="wechatUserUpdateTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="wechatUserJobDetail"></property>
+		<property name="cronExpression" value="0 15 0,12 * * ?"></property>
+	</bean>
+	<bean id="userJob" class="com.deppon.dpm.module.wechat.server.job.WechatUserUpdateJob">
+		<property name="wechatService" ref="wechatService"/>
+	</bean>
+	<bean id="wechatUserJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="userJob" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean>
+	<!-- ==============定时更新企业微信部门信息（每天晚上24：00及早上08：00执行） end============== -->
+	
+	<!-- ==============首次上线时更新企业微信员工信息 只执行一次（只在2017-10-26 17：00执行一次） start============ -->
+<!-- 	<bean id="wechatUserUpdateTriggerForOnce" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="wechatUserJobDetailForOnce"></property>
+		<property name="cronExpression" value="0 0 17 26 10 ? 2017"></property>
+	</bean>
+	<bean id="userJobForOnce" class="com.deppon.dpm.module.wechat.server.job.WechatUserUpdateForOnceJob">
+		<property name="wechatService" ref="wechatService"/>
+	</bean>
+	<bean id="wechatUserJobDetailForOnce"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="userJobForOnce" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean> -->
+	<!-- ==============首次上线时更新企业微信员工信息 只执行一次（只在2017-10-26 17：00执行一次） end============== -->
+	
+	<!-- ==============删除员工信息 每天9：00 21：00执行一次 start-->
+	<bean id="wechatUserDelTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="wechatUserDelJobDetail"></property>
+		<property name="cronExpression" value="0 0 1,13 * * ?"></property>
+	</bean>
+	<bean id="userJobDel" class="com.deppon.dpm.module.wechat.server.job.WechatUserInfoDelJob">
+		<property name="wechatService" ref="wechatService"/>
+	</bean>
+	<bean id="wechatUserDelJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="userJobDel" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean>
+	<!-- ==============删除员工信息  每天9：00 21：00执行一次 end============== -->
+	
+	<!-- ==============发送同步结果消息 每天部门和员工同步完之后 00:45 12:45  start============= -->
+	<bean id="wechatSendMessageTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="wechatSendMessageDetail"></property>
+		<property name="cronExpression" value="0 45 0,12 * * ?"></property>
+	</bean>
+	<bean id="sendMessage" class="com.deppon.dpm.module.wechat.server.job.WechatMessageSendJob">
+		<property name="wechatService" ref="wechatService"/>
+	</bean>
+	<bean id="wechatSendMessageDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="sendMessage" />
+		</property>
+		<property name="targetMethod">
+			<value>execute</value>
+		</property>
+	</bean>
+	<!-- ==============发送同步结果消息  每天部门和员工同步完之后 end============== -->
+	
+
+	<!-- ======================== 调度工厂 ======================== -->
+	<bean id="SpringJobSchedulerFactoryBean"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<!-- <ref bean="CronTriggerBean" />
+				<ref bean="tongxunluFurloughTrigger"/>
+				<ref bean="msgCentreCleanTrigger"/> -->
+				<ref bean="wechatDepartmentUpdateTrigger"/>
+				<ref bean="wechatUserUpdateTrigger"/>
+				<ref bean="wechatUserDelTrigger"/>
+				<ref bean="wechatSendMessageTrigger"/>
+				
+			</list>
+		</property>
+	</bean>
+                                                                                                                                                                                                                                                                                                                                          
+
+	<!-- 数据源 jndi方式 -->
+	<bean id="dpmDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="jdbc/dpmmsds" />
+		<property name="resourceRef" value="true" />
+	</bean>
+	<bean id="oaDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="jdbc/oaorlds" />
+		<property name="resourceRef" value="true" />
+	</bean>
+	<!-- 项目管理工具 -->
+	<bean id="dppmDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	    <property name="jndiName" value="jdbc/dppmsys" />
+	    <property name="resourceRef" value="true" />
+	</bean>
+
+	<!-- 缺省的数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dpmDataSource" />
+	</bean>
+
+	<!-- 数据连接管理 -->
+<!-- 	<bean id="oaTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="oaDataSource" />
+	</bean> -->
+    
+	<!-- 项目管理工具事务管理 -->
+<!-- 	<bean id="dppmTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	    <property name="dataSource" ref="dppmDataSource" />
+	</bean> -->
+	
+	<bean name="appProfile" class="com.deppon.ar.bamp.common.config.AppProfile"
+		init-method="initAppProfile">
+		<property name="appCode" value="MAPP"></property>
+		<property name="actionExtension">
+			<list>
+				<value>action</value>
+				<value>do</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean name="logSwitch" class="com.deppon.ar.bamp.common.dispatch.switchs.LogSwitch"
+		init-method="initLogSwitch">
+		<property name="localReqLogSwitch" value="1"></property>
+	</bean>
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- ##MQ的ip信息 -->
+	<bean name="activeMQUtil" class="com.deppon.ar.bamp.client.jms.ActiveMQUtil"
+		init-method="startConnectionFactory">
+		<property name="brokerUrl" value="${brokerUrl}"></property>
+	</bean>
+
+	<!-- 日志队列配置开始 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.deppon" />
+
+	<!-- 日志队列配置开始 -->
+	<!-- 异常日志 -->
+	<bean id="exceptionLog"
+		class="com.deppon.foss.framework.server.components.logger.LogBuffer">
+		<property name="enable" value="${log.enable}" /> <!-- 默认启用 -->
+		<property name="queueSize" value="${log.queueSize}" />
+		<property name="listSize" value="${log.listSize}" />
+	</bean>
+
+	<!-- 性能日志 -->
+	<bean id="performanceLog"
+		class="com.deppon.foss.framework.server.components.logger.LogBuffer">
+		<property name="enable" value="${log.enable}" /><!-- 默认启用 -->
+		<property name="queueSize" value="${log.queueSize}" />
+		<property name="listSize" value="${log.listSize}" />
+		<property name="interval" value="${log.interval}" />
+	</bean>
+	<!-- 日志队列配置结束 -->
+
+	<!-- 推送地址 -->
+	<bean id="tpushAddressService"
+		class="com.deppon.dpm.module.news.server.service.impl.TpushAddressService">
+		<property name="tpushAddress" value="${tpush.address}"></property>
+		<property name="tpushAppKey" value="${tpush.appkey}"></property>
+		<property name="tpushMasterSercret" value="${tpush.master.sercret}"></property>
+		<property name="tpushTimeLive" value="${tpush.time.live}"></property>
+	</bean>
+
+	<!-- 图片存储地址 -->
+	<bean id="photoAddressService"
+		class="com.deppon.dpm.module.common.server.service.impl.PhotoAddressService">
+		<property name="headPortraitAddress" value="${tongxunlu.head.portrait}"></property>
+		<property name="taskPhotoAddress" value="${task.photo}"></property>
+		<property name="feedBackAddress" value="${feedback.picture.dir}"></property>
+		<property name="welcomeAddress" value="${welcome.page}"/>
+		<property name="serverHostPort" value="${serverHostPort}"/>
+		<property name="appDetailAddress" value="${appdetail.photos}"></property>
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dpmDataSource" />
+		</property>
+	</bean>
+
+	<bean id="oaJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="oaDataSource" />
+		</property>
+	</bean>
+    
+	<!-- 项目管理工具 -->
+	<bean id="dppmJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+	    <property name="dataSource">
+	        <ref bean="dppmDataSource" />
+	    </property>
+	</bean>
+	<bean id="SpringContextUtil" class="com.deppon.dpm.module.wfs.server.util.SpringContextUtil">
+	</bean>
+	<context:component-scan base-package="com.deppon" />
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="/WEB-INF/ibatis.xml" />
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/ibatis/*.xml" />
+		<property name="dataSource" ref="dpmDataSource" />
+	</bean>
+	<bean id="tongxunLuService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.TongxunLuService">
+		<property name="empDao" ref="empDao"></property>
+		<property name="orgDao" ref="orgDao"></property>
+		<property name="systemConfigDao" ref="systemConfigDao"></property>
+		<property name="webUrl" value="${dmp.announce.webUrl}"></property>
+		<property name="personlyImageService" ref="personlyImageService"></property>
+		<property name="template" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="systemConfigService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.SystemConfigService">
+		<property name="systemConfigDao" ref="systemConfigDao"></property>
+	</bean>
+	<bean id="jpushService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.PushService">
+		<property name="dao" ref="jpushDao"></property>
+	</bean>
+	<!-- zxy 20140808 DPM-299 start 新增:数据同步服务 -->
+	<!-- <bean id="syncBaseDataService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.SyncBaseDataService">
+		<property name="orgDao" ref="orgDao" />
+		<property name="empDao" ref="empDao" />
+		<property name="oaJdbcTemplate" ref="oaJdbcTemplate" />
+	</bean> -->
+
+	<!-- <bean id="omConfigDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.OmConfigDao" />
+	<bean id="omConfigService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.OmConfigService">
+		<property name="omConfigDao" ref="omConfigDao" />
+	</bean> -->
+	<!-- zxy 20140808 DPM-299 end 新增:数据同步服务 -->
+
+	<bean id="empDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.EmployeeDao">
+		<property name="template" ref="jdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="jpushDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.JPushDao">
+		<property name="template" ref="jdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="systemConfigDao"
+		class="com.deppon.dpm.tongxunlu.server.dao.impl.SystemConfigDao">
+		<property name="template" ref="jdbcTemplate" />
+	</bean>
+	<bean id="orgDao"
+		class="com.deppon.dpm.tongxunlu.server.dao.impl.OrganizationDao">
+		<property name="template" ref="jdbcTemplate" />
+	</bean>
+	<!-- TODO -->
+	<bean id="jpushAction" class="com.deppon.dpm.tongxunlu.server.action.JpushAction"
+		scope="prototype">
+		<property name="jpushService" ref="jpushService" />
+		<property name="iTpushNewsService" ref="iTpushNewsService" />
+	</bean>
+	<bean id="tongxunlu" class="com.deppon.dpm.tongxunlu.server.action.TongxunluAction"
+		scope="prototype">
+		<property name="tongxunLuService" ref="tongxunLuService" />
+		<property name="appVersionConfigService" ref="appVersionConfigService" />
+		<property name="personlyImageService" ref="personlyImageService"/>
+		<property name="myFavoritesService" ref="myFavoritesService"/>
+		<property name="orgMonitorService" ref="orgMonitorService"/>
+		<property name="redisService" ref="redisService"/>
+	</bean>
+	<bean id="orgMonitorService" class="com.deppon.dpm.tongxunlu.server.service.impl.OrgMonitorService">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="functionAccess" class="com.deppon.dpm.tongxunlu.server.action.FunctionAccessAction"
+		scope="prototype">
+		<property name="systemConfigService" ref="systemConfigService"></property>
+	</bean>
+	<bean id="appVersionConfigDao"
+		class="com.deppon.dpm.tongxunlu.server.dao.impl.AppVersionConfigDao"
+		scope="prototype">
+	</bean>
+	<bean id="appVersionConfigService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.AppVersionConfigService">
+		<property name="appVersionConfigDao" ref="appVersionConfigDao" />
+		<property name="loginRedisService" ref="loginRedisService"/>
+		<property name="versionUpdateControlDao" ref="versionUpdateControlDao"/>
+	</bean>
+	
+	<!-- 整合jedis satrt-->
+	<!-- jedis连接池配置信息 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${redis.maxTotal}"></property>
+		<property name="maxIdle" value="${redis.maxIdle}"></property>
+		<property name="maxWaitMillis" value="${redis.maxWaitMillis}"></property>
+		<property name="testOnBorrow" value="${redis.testOnBorrow}"></property>
+		<property name="testOnReturn" value="${redis.testOnReturn}"></property>
+	</bean>
+	<!-- 定义集群连接池 -->
+	<bean id="jedisPool" class="redis.clients.jedis.ShardedJedisPool">
+		<!-- 连接池的配置 -->
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<!-- 集群信息 -->
+		<constructor-arg index="1">
+			<list>
+				<!-- 第一个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip1}" />
+					<constructor-arg index="1" value="${redis.port1}" />
+					<constructor-arg index="2" value="node1" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第二个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip2}" />
+					<constructor-arg index="1" value="${redis.port2}" />
+					<constructor-arg index="2" value="node2" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第三个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip3}" />
+					<constructor-arg index="1" value="${redis.port3}" />
+					<constructor-arg index="2" value="node3" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第四个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip4}" />
+					<constructor-arg index="1" value="${redis.port4}" />
+					<constructor-arg index="2" value="node4" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第五个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip5}" />
+					<constructor-arg index="1" value="${redis.port5}" />
+					<constructor-arg index="2" value="node5" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第六个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip6}" />
+					<constructor-arg index="1" value="${redis.port6}" />
+					<constructor-arg index="2" value="node6" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="redisService" class="com.deppon.dpm.module.common.server.service.impl.RedisService">
+		<property name="jedisPool" ref="jedisPool" />
+	</bean>
+	<!-- 整合jedis end-->
+	
+	<!-- 单点登录的redis -->
+	<bean id="loginJedisPool" class="redis.clients.jedis.ShardedJedisPool">
+		<!-- 连接池的配置 -->
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<!-- 集群信息 -->
+		<constructor-arg index="1">
+			<list>
+				<!-- 第一个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${loginRedis.ip}" />
+					<constructor-arg index="1" value="${loginRedis.port}" />
+					<constructor-arg index="2" value="node1" />
+					<property name="password" value="${loginRedis.pass}" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="loginRedisService" class="com.deppon.dpm.module.common.server.service.impl.RedisService">
+		<property name="jedisPool" ref="loginJedisPool" />
+	</bean>
+	<!-- 单点登录的redis end-->
+
+	<!-- YB增加DPAP数据缓存 -->
+	<bean id="storage"
+		class="com.deppon.dpm.login.server.cache.DefaultLocalCacheStorage">
+	</bean>
+
+	<!-- YB增加DPAP数据缓存池 -->
+	<!-- <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxActive" value="${redis.pool.maxActive}"></property>
+		<property name="maxIdle" value="${redis.pool.maxIdle}"></property>
+		<property name="maxWait" value="${redis.pool.maxWait}"></property>
+		<property name="testOnBorrow" value="${redis.pool.testOnBorrow}"></property>
+		<property name="testOnReturn" value="${redis.pool.testOnReturn}"></property>
+	</bean> -->
+
+	<!-- YB增加DPAP数据缓存 -->
+	<!-- <bean id="client" class="com.deppon.foss.framework.cache.redis.RedisClient">
+		<property name="host1" value="${redis.host1}"></property>
+		<property name="port1" value="${redis.port1}"></property>
+		<property name="poolConfig" ref="poolConfig"></property>
+	</bean> -->
+
+	<!-- redis缓存 -->
+	<!-- <bean id="redisCacheStorage"
+		class="com.deppon.foss.framework.cache.storage.RedisCacheStorage">
+		<property name="client" ref="client" />
+	</bean> -->
+
+	<!-- 我的任务 -->
+	<!-- <bean id="taskAction" class="com.deppon.dpm.uums.server.action.TaskAction"
+		scope="prototype">
+		<property name="taskService" ref="taskService"></property>
+	</bean>
+
+	<bean id="taskService" class="com.deppon.dpm.uums.server.service.impl.TaskService">
+		<property name="taskDao" ref="taskDao"></property>
+		<property name="pushService" ref="tpushNewsService"></property>
+	</bean>
+
+	<bean id="taskDao" class="com.deppon.dpm.uums.server.dao.impl.TaskDao" /> -->
+
+	<bean id="personlyImageService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.PersonlyImageService">
+		<property name="personlyImageDao" ref="personlyImageDao" />
+		<property name="photoAddressService" ref="photoAddressService" />
+		<property name="webUrl" value="${dmp.announce.webUrl}"></property>
+	</bean>
+	<bean id="personlyImageDao"
+		class="com.deppon.dpm.tongxunlu.server.dao.impl.PersonlyImageDao" />
+	<bean id="perSonlyPicAction"
+		class="com.deppon.dpm.tongxunlu.server.action.PersonlyPicAction" scope="prototype">
+		<property name="personlyImageService" ref="personlyImageService"></property>
+		<property name="lsysyncheadphoto" value="${lsp_sync_headphoto_url}"></property>
+	</bean>
+
+	<bean id="dpmEhcacheManager"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<!-- 指定配置文件的位置 -->
+		<property name="configLocation" value="/WEB-INF/ehcache.xml" />
+	</bean>
+
+	<!-- 定义一个Ehcache -->
+	<bean id="dpmCache" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+		<property name="cacheName" value="dpmEhcache" />
+		<property name="cacheManager" ref="dpmEhcacheManager" />
+	</bean>
+
+	<!-- <bean class="com.deppon.dpm.module.common.server.util.DpmCacheManager">
+		<property name="cache" ref="dpmCache" />
+		<property name="redisCacheStorage" ref="redisCacheStorage" />
+	</bean> -->
+
+	<bean class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor">
+		<property name="loginInfoService" ref="loginInfoService" />
+		<property name="loginRedisService" ref="loginRedisService" />
+	</bean>
+	
+	<!-- 常用联系人 -->
+	<bean id="myFavoritesAction" class="com.deppon.dpm.tongxunlu.server.action.MyFavoritesAction" scope="prototype">
+		<property name="myFavoritesService" ref="myFavoritesService"/>
+		<property name="personlyImageService" ref="personlyImageService"/>
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+		<property name="redisService" ref="redisService"/>
+	</bean>
+	<bean id="myFavoritesService" class="com.deppon.dpm.tongxunlu.server.service.impl.MyFavoritesService">
+		<property name="template" ref="jdbcTemplate"/>
+		<property name="myFavoritesDao" ref="myFavoritesDao"/>
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+	</bean>
+	<bean id="myFavoritesDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.MyFavoritesDao"/>
+	<!-- 常用联系人 -->
+	<!-- 约吧 -->
+	<bean id="bootyCallAction" class="com.deppon.dpm.tongxunlu.server.action.BootyCallAction" scope="prototype">
+		<property name="bootyCallService" ref="bootyCallService"/>
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+	</bean>
+	<bean id="bootyCallService" class="com.deppon.dpm.tongxunlu.server.service.impl.BootyCallService">
+		<property name="bootyCallDao" ref="bootyCallDao"/>
+		<property name="template" ref="jdbcTemplate"/>
+		<property name="webUrl" value="${dmp.announce.webUrl}"/>
+	</bean>
+	<bean id="bootyCallDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.BootyCallDao"/>
+	<!-- 约吧 -->
+	
+	<bean id="headPhotoAction" class="com.deppon.dpm.tongxunlu.server.action.HeadPhotoAction" scope="prototype">
+		<property name="personlyImageService" ref="personlyImageService"></property>
+	</bean>
+	
+	<!-- 极光推送相关 start -->
+	<bean id="jpushClientConfig" class="cn.jpush.api.common.ClientConfig" factory-method="getInstance"/>
+	<bean id="jPushClient" class="cn.jpush.api.JPushClient">
+		<constructor-arg index="0" value="${jpush.masterSecret}"/>
+		<constructor-arg index="1" value="${jpush.appKey}"/>
+		<constructor-arg index="2">
+			<null />
+		</constructor-arg>
+		<constructor-arg index="3" ref="jpushClientConfig"/>
+	</bean>
+	<!-- 极光推送注册id绑定关系 -->
+	<bean id="jPushRegistBindAction" class="com.deppon.dpm.tongxunlu.server.action.JPushRegistBindAction" scope="prototype">
+		<property name="jPushRegistBindService" ref="jPushRegistBindService"/>
+		<property name="jpushClient" ref="jPushClient"/>
+	</bean>
+	<bean id="jPushRegistBindService" class="com.deppon.dpm.tongxunlu.server.service.impl.JPushRegistBindService">
+		<property name="jPushRegistBindDao" ref="jPushRegistBindDao"/>
+	</bean>
+	<bean id="jPushRegistBindDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.JPushRegistBindDao"/>
+	
+	<!-- 极光推送接口 -->
+	<bean id="jPushNewAction" class="com.deppon.dpm.tongxunlu.server.action.JPushNewAction" scope="prototype">
+		<property name="jPushNewService" ref="jPushNewService"/>
+	</bean>
+	<bean id="jPushNewService" class="com.deppon.dpm.tongxunlu.server.service.impl.JPushNewService">
+		<property name="jPushRegistBindService" ref="jPushRegistBindService"/>
+		<property name="jpushClient" ref="jPushClient"/>
+		<property name="APNSProduction" value="${jpush.APNSProduction}"/>
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+		<property name="jpushMsgCentreService" ref="jpushMsgCentreService"/>
+	</bean>
+	<!-- 极光推送相关 end -->
+	
+	<!-- 使用jpush为外部系统提供的推送接口 -->
+	<bean id="jPushForOtherService" class="com.deppon.dpm.tongxunlu.server.service.impl.JPushForOtherService">
+		<property name="jPushNewService" ref="jPushNewService"/>
+		<property name="redisService" ref="redisService"/>
+		<property name="jPushNewMonitorService" ref="jPushNewMonitorService"/>
+	</bean>
+	
+	<!-- 各应用模块的加载时长监控 -->
+	<bean id="appLoadTimeMonitorAction" class="com.deppon.dpm.module.common.server.action.AppLoadTimeMonitorAction" scope="prototype">
+		<property name="appLoadTimeMonitorService" ref="appLoadTimeMonitorService"/>
+	</bean>
+	<bean id="appLoadTimeMonitorService" class="com.deppon.dpm.module.common.server.service.impl.AppLoadTimeMonitorService">
+		<property name="appLoadTimeMonitorDao" ref="appLoadTimeMonitorDao"/>
+	</bean>
+	<bean id="appLoadTimeMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.AppLoadTimeMonitorDao"/>
+	
+	<!-- 来电显示的通讯录 -->
+	<bean id="cIDAction" class="com.deppon.dpm.tongxunlu.server.action.CIDAction" scope="prototype">
+		<property name="cIDService" ref="cIDService"/>
+		<property name="redisService" ref="redisService"/>
+	</bean>
+	<bean id="cIDService" class="com.deppon.dpm.tongxunlu.server.service.impl.CIDService">
+		<property name="cIDDao" ref="cIDDao"/>
+		<property name="employeeDao" ref="empDao"/>
+		<property name="serverHostPort" value="${serverHostPort}"/>
+		<property name="encryptKey" value="${aes.encryptKey}"/>
+		<property name="cidBaseDir" value="${cid.baseDir}"/>
+	</bean>
+	<bean id="cIDDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.CIDDao" />
+	
+	<!-- 消息中心 -->	
+	<bean id="msgCentreAction" class="com.deppon.dpm.tongxunlu.server.action.MsgCentreAction" scope="prototype">
+		<property name="msgCentreService" ref="jpushMsgCentreService"/>
+	</bean>
+	<bean id="jpushMsgCentreService" class="com.deppon.dpm.tongxunlu.server.service.impl.JpushMsgCentreService">
+		<property name="jpushMsgCentreDao" ref="jpushMsgCentreDao"/>
+	</bean>
+	<bean id="jpushMsgCentreDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.JpushMsgCentreDao"/>
+	
+	<jaxrs:server id="jPushMsgForOther" address="/jPushMsgForOther">
+		<jaxrs:serviceBeans>
+			<ref bean="jPushForOtherService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	
+	<jaxrs:server id="headPhotoCxfService" address="/crmremote">
+		<jaxrs:serviceBeans>
+			<ref bean="headPhotoAction" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+		</jaxrs:providers>
+		<jaxrs:outInterceptors>
+			<bean class="com.deppon.dpm.module.common.server.interceptor.OutPhaseInterceptor"/>
+		</jaxrs:outInterceptors>
+		<jaxrs:outFaultInterceptors>
+			<bean class="com.deppon.dpm.module.common.server.interceptor.OutFaultPhaseInterceptor"/>
+		</jaxrs:outFaultInterceptors>
+	</jaxrs:server>
+	
+	<!-- 访客系统短信发送接口 -->
+	<jaxrs:server id="visitorSmsSend" address="/smsSend">
+		<jaxrs:serviceBeans>
+			<ref bean="visitorSmsSendService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	<bean id="visitorSmsSendService" class="com.deppon.dpm.login.server.service.VisitorSmsSendService">
+		<property name="smsUrl" value="${sms_url}" />
+		<property name="smsMsgType" value="${smsMsgType}"/>
+		<property name="smsSource" value="${smsSource}"/>
+		<property name="smsEncrypt" value="${smsEncrypt}"/>
+		<property name="visitorSmsSendLogDao" ref="visitorSmsSendLogDao"/>
+	</bean> 
+	<bean id="visitorSmsSendLogDao" class="com.deppon.dpm.module.common.server.dao.impl.VisitorSmsSendLogDaoImpl" />
+	
+</beans>

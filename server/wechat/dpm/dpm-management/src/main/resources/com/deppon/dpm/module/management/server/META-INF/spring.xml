@@ -1,0 +1,884 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context 
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd
+      http://www.springframework.org/schema/jee 
+      http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+      http://www.springframework.org/schema/tx 
+      http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+      http://www.springframework.org/schema/aop 
+      http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+      
+      	http://www.springframework.org/schema/task  
+		http://www.springframework.org/schema/task/spring-task-3.0.xsd 
+	
+  
+      http://cxf.apache.org/core
+        http://cxf.apache.org/schemas/core.xsd
+        http://cxf.apache.org/jaxws
+        http://cxf.apache.org/schemas/jaxws.xsd
+        http://cxf.apache.org/jaxrs
+        http://cxf.apache.org/schemas/jaxrs.xsd">
+
+	<!-- <context:property-placeholder location="classpath*:spring-config.properties" /> -->
+
+	<!-- JOB 配置文件 start -->
+	<context:annotation-config />
+	<task:annotation-driven />
+	<context:component-scan base-package="com.deppon.*.job.*" />
+	<!-- JOB 配置文件end -->
+
+	<bean id="terminalInformationAction"
+		class="com.deppon.dpm.module.management.server.action.ItTerminalInformationAction" scope="prototype">
+		<property name="itTerminalInformationService" ref="itTerminalInformationService" />
+		<property name="hostPort" value="${serverHostPort}" />
+	</bean>
+
+	<bean id="itTerminalInformationService"
+		class="com.deppon.dpm.module.management.server.service.impl.ItTerminalInformationService">
+		<property name="itQueryUrl" value="${it_query_terminal}" />
+		<property name="itDealUrl" value="${it_deal_terminal}" />
+		<property name="itFaultUrl" value="${it_fault_terminal}" />
+		<property name="itBackDealUrl" value="${it_back_deal_terminal}" />
+	</bean>
+
+	<bean id="issuesAndAddrsService"
+		class="com.deppon.dpm.module.management.server.service.impl.IssuesAndAddrsService">
+		<property name="url" value="${isp_esb_issaueandaddrs_url}"></property>
+	</bean>
+	<bean id="reportHistoryService"
+		class="com.deppon.dpm.module.management.server.service.impl.ReportHistoryService">
+		<property name="url" value="${isp_esb_reporthistory_url}"></property>
+	</bean>
+
+	<bean id="queryTheaterService"
+		class="com.deppon.dpm.module.management.server.service.impl.QueryTheaterInfoService">
+		<property name="url" value="${isp_esb_querytheater_url}" />
+	</bean>
+	<bean id="theaterDealService"
+		class="com.deppon.dpm.module.management.server.service.impl.ThreaterDealService">
+		<property name="url" value="${isp_esb_isptaskhandle_url}" />
+	</bean>
+
+	<bean id="itReportAction"
+		class="com.deppon.dpm.module.management.server.action.ITReportAction"
+		scope="prototype">
+		<property name="issuesAndAddrsService" ref="issuesAndAddrsService" />
+		<property name="reportHistoryService" ref="reportHistoryService" />
+		<property name="queryTheaterService" ref="queryTheaterService" />
+		<property name="theaterDealService" ref="theaterDealService" />
+		<property name="reportService" ref="reportService"></property>
+		<property name="monitorCountInfoService" ref="monitorCountInfoService"></property>
+	</bean>
+	<bean id="reportService"
+		class="com.deppon.dpm.module.management.server.service.impl.ReportService">
+		<property name="reportDao" ref="reportDao" />
+		<property name="reportUrl" value="${isp_esb_report_url}" />
+		<property name="authUrl" value="${isp_esb_auth}" />
+	</bean>
+
+	<!-- 接收终端消息dao配置start -->
+	<bean id="terminalMessageDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.TerminalMessageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="terminalMessageService"
+		class="com.deppon.dpm.module.management.server.service.impl.TerminalMessageService" />
+	<jaxrs:server id="terminalMessageServiceRs" address="/management">
+		<jaxrs:serviceBeans>
+			<ref bean="terminalMessageService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	
+	<!-- 应用详情 -->
+	<bean id="appDetailDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.AppDetailDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="appDetailService"
+		class="com.deppon.dpm.module.management.server.service.impl.AppDetailService">
+		<property name="appDetailDao" ref="appDetailDao" />
+		<property name="photoAddressService" ref="photoAddressService" />
+	</bean>
+	
+	<bean id="appDetailAction" class="com.deppon.dpm.module.management.server.action.AppDetailAction" scope="prototype">
+    	<property name="appdetailService" ref="appDetailService"></property>
+    </bean>
+    <!-- end -->
+
+	<bean id="reportDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ReportDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="outlookService"
+		class="com.deppon.dpm.module.management.server.service.impl.OutlookService"
+		abstract="true">
+		<property name="jdbcTemplate" ref="jdbcTemplate" />
+		<property name="serverHostPort" value="${serverHostPort}" />
+		<property name="host" value="${dpmMailHost}"></property>
+	</bean>
+
+	<bean id="calendarAction"
+		class="com.deppon.dpm.module.management.server.action.CalendarAction"
+		scope="prototype">
+		<property name="calendarService" ref="calendarService" />
+		<property name="tongxunLuService" ref="tongxunLuService" />
+		<property name="itQueryUrl" value="${it_query_terminal}"/>
+		<property name="pushUrl" value="${pushpageurl}"/>
+	</bean>
+
+	<bean id="calendarService"
+		class="com.deppon.dpm.module.management.server.service.impl.CalendarService"
+		parent="outlookService">
+		<property name="calendarDao" ref="calendarDao" />
+		<property name="tongxunLuService" ref="tongxunLuService" />
+	</bean>
+
+	<bean id="calendarDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.CalendarDao" />
+
+	<!-- 邮箱 -->
+	<bean id="emailAction"
+		class="com.deppon.dpm.module.management.server.action.EmailAction"
+		scope="prototype">
+		<property name="emailService" ref="emailService" />
+		<property name="appInterfaceUrl" value="${appInterfaceUrl}" />
+		<property name="serverHostPort" value="${serverHostPort}" />
+	</bean>
+
+	<bean id="emailService"
+		class="com.deppon.dpm.module.management.server.service.impl.EmailService"
+		parent="outlookService">
+	</bean>
+
+	<!-- IT上报评价 -->
+	<bean id="appraiseDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.AppraiseDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="appraiseService"
+		class="com.deppon.dpm.module.management.server.service.impl.AppraiseService">
+		<property name="appraiseUrl" value="${isp_esb_confirm_url}"></property>
+		<property name="queryCountUrl" value="${isp_esb_reportcount_url}"></property>
+		<property name="appraiseDao" ref="appraiseDao"></property>
+		<property name="tpushNewsService" ref="tpushNewsService"></property>
+	</bean>
+	<!-- 班车管理 -->
+	<bean id="busManagerDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.BusManagerDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="busManagerService"
+		class="com.deppon.dpm.module.management.server.service.impl.BusManagerService">
+		<property name="busManagerDao" ref="busManagerDao" />
+	</bean>
+	<!-- 工程勘测详情               -->
+	<bean id="procSurveyDetailsDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcSurveyDetailsDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="procSurveyDetailsService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcSurveyDetailsService">
+		<property name="procSurveyDetailsDao" ref="procSurveyDetailsDao" />
+	</bean>
+	<!-- <bean id="busManagerAction" class="com.deppon.dpm.module.management.server.action.BusManagerAction"> 
+		<property name="busManagerService" ref="busManagerService"/> </bean> -->
+
+	<!-- 班车站点 -->
+	<!-- 班车站点dao层 -->
+	<bean id="bussiteviewdao"
+		class="com.deppon.dpm.module.management.server.dao.impl.BusSiteViewDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- 班车站点service层 -->
+	<bean id="bussiteviewservice"
+		class="com.deppon.dpm.module.management.server.service.impl.BusSiteViewService">
+		<property name="bussiteviewdao" ref="bussiteviewdao" />
+	</bean>
+	<!-- 班车站点 -->
+	<jaxrs:server id="appraiseServiceRs" address="/managementAppraise">
+		<jaxrs:serviceBeans>
+			<ref bean="appraiseService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+
+
+	<!-- 站点管理开始 by zhangguangbo 268087 开始 -->
+	<bean id="busSiteDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.BusSiteDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 班车服务-数据监控引用dpm-common的monitorCountInfoDao -->
+	<bean id="countInfoDao"
+		class="com.deppon.dpm.module.common.server.dao.impl.MonitorCountInfoDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="busSiteService"
+		class="com.deppon.dpm.module.management.server.service.impl.BusSiteService">
+		<property name="busSiteDao" ref="busSiteDao" />
+		<property name="countInfoDao" ref="countInfoDao"></property>
+	</bean>
+
+	<bean id="busSiteAction"
+		class="com.deppon.dpm.module.management.server.action.BusSiteAction"
+		scope="prototype">
+		<property name="busSiteService" ref="busSiteService" />
+	</bean>
+	<!-- 站点管理结束 by zhangguangbo 268087 结束 -->
+
+	<!--工程验收-消息通知开始 by zhangguangbo 268087 开始 -->
+	<!-- 验收任务保存开始 -->
+	<bean id="procCheckTaskDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcCheckTaskDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="checkTaskService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcCheckTaskService">
+		<property name="checkTaskDao" ref="procCheckTaskDao"></property>
+	</bean>
+	<jaxrs:server id="checkTaskServiceCXF" address="/procCheckTask">
+		<jaxrs:serviceBeans>
+			<ref bean="checkTaskService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	<!-- 验收任务保存结束 -->
+	<!--工程验收-消息通知结束 by zhangguangbo 268087 结束 -->
+	<!-- 收发室 by zhangguangbo 268087 开始 -->
+	<bean id="parcelDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.SendParcelWorkDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="parcelService"
+		class="com.deppon.dpm.module.management.server.service.impl.SendParcelWorkService">
+		<property name="sendParcelWorkDao" ref="parcelDao"></property>
+		<property name="sendReceiveRoomMessNotificationService" ref="sendReceiveRoomMessNotificationService" />
+	</bean>
+	<!-- 收发室 by zhangguangbo 268087 结束 -->
+	<!-- 工程维修 by zhangguangbo 268087 开始 -->
+	<bean id="procManWorkDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcManWorkDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="procManWorkService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcManWorkService">
+		<property name="workDao" ref="procManWorkDao"></property>
+		<property name="repairService" ref="repairService"></property>
+		<property name="monitorCountInfoService" ref="monitorCountInfoService" />
+	</bean>
+	<!-- 工程维修 by zhangguangbo 268087 结束 -->
+	<!-- 预订管理 by zhangguangbo 268087 开始 -->
+	<bean id="reserveManWorkDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ReserveManWorkDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="reserveManWorkService"
+		class="com.deppon.dpm.module.management.server.service.impl.ReserveManWorkService">
+		<property name="reserveManWorkDao" ref="reserveManWorkDao" />
+	</bean>
+	<!-- 预订管理 by zhangguangbo 268087 结束 -->
+	<!-- 拼车活动管理  by  zhangguangbo 268087 开始 -->
+	<bean id="serveOrigWorkDao" class="com.deppon.dpm.module.management.server.dao.impl.ServeOrigWorkDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="serveOrigWorkService" class="com.deppon.dpm.module.management.server.service.impl.ServeOrigWorkService">
+		<property name="workDao" ref="serveOrigWorkDao"/>
+	</bean>
+	<!-- 拼车活动管理  by  zhangguangbo 268087 结束 -->
+	<!-- 查询所有的消息信息start -->
+	<bean id="busMessageByFindDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.BusMessageByFindDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="busMessageByFindService"
+		class="com.deppon.dpm.module.management.server.service.impl.BusMessageByFindService">
+		<property name="busMessageByFindDao" ref="busMessageByFindDao" />
+	</bean>
+	<!-- 查询所有的消息信息end -->
+
+	<!-- 插入用户评价数据start -->
+	<bean id="buraDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.BusUserRetroactionAddDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="buraService"
+		class="com.deppon.dpm.module.management.server.service.impl.BusUserRetroactionService">
+		<property name="buraDao" ref="buraDao" />
+		<property name="busManagerDao" ref="busManagerDao" />
+		<property name="busMsgAssNewsDao" ref="busMsgAssNewsDao" />
+	</bean>
+	<!-- 插入用户评价数据end -->
+
+	<!-- 显示所有的建议站点信息start -->
+	<bean id="busOpenLineAndNewsSiteDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.BusOpenLineAndNewsSiteDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="busOpenLineAndNewsSiteService"
+		class="com.deppon.dpm.module.management.server.service.impl.BusOpenLineAndNewsSiteService">
+		<property name="busOpenLineAndNewsSiteDao" ref="busOpenLineAndNewsSiteDao" />
+	</bean>
+	<!-- 显示所有的建议站点信息end -->
+
+	<!-- 应用商店 -->
+	<bean id="applyStoreAction"
+		class="com.deppon.dpm.module.management.server.action.ApplyStoreAction"
+		scope="prototype">
+		<property name="iApplyStoreService" ref="iApplyStoreService" />
+		<property name="systemConfigService" ref="systemConfigService" />
+		<property name="uUMSRoleService" ref="uUMSRoleService"/>
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+	</bean>
+	
+	<!-- 应用商店PC页面 -->
+	<bean id="applyStorePcAction"
+		class="com.deppon.dpm.module.management.server.action.ApplyStorePcAction"
+		scope="prototype">
+		<property name="iApplyStoreService" ref="iApplyStoreService" />
+	</bean>
+
+	<bean id="iApplyStoreService"
+		class="com.deppon.dpm.module.management.server.service.impl.ApplyStoreService">
+		<property name="iApplyStoreDao" ref="iApplyStoreDao" />
+		<property name="iApplyDeviceDao" ref="iApplyDeviceDao" />
+		<property name="appDetailDao" ref="appDetailDao" />
+		<property name="appAutoUpdateControlDao" ref="appAutoUpdateControlDao" />
+		<property name="biService" ref="biPermissionService" />
+		<property name="roleUrl" value="${roleurl}" />
+		<property name="appPicDir" value="${appstore.picture.dir}" />
+		<property name="hostPort" value="${serverHostPort}" />
+	</bean>
+	<bean id="biPermissionService"
+		class="com.deppon.dpm.module.management.server.service.impl.BIPermissionService">
+		<property name="biPermissionUrl" value="${biPermissionUrl}" />
+	</bean>	
+
+	<bean id="iApplyStoreDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ApplyStoreServiceDao" />
+	<bean id="iApplyDeviceDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ApplyDeviceDao" />
+
+	<!-- 异常信息的查询、新增，评价建议的回复、删除，开线建议统计、新增 -->
+	<bean id="busMsgAssNewsDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.BusMsgAssNewsDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="busMsgAssNewsService"
+		class="com.deppon.dpm.module.management.server.service.impl.BusMsgAssNewsService">
+		<property name="busMsgAssNewsDao" ref="busMsgAssNewsDao" />
+	</bean>
+
+
+	<!--工程巡检界面显示 -->
+	<bean id="procCheckFindScoreShowService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcCheckFindScoreShowService">
+		<property name="procCheckFindScoreShowDao" ref="procCheckFindScoreShowDao" />
+	</bean>
+	<bean id="procCheckFindScoreShowDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcCheckFindScoreShowDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+
+	<!--收发室签收、拒绝、注销、催领 服务器 xiyidong -->
+	<bean id="mailReceiveSendServiceFunctionService"
+		class="com.deppon.dpm.module.management.server.service.impl.MailReceiveSendServiceFunctionService">
+		<property name="mailReceiveSendFunctionDao" ref="mailReceiveSendFunctionDao" />
+		<property name="sendReceiveRoomMessNotificationService" ref="sendReceiveRoomMessNotificationService" />
+
+	</bean>
+	<!--收发室签收、拒绝、注销、催领 客户端 -->
+	<bean id="mailReceiveSendFunctionService"
+		class="com.deppon.dpm.module.management.server.service.impl.MailReceiveSendFunctionService">
+		<property name="mailReceiveSendFunctionDao" ref="mailReceiveSendFunctionDao" />
+		<property name="sendReceiveRoomMessNotificationService" ref="sendReceiveRoomMessNotificationService" />
+		<property name="mailRecSenUrl" value="${mailRecSenUrl}" />
+	</bean>
+	<!--收发室签收、拒绝、注销、催领 dao层 -->
+	<bean id="mailReceiveSendFunctionDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.MailReceiveSendFunctionDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- 收发室签收、拒绝、注销、催领 服务器 -->
+	<jaxrs:server id="mailRecSendSerFunService" address="/mailRecSendSerFunService">
+		<jaxrs:serviceBeans>
+			<ref bean="mailReceiveSendServiceFunctionService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+
+
+	<!--工程巡检、验收、维修权限控制 xieyidong -->
+	<bean id="procMaintainRightControlService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcMaintainRightControlService">
+		<property name="procMaintainStaticUpdateServieceDao" ref="procMaintainStaticUpdateServieceDao" />
+	</bean>
+	<!--工程维修退回、已审核 xieyidong -->
+	<bean id="procMaintainStaticUpdateServieceService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcMaintainStaticUpdateServieceService">
+		<property name="procMaintainStaticUpdateServieceDao" ref="procMaintainStaticUpdateServieceDao" />
+		<property name="procMaintenanceMessageService" ref="procMaintenanceMessageService" />
+
+	</bean>
+	<!--工程维修退回、已审核 DAO xieyidong -->
+	<bean id="procMaintainStaticUpdateServieceDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcMaintainStaticUpdateServieceDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!--拼车 service  xieyidong-->
+	<bean id="serveMonitoringOrAddressService" 
+		class="com.deppon.dpm.module.management.server.service.impl.ServeMonitoringOrAddressService">
+	     <property name="serveMonitoringOrAddressDao" ref="serveMonitoringOrAddressDao" />	    
+	</bean>
+	<!--拼车  DAO xieyidong-->
+	<bean id="serveMonitoringOrAddressDao" 
+		class="com.deppon.dpm.module.management.server.dao.impl.ServeMonitoringOrAddressDao">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" /> 
+	</bean>
+	<!-- 工程维修 状态更新 服务器 -->
+	<jaxrs:server id="procMaintainStaUpdSerXml" address="/procMaintainStaUpdSerXml">
+		<jaxrs:serviceBeans>
+			<ref bean="procMaintainStaticUpdateServieceService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+
+
+	<!--预定管理瑜伽室与羽毛球场 service  xieyidong-->
+	<bean id="reserveManageQueryListInfoService" 
+		class="com.deppon.dpm.module.management.server.service.impl.ReserveManageQueryListInfoService">
+	     <property name="reserveManageQueryListInfoDao" ref="reserveManageQueryListInfoDao" />	    
+	</bean>
+	<!--预定管理瑜伽室与羽毛球场控制  DAO xieyidong-->
+	<bean id="reserveManageQueryListInfoDao" 
+		class="com.deppon.dpm.module.management.server.dao.impl.ReserveManageQueryListInfoDao">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" /> 
+	</bean>
+    <!--工程勘测service  xieyidong-->
+	<bean id="procSurveySubmitSaveClientService" 
+		class="com.deppon.dpm.module.management.server.service.impl.ProcSurveySubmitSaveClientService">
+	     <property name="procSurveySubmitSaveClientDao" ref="procSurveySubmitSaveClientDao" />	    
+	     <property name="proManagerUrl" value="${proManagerUrl}" />
+	</bean>
+	<!--工程勘测DAO  xieyidong-->
+    <bean id="procSurveySubmitSaveClientDao" 
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcSurveySubmitSaveClientDao">
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" /> 
+	</bean>
+     
+	<!-- 班车小红点start -->
+	<bean id="busRedPointDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.BusRedPointDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="busRedPointService"
+		class="com.deppon.dpm.module.management.server.service.impl.BusRedPointService">
+		<property name="busRedPointDao" ref="busRedPointDao" />
+	</bean>
+	<!-- 班车小红点end -->
+
+	<!--日程排班 -->
+	<bean id="calendarPlanAction"
+		class="com.deppon.dpm.module.management.server.action.CalendarPlanAction">
+		<property name="calendarPlanPath" value="${calendar_plan_path}" />
+	</bean>
+	<!--日程排班 -->
+
+	<!-- 资讯排序 -->
+	<bean id="infoAction"
+		class="com.deppon.dpm.module.management.server.action.InformationSortAction"
+		scope="prototype">
+		<property name="informationService" ref="informationService" />
+	</bean>
+	<bean id="informationService"
+		class="com.deppon.dpm.module.management.server.service.impl.InformationService">
+		<property name="informationDao" ref="informationDao" />
+		<property name="roleUrl" value="${roleurl}" />
+		<property name="uUMSRoleService" ref="uUMSRoleService"/>
+	</bean>
+	<bean id="informationDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.InformationDao">
+	</bean>
+	<!-- 资讯排序 -->
+
+	<!--工程管理界面显示 -->
+	<bean id="projectManagerFindMsgService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProjectManagerFindMsgService">
+		<property name="projectManagerFindMsgDao" ref="projectManagerFindMsgDao" />
+		<property name="proManagerUrl" value="${proManagerUrl}" />
+	</bean>
+	<bean id="projectManagerFindMsgDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProjectManagerFindMsgDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+
+	<!-- 地理位置获取部门 start -->
+	<bean id="addressService"
+		class="com.deppon.dpm.module.management.server.service.impl.MapAddressService">
+		<property name="defaultUrl" value="${dpm_map_address}"></property>
+		<property name="defaultPort" value="${defaultPort}"></property>
+		<property name="esbCode" value="${GIS_ESB_CODE}"></property>
+		<property name="radius" value="${radius}"></property>
+	</bean>
+	<!-- 地理位置获取部门 end -->
+
+	<!-- 评分详细表start -->
+	<bean id="procScoreMessageDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcScoreMessageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="procScoreMessageService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcScoreMessageService">
+		<property name="procScoreMessageDao" ref="procScoreMessageDao" />
+	</bean>
+	<!-- 评分详细表end -->
+
+	<!-- 提交显示所有0分项start -->
+	<bean id="procUserScoreAndAddressDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcUserScoreAndAddressDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="procUserScoreAndAddressService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcUserScoreAndAddressService">
+		<property name="procUserScoreAndAddressDao" ref="procUserScoreAndAddressDao" />
+	</bean>
+	<!-- 提交显示所有0分项end -->
+
+	<!--5分保存，实时数据保存 -->
+	<bean id="engScoringDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcScoringDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="engScoringService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcScoringService">
+		<property name="engScoringDao" ref="engScoringDao" />
+	</bean>
+
+	<!-- 基础数据start -->
+	<bean id="standardDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.StandardTableDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="standarService"
+		class="com.deppon.dpm.module.management.server.service.impl.StandardTableService">
+		<property name="standardTableDao" ref="standardDao" />
+	</bean>
+	<!-- 基础数据end -->
+
+	<!-- 基础数据同步接口 start -->
+	<jaxrs:server id="standardServiceRs" address="/standard">
+		<jaxrs:serviceBeans>
+			<ref bean="standarService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	<!-- 基础数据同步接口 end -->
+
+	<!-- 验收任务数据start -->
+	<bean id="procRecordDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcRecordDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="procRecordService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcRecordService">
+		<property name="procRecordDao" ref="procRecordDao" />
+		<property name="toPcUrl" value="${proCheckSubmitUrl}" />
+		<property name="proCheckESBCode" value="${proCheckESBCode}" />
+	</bean>
+	<!-- 验收任务数据end -->
+
+	<!--工程巡检 保存合格。扣分 -->
+	<bean id="procCheckScoreDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcCheckScoreDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="procCheckScoreService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcCheckScoreService">
+		<property name="procCheckScoreDao" ref="procCheckScoreDao" />
+	</bean>
+	<!-- 工程巡检提交检验 -->
+	<bean id="checkVerifyDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcCheckVerifyDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="checkVerifyService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcCheckVerifyService">
+		<property name="checkVerifyDao" ref="checkVerifyDao" />
+	</bean>
+	<!-- 明细信息查询接口 start -->
+	<jaxrs:server id="task" address="/task">
+		<jaxrs:serviceBeans>
+			<ref bean="procRecordService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	<!-- 明细信息查询接口 end -->
+
+	<!-- 工程勘测PC端推送APP接口  zyf-->
+	<jaxrs:server id="procSurveyCheckXml" address="/procSurveyCheckXml">
+		<jaxrs:serviceBeans>
+			<ref bean="procSurveyCheckService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	
+	
+	<bean id="procSurveyCheckService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcSurveyCheckService">
+		<property name="procSurveyCheckDao" ref="procSurveyCheckDao" />
+	</bean>
+	
+	<bean id="procSurveyCheckDao" class="com.deppon.dpm.module.management.server.dao.impl.ProcSurveyCheckDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" /> 
+	</bean>
+	
+	<!-- end -->
+
+	<!-- 收发室寄快递 袁中华 -->
+	<bean id="sendParcelSendDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.SendParcelSendDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="sendParcelSendService"
+		class="com.deppon.dpm.module.management.server.service.impl.SendParcelSendService">
+		<property name="sendParcelSendDao" ref="sendParcelSendDao"></property>
+	</bean>
+
+	<!-- 消息通知 service 宝宝 start -->
+	<bean id="sendReceiveRoomMessNotificationService"
+		class="com.deppon.dpm.module.management.server.service.impl.SendReceiveRoomMessNotificationService">
+		<property name="sendParcelDao" ref="sendParcelDao" />
+		<property name="monitorCountInfoService" ref="monitorCountInfoService" />
+		<property name="tpushNewsService" ref="tpushNewsService" />
+	</bean>
+	<!-- 消息通知 service 宝宝 end -->
+
+	<!-- 收发室包裹 sky 王亚男 -->
+	<bean id="sendParcelDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.SendParcelDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="sendParcelService"
+		class="com.deppon.dpm.module.management.server.service.impl.SendParcelService">
+		<property name="sendParcelDao" ref="sendParcelDao" />
+		<property name="sendReceiveRoomMessNotificationService" ref="sendReceiveRoomMessNotificationService" />
+	</bean>
+	<!-- 收发室包裹Service end -->
+	<!-- 收发室包裹信息录入接口 PC推送录入数据 start sky 王亚男 -->
+	<jaxrs:server id="sendPackage" address="/send">
+		<jaxrs:serviceBeans>
+			<ref bean="sendParcelService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+		<jaxrs:languageMappings>
+			<entry key="en" value="en-gb" />
+		</jaxrs:languageMappings>
+	</jaxrs:server>
+	<!-- 收发室包裹信息录入接口 PC推送录入数据 end sky 王亚男 -->
+
+	<!-- 工程维修信息显示start cs 曹嵩 -->
+	<bean id="procMaintenanceInfoListDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcMaintenanceInfoListDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="procMaintenanceInfoListService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcMaintenanceInfoListService">
+		<property name="procMaintenanceInfoListDao" ref="procMaintenanceInfoListDao" />
+	</bean>
+	<!-- 工程维修信息显示end cs 曹嵩 -->
+
+	<!-- 工程维修消息推送 start cs 曹嵩 -->
+	<bean id="procMaintenanceMessageService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcMaintenanceMessageService">
+		<property name="procMaintenanceInfoListDao" ref="procMaintenanceInfoListDao" />
+		<property name="tpushNewsService" ref="tpushNewsService" />
+	</bean>
+	<!-- 工程维修消息推送 end cs 曹嵩 -->
+
+	<!-- 预订管理取消预订和提前取消start cs 曹嵩 -->
+	<bean id="reserveManageCancelDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ReserveManageCancelDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="reservationManageByAdminDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ReservationManageByAdminDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="reserveManageCancelService"
+		class="com.deppon.dpm.module.management.server.service.impl.ReserveManageCancelService">
+		<property name="reserveManageCancelDao" ref="reserveManageCancelDao" />
+	</bean>
+	<bean id="reservationManageByAdminService"
+		class="com.deppon.dpm.module.management.server.service.impl.ReservationManageByAdminService">
+		<property name="reservationManageByAdminDao" ref="reservationManageByAdminDao" />
+	</bean>
+	<!-- 预订管理取消预订和提前取消end cs 曹嵩 -->
+
+	<!-- 维修提交 serivce stard 王亚男 -->
+	<bean id="maintainMessageDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ProcMaintainMessageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="repairService"
+		class="com.deppon.dpm.module.management.server.service.impl.ProcMainService">
+		<property name="maintainMessageDao" ref="maintainMessageDao" />
+		<property name="getDeptListUrl" value="${getDeptListUrl}" />
+		<property name="esbCodeDept" value="${esbCodeDept}" />
+		<property name="postDataUrl" value="${postDataUrl}" />
+		<property name="esbCodePost" value="${esbCodePost}" />
+		<property name="getProListUrl" value="${getProListUrl}" />
+		<property name="esbCodePro" value="${esbCodePro}" />
+	</bean>
+	<!-- 维修提交 serivce end 王亚男 -->
+
+	<!-- 获取用户信息 start 王亚男 -->
+	<bean id="userDaoMs"
+		class="com.deppon.dpm.module.management.server.dao.impl.UserDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="userServiceMs"
+		class="com.deppon.dpm.module.management.server.service.impl.UserService">
+		<property name="userDao" ref="userDaoMs" />
+	</bean>
+	<!-- 获取用户信息 end -->
+
+	
+	<!-- Job 预定消息通知 start 王亚男 -->
+		<bean id="reserveMessageJob" class="com.deppon.dpm.module.management.server.job.ReserveMessageJob">
+		<property name="reserveSubmitSerivce" ref="reserveSubmitSerivce" />
+		<property name="tpushNewsService" ref="tpushNewsService" />
+	</bean>
+	<!-- Job 预定消息通知  end 王亚男 -->
+	
+	<!-- 预定信息提交 start 王亚男-->
+	<bean id="reserveSubmitDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ReserveSubmitDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="reserveSubmitSerivce"
+		class="com.deppon.dpm.module.management.server.service.impl.ReserveSubmitSerivce">
+		<property name="reserveSubmitDao" ref="reserveSubmitDao" />
+	</bean>
+
+	<bean id="resAction" class="com.deppon.dpm.module.management.server.action.ReserveSubmitAction"> 
+		<property name="monitorCountInfoService" ref="monitorCountInfoService"></property>
+	</bean>
+	<!-- 预定信息提交 end 王亚男-->
+	
+	<!-- 拼车信息 start 王亚男 -->
+	<bean id="serveOriginatorsMessageDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ServeOriginatorsMessageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="serveOriginatorsMessageService"
+		class="com.deppon.dpm.module.management.server.service.impl.ServeOriginatorsMessageService">
+		<property name="serveOriginatorsMessageDao" ref="serveOriginatorsMessageDao" />
+		<property name="personlyImageService" ref="personlyImageService" />	
+	</bean>
+
+	<!-- 拼车信息 end 王亚男 -->
+	
+	<!-- 查询拼车信息 start 赵一凡 -->
+	<bean id="queryPcInfoDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.QueryPcInfoDaoImpl">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="queryPcInfoService"
+		class="com.deppon.dpm.module.management.server.service.impl.QueryPcInfoServiceImpl">
+		<property name="queryPcInfoDao" ref="queryPcInfoDao" />
+	</bean>
+	
+	<!--               ccf 收发室消息推送                                                          -->
+	
+	<bean id="sendParcelNewsService"
+		class="com.deppon.dpm.module.management.server.service.impl.SendParcelNewsService">
+		<property name="sendParcelNewsDao" ref="sendParcelNewsDao" />
+	</bean>
+	
+	<bean id="sendParcelNewsDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.SendParcelNewsDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+		<!--               ccf 拼车吧广告                                                         -->
+	
+	<bean id="servePhotoService"
+		class="com.deppon.dpm.module.management.server.service.impl.ServePhotoService">
+		<property name="servePhotoDao" ref="servePhotoDao" />
+	</bean>
+	
+	<bean id="servePhotoDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ServePhotoDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	
+<!-- 	
+	激活组件扫描功能,在包cn.ysh.studio.spring.aop及其子包下面自动扫描通过注解配置的组件
+	<context:component-scan base-package="com.deppon.dpm.module.management.server.service"/>
+	激活自动代理功能
+	<aop:aspectj-autoproxy proxy-target-class="true"/> -->
+	
+	
+	
+</beans>

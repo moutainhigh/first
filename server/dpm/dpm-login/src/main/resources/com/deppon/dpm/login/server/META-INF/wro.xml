@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<groups xmlns="http://www.isdc.ro/wro"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.isdc.ro/wro wro.xsd">
+    <group name="jquerylib">
+		<js>classpath:com/deppon/dpm/login/server/META-INF/scripts/jquery-2.1.1.js</js>
+  	</group>
+  	<group name="login">
+		<js>classpath:com/deppon/dpm/login/server/META-INF/scripts/login.js</js>
+  	</group>
+  	<group name="app">
+		<js>classpath:com/deppon/dpm/login/server/META-INF/scripts/app.js</js>
+  	</group>
+  	<group name="home">
+  		<js>classpath:com/deppon/dpm/login/server/META-INF/scripts//home.js</js>
+		<css>classpath:com/deppon/dpm/login/server/META-INF/styles/home.css</css>
+  	</group>
+  	<group name="common">
+  		<js>classpath:com/deppon/dpm/login/server/META-INF/scripts/common.js</js>
+  	</group>
+</groups>

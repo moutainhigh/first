@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.LoginInfoMonitorDao">
+	
+	<insert id="saveLoginInfo" parameterType="com.deppon.dpm.module.common.shared.domain.LoginInfoMonitorEntity">
+		INSERT INTO login_info (
+			id,
+			user_id,
+			location,
+			os_type,
+			device_token,
+			app_version,
+			phone_model,
+			os_version,
+			phone_mac,
+			login_time,
+			access_ip,
+			create_time
+		)
+		VALUES
+			(
+				NULL,
+				#{userId},
+				#{location},
+				#{osType},
+				#{deviceToken},
+				#{appVersion},
+				#{phoneModel},
+				#{osVersion},
+				#{phoneMac},
+				#{loginTime},
+				#{accessIp},
+				NOW()
+			)
+	</insert>
+	
+	<insert id="saveMobileInfo" parameterType="com.deppon.dpm.module.common.shared.vo.MobileInfoVo">
+		INSERT INTO mobile_info 
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="empCode != null" >
+	        empcode,
+	      </if>
+	      <if test="msgImei != null" >
+	        msg_imei,
+	      </if>
+	      <if test="msgAndroidid != null" >
+	        msg_androidid,
+	      </if>
+	      <if test="msgModel != null" >
+	        msg_model,
+	      </if>
+	      <if test="msgPhonenum != null" >
+	        msg_phonenum,
+	      </if>
+	      <if test="msgSubscriberid != null" >
+	        msg_subscriberid,
+	      </if>
+	      <if test="msgSimserialnumber != null" >
+	        msg_simserialnumber,
+	      </if>
+	      <if test="msgBasebandstring != null" >
+	        msg_basebandstring,
+	      </if>
+	      <if test="msgMacaddress != null" >
+	        msg_macaddress,
+	      </if>
+	      <if test="msgContactphonenumber != null" >
+	        msg_contactphonenumber,
+	      </if>
+	      createtime,
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="empCode != null" >
+	        #{empCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="msgImei != null" >
+	        #{msgImei,jdbcType=VARCHAR},
+	      </if>
+	      <if test="msgAndroidid != null" >
+	        #{msgAndroidid,jdbcType=VARCHAR},
+	      </if>
+	      <if test="msgModel != null" >
+	        #{msgModel,jdbcType=VARCHAR},
+	      </if>
+	      <if test="msgPhonenum != null" >
+	        #{msgPhonenum,jdbcType=VARCHAR},
+	      </if>
+	      <if test="msgSubscriberid != null" >
+	        #{msgSubscriberid,jdbcType=VARCHAR},
+	      </if>
+	      <if test="msgSimserialnumber != null" >
+	        #{msgSimserialnumber,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="msgBasebandstring != null" >
+	        #{msgBasebandstring,jdbcType=VARCHAR},
+	      </if>
+	      <if test="msgMacaddress != null" >
+	        #{msgMacaddress,jdbcType=VARCHAR},
+	      </if>   
+	      <if test="msgContactphonenumber != null" >
+	        #{msgContactphonenumber,jdbcType=VARCHAR},
+	      </if>
+	      NOW(),  
+	    </trim>
+		
+		<!-- (
+	    empcode,
+	    msg_imei,
+	    msg_androidid,
+	    msg_systemmode,
+	    msg_phonenum,
+	    msg_subscriberid,
+	    msg_simserialnumber,
+	    msg_basebandstring,
+	    msg_macaddress,
+	    msg_contactphonenumber,
+	    createtime
+        )
+        VALUES
+	    (
+		#{empCode},
+	    #{msg_imei},
+	    #{msg_androidid},
+	    #{msg_systemmode},
+	    #{msg_phonenum},
+	    #{msg_subscriberid},
+	    #{msg_simserialnumber},
+	    #{msg_basebandstring},
+	    #{msg_macaddress},
+	    #{msg_contactphonenumber},
+	    NOW()
+	    ) -->
+	</insert>
+</mapper>

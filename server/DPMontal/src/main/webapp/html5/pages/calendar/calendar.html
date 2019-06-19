@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="../../css/style.css" rel="stylesheet">
+    <!-- jQuery CDN -->
+    <script src="../../js/jquery-2.1.1.js"></script>
+    <script src="../../js/calendar/festival.js"></script>
+    <script src="../../js/calendar/nl.js"></script>
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" href="../../js/bootstrap/css/bootstrap.min.css">
+    <script src="../../js/bootstrap/js/bootstrap.min.js"></script>
+   
+    <link rel="stylesheet" type="text/css" href="../../js/calendar/calendar.css">
+    <style type="text/css">
+
+        .calendar-lunar {
+            font-size: 8px;
+        }
+
+        div.zabuto_calendar .table th, div.zabuto_calendar .table td {
+            padding: 0 ! important;
+        }
+
+        .right {
+            float: right;
+        }
+
+        .left {
+            float: left;
+        }
+
+        .addScheduleModal .modal-body, .addScheduleModal .modal-footer {
+            padding: 3px 3px ! important;
+        }
+
+        .rest {
+            color: #FA2601;
+            padding-top: 7px;
+        }
+ 		.ofc {
+            color: #4499CC;
+            padding-top: 7px;
+        }
+        .badge-today {
+            padding-top: 5px;
+        }
+        .today {
+            background-color: #373C64;
+        }
+
+        .event {
+            background-color: #FAAF19 ! important;
+        }
+
+        .schedule-opearte {
+            display: inline-block;
+            min-width: 10px;
+            padding: 3px 7px;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 10px;
+            color: #373C64;
+        }
+
+        .btn-deppon {
+            	z-index:10;
+            background-color: #373C64;
+            color: #FFFFFF;
+        }
+        .btn-deppon:active {
+            background-color: #DFDFDF;
+            color: #FFFFFF;
+        }
+    
+		.btn-switch {
+  background-color: #DFDFDF;
+            color: #FFFFFF;
+            
+}
+
+.btn-switch:hover,
+.btn-switch:focus,
+.btn-switch:active,
+.btn-switch.active,
+.btn:hover,
+.btn:focus,
+.open > .dropdown-toggle.btn-switch {
+  background-color: #373C64;
+  border-color: #285e8e;
+color: #FFFFFF;
+}
+
+
+.btn:active{
+  background-color: #FAAF19;
+	color: #000000;
+
+}
+.calendar-month-navigation{
+	z-index:-1;
+	}
+.btn-switch:active,
+.btn-switch.active,
+.open > .dropdown-toggle.btn-switch {
+  background-image: none;
+            color: #FFFFFF;
+}
+.btn-switch.disabled,
+.btn-switch[disabled],
+fieldset[disabled] .btn-switch,
+.btn-switch.disabled:hover,
+.btn-switch[disabled]:hover,
+fieldset[disabled] .btn-switch:hover,
+.btn-switch.disabled:focus,
+.btn-switch[disabled]:focus,
+fieldset[disabled] .btn-switch:focus,
+.btn-switch.disabled:active,
+.btn-switch[disabled]:active,
+fieldset[disabled] .btn-switch:active,
+.btn-switch.disabled.active,
+.btn-switch[disabled].active,
+fieldset[disabled] .btn-switch.active {
+  background-color: #373C64;
+  border-color: #357ebd;
+            color: #FFFFFF;
+}
+.btn-switch .badge {
+  color: #FFFFFF;
+  background-color: #fff;
+}
+	.bar{
+	position:relative;
+	}	
+	
+	.calendar-head span{
+		margin-top:5px;
+	}
+	.selected{
+		 background-color:#f0f0f0;
+	}
+	.font12{
+	margin-top:0px;
+	font-size:12px;
+	}
+	   @font-face {
+            font-family: "Ionicons";
+            src: url("fonts/ionicons.eot?v=1.5.2");
+            src: url("fonts/ionicons.eot?v=1.5.2#iefix") format("embedded-opentype"), url("fonts/ionicons.ttf?v=1.5.2") format("truetype"), url("fonts/ionicons.woff?v=1.5.2") format("woff"), url("fonts/ionicons.svg?v=1.5.2#Ionicons") format("svg");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .dp-navbar-left:before {
+            font-family: 'Ionicons';
+            content: "\f153";
+            font-size: 32px;
+            font-weight: 600;
+            line-height:52px;
+            z-index:10;
+        }
+
+        .dp-navbar {
+            min-height: 64px;
+            margin-bottom: 0px;
+            border-color: #b2b2b2;
+            background-color: #373C64;
+        }
+
+        .dp-navbar-left {
+           	height: 44px;
+            padding: 6px;
+            text-align: left;
+            vertical-align: top;
+            line-height: 32px;
+            font-size: 17px;
+            opacity: 0.8;
+        }
+
+        .dp-navbar-center {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            text-align: center;
+            font-size: 17px;
+            line-height: 64px;
+            z-index:-1;
+            color:white;
+        }
+        
+        .dp-calendar {
+            position: inherit;
+            margin-top: 44px;
+        }
+        .calendar-pra{
+        margin-top: 64px;
+        }
+        .workbreak{
+        　word-break:break-all;
+　　  	word-wrap:break-word;
+			white-space: pre-wrap;
+        
+        }
+     
+    </style>
+
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top dp-navbar" role="navigation" >
+    <div class="depponback dp-navbar-left glyphicon glyphicon-chevron-left" onclick="goback()"></div>
+    <div class="dp-navbar-center" >日程</div>
+</nav>
+<div class="calendar-pra">
+    <div id="my-calendar"></div>
+</div>
+
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading"><span id="scheduleHead1"></span><span class="right" id="scheduleHead2"></span></div>
+    <ul class="list-group">
+        <div class="form-group" id="schedule">
+        </div>
+    </ul>
+</div>
+<!-- Modal -->
+<div class="modal addScheduleModal" id="addScheduleModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" id="saveAddcheduleBtn" data-loading-text="保存..." class="right btn btn-deppon"
+                        autocomplete="off">
+                    保存
+                </button>
+                <button type="button" data-dismiss="modal" class="btn btn-deppon">
+                    关闭
+                </button>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <!--<div class="form-group">-->
+                    <!--<label for="enableUses">可查看人员</label>-->
+                    <!--<input type="email" class="form-control" id="enableUses" placeholder="工号/姓名">-->
+                    <!--</div>-->
+                    <textarea class="form-control" id="addEventTextarea" rows="7"></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+              <div class="btn-group" data-toggle="buttons">
+				  <label id="radio1" class="btn btn-switch active" onclick="finish_options(0)" >
+				    <input type="radio" name="finish_options" value ="0" autocomplete="off" > 未完成
+				  </label>
+				  <label id="radio2" class="btn btn-switch" onclick="finish_options(1)" >
+				    <input type="radio"  name="finish_options" value="1" autocomplete="off" checked> 已完成
+				  </label>
+			</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal "  id="confirmModal" >
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">提示</h4>
+      </div>
+      <div class="modal-body">
+        <p>确定要删除该天的记录？</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="  btn btn-deppon" data-dismiss="modal">取消</button>
+        <button type="button" onclick="deleteEvent()" class="  btn btn-deppon">确定</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="application/javascript">
+var url = "../../../calendarManagerServlet?controller=1";
+var selectDate = new Date();
+var selectMonth = selectDate.getMonth();
+var selectYear = selectDate.getFullYear();
+var selectEvents = [];
+var prevSelectId;
+var isFinish = 0;
+var getParam = function(name){
+    var search = document.location.search;
+    var pattern = new RegExp("[?&]"+name+"\=([^&]+)", "g");
+    var matcher = pattern.exec(search);
+    var items = null;
+    if(null != matcher){
+            try{
+                    items = decodeURIComponent(decodeURIComponent(matcher[1]));
+            }catch(e){
+                    try{
+                            items = decodeURIComponent(matcher[1]);
+                    }catch(e){
+                            items = matcher[1];
+                    }
+            }
+    }
+    return items;
+};
+var userId=getParam("userId");
+var password=getParam("password");
+var useridss = getParam("userid");
+// alert(useridss);
+// alert(userinfoinfo);
+console.log(userId+"=======");
+console.log(password+"------");
+//判断是add还是edit
+var addoredit = 0; 
+$(document).ready(function () {
+    $("#my-calendar").zabuto_calendar({
+        language: "cn",
+        cell_border: true,
+        today: true,
+        show_days: true,
+        weekstartson: 0,
+        legend: [
+            {type: "text", label: "当前", badge: "00"},
+            {type: "block", label: "事件 ", classname: "event"},
+            {type: "text", label: "休息", classname: "legend-rest", badge: "00"}
+        ],
+        ajax: { url: url, modal: false },
+        action: function () {
+            return myDateFunction(this.id, false);
+        },
+        action_nav: function () {
+            return myNavFunction(this.id, false);
+        },
+        nav_icon: { 
+//         	prev: '<i class="depponback glyphicon glyphicon-circle-arrow-left"></i>',
+//         	next: '<i class="depponback glyphicon glyphicon-circle-arrow-right"></i>' 
+			prev:'<button type="button" class="btn btn-deppon" data-toggle="button" autocomplete="off">上一月</button>',
+			next:'<button type="button" class="btn btn-deppon" data-toggle="button" autocomplete="off"> 下一月 </button>'
+        },
+        userId :userId,
+        password:password
+    });
+});
+
+//点击日程调用
+function myDateFunction(id, fromModal) {
+	var divId = "#"+id+"_day";
+	$(prevSelectId).removeClass("selected");
+	prevSelectId = divId;
+	$(divId).addClass("selected");
+    $("#addEventTextarea").val('');
+    $("#date-popover").hide();
+    if (fromModal) {
+        $("#" + id + "_modal").modal("hide");
+    }
+    var date = $("#" + id).data("date");
+    var events = queryDayEventRequest(date);
+    var hasEvent = $("#" + id).data("hasEvent");
+	
+    setSchedule(date,events);
+    if (hasEvent && !fromModal) {
+        return false;
+    }
+    return true;
+}
+function myNavFunction(id) {
+    var nav = $("#" + id).data("navigation");
+    var to = $("#" + id).data("to");
+    selectMonth = to.month;
+    selectYear = to.year;
+}
+/**
+ *格式化时间
+ *
+ * */
+
+Date.prototype.Format = function (fmt) { //author: meizz
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+var strToDate = function (d) {
+    return new Date(d.replace(/-/g, "/"));
+}
+var dateToStr = function (d) {
+    return d.Format("yyyy-MM-dd");
+}
+
+/**
+ * 判断日程内容是否为空
+ * */
+var isScheduleNull = function (d) {
+    if ($("#schedule").innerHTML == '') {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * 设置日程
+ * @param d 日期
+ */
+var setSchedule = function (d,events) {
+    selectDate = d;
+    //显示底部标题
+    var scheduleHead1 = selectDate;
+    var scheduleHead2 = showCal(selectDate);
+
+    $("#scheduleHead1").html(scheduleHead1);
+    $("#scheduleHead2").html(scheduleHead2);
+	
+    //td id
+    var id = "#zabuto_calendar_"+idrandom+"_"+d+"_day";
+    //获取日程
+    if(typeof(events)=="undefined"||events==""||events.length == 0){
+     events = getScheduleByDate(d);
+	}
+    var schedule = "";
+    if (events==''||events.length == 0) {
+        schedule = '' +
+                '    <div class="panel-body">' +
+                '<button type="button" onclick="addScheduleBtn()" class="btn btn-default  btn-lg btn-block">点击添加日程</button>' +
+                '</div>';
+       $(id).removeClass("event");
+    } else {
+		
+        for (var i = 0; i < events.length; i++) {
+            var event = events[i];
+            //添加样式
+             $(id).addClass("event");
+             
+            schedule += ' <li class="list-group-item">' + '' +
+                    '<div class="panel panel-default">' +
+                    '<div class="panel-body workbreak">' +
+                    event.body +'---'+event.isFinish+
+                    '                </div>' +
+                    '                <div class="panel-footer">' +
+
+                    '<span onclick="delScheduleBtnClick(this)" data='+i+'  class="schedule-opearte right">' +
+                    '   <span class="glyphicon glyphicon-trash font12" ></span>'+
+                    '<span class="font12">删除</span>' +
+                    '</span>' +
+                    '<span onclick="editScheduleBtnClick(this)"data='+i+'  class="schedule-opearte">' +
+                    '   <span class="glyphicon glyphicon-edit font12"></span>'+
+                    '<span class="font12">编辑</span>' +
+                    '</span>' +
+                    '  </div></div>' +
+                    '</li>';
+        }
+    }
+
+
+    $("#schedule").html(schedule);
+}
+
+
+var getScheduleByDate = function (d) {
+    //如果没有日程，直接返回
+    var events = [];
+
+    //遍历日程
+    for (var i = 0; i < allEvents.length; i++) {
+        if (d == allEvents[i].date) {
+            events.push(allEvents[i]);
+        }
+    }
+    return events;
+}
+
+
+//点击弹出添加日程框
+var addScheduleBtn = function (d) {
+	isFinish = 0;
+	addoredit = 0;
+	$("#radio1").attr("class",'btn btn-switch active'); 
+	$("#radio2").attr("class",'btn btn-switch'); 
+    $("#myAddModalLabel-date").html(d);
+    $('#addScheduleModal').modal('show');
+};
+var finish_options = function(i){
+	isFinish = i;
+}
+
+
+//添加监听事件
+$('#saveAddcheduleBtn').on('click', function () {
+    var $btn = $(this).button('loading');
+    if(addoredit==0){
+    addEventRequest(selectDate,$("#addEventTextarea").val(),"",isFinish,"ADD");
+    }else{
+        addEventRequest(selectDate,$("#addEventTextarea").val(),"",isFinish,"UPDATE");
+    }
+
+
+});
+
+//编辑按钮
+var editScheduleBtnClick = function (sw) {
+	addoredit = 1;
+	var idx = $(sw).attr("data");
+	if(selectEvents[idx].isFinish=="（已完成）"){
+		//$("input:[name=finish_options]:eq(0)").attr("checked",'checked'); 
+		$("#radio2").attr("class",'btn btn-switch active'); 
+		$("#radio1").attr("class",'btn btn-switch '); 
+		isFinish = 1;
+	}else{
+	//	$("input:[name=finish_options]:eq(1)").attr("checked",'checked'); 
+		$("#radio1").attr("class",'btn btn-switch active'); 
+		$("#radio2").attr("class",'btn btn-switch'); 
+
+		isFinish = 0;
+	}
+	$("#addEventTextarea").val(selectEvents[idx].body);
+    $('#addScheduleModal').modal('show');
+};
+//删除按钮
+var delScheduleBtnClick = function () {
+	$('#confirmModal').modal('show');
+//     delEventRequest(selectDate);
+};
+//确定删除
+var deleteEvent = function(){
+	delEventRequest(selectDate);
+    $("#confirmModal").modal("hide");
+}
+/**
+ * 添加日程
+ * @param u 用户
+ * @param c 内容
+ * @param o 可操作人
+ * @param f 是否完成 0、未完成1、已完成
+ * @param t 操作类型
+ */
+var addEventRequest = function (d,  c, o, f,t) {
+    var rtn = "{\"date\": \""+d+"\", \"operatorid\": \""+o+"\", \"notice\": \""+c+"\", \"finish\": "+f+" }";
+    aaaa(url,rtn,d,  c, o, f,t)
+    /* $.post(url, {"content": rtn, "oprateType": t},
+            function (data) {
+
+    	         timeout(data,userid,password);
+    	         if(data=='userisnull'){
+    	        	 aaaa(url,rtn,d,  c, o, f,t)
+    	         }
+                var resultCode = data.resultCode;
+                if(resultCode==0){
+                	return;
+                }
+                var resultContent = data.resultContent;
+                $("#saveAddcheduleBtn").button('reset')
+                $("#addScheduleModal").modal("hide");
+                
+                var event = {
+                	body: c,
+                	classname: "event",
+                	create: null,
+                	date: d,
+                	isFinish: isFinish==0?"（未完成）":"（已完成）",
+                	operate: null,
+                	type: null
+                }
+                if(addoredit==1){
+                	allEvents=[];
+                }
+                selectEvents[0] = event;
+                allEvents.push(event);
+                setSchedule(d);
+                $("#addEventTextarea").val('');
+            }); */
+}
+function aaaa(url,rtn,d,  c, o, f,t){
+	$.post(url, {"content": rtn, "oprateType": t},
+            function (data) {
+				/*
+    	         timeout(data,userid,password);
+    	         if(data=='userisnull'){
+    	        	 aaaa(url,rtn,d,  c, o, f,t);
+    	         }else{ */
+                var resultCode = data.resultCode;
+                if(resultCode==0){
+                	return;
+                }
+                var resultContent = data.resultContent;
+                $("#saveAddcheduleBtn").button('reset')
+                $("#addScheduleModal").modal("hide");
+                
+                var event = {
+                	body: c,
+                	classname: "event",
+                	create: null,
+                	date: d,
+                	isFinish: isFinish==0?"（未完成）":"（已完成）",
+                	operate: null,
+                	type: null
+                }
+                if(addoredit==1){
+                	allEvents=[];
+                }
+                selectEvents[0] = event;
+                allEvents.push(event);
+                setSchedule(d);
+                $("#addEventTextarea").val('');
+    	        /* } */
+            });
+}
+/**
+ * 修改日程
+ * @param d 日期
+ * @param c 内容
+ * @param o 可操作人
+ * @param f 是否完成 0、未完成1、已完成
+ */
+// var editEventRequest = function (d,  c, o, f) {
+//     c = $("#addEventTextarea").html();
+//     var rtn = "{'date': "+d+", 'operatorid': "+o+", 'notice': "+c+", 'finish': "+f+" }";
+//     $.post(url, {"content": rtn, "oprateType": 'EDIT'},
+//             function (data) {
+//                 var resultCode = data.resultCode;
+//                 var resultContent = data.resultContent;
+//                 $("#saveAddcheduleBtn").button('reset')
+//                 $("#addScheduleModal").modal("hide");
+//                 setSchedule(d);
+//             });
+// }
+/**
+ * 删除日程
+ * @param d 日期
+ * @param u 用户
+ */
+var delEventRequest = function (d) {
+    var rtn = "{\"date\":\""+d+"\"}";
+    aaaaaa(url,rtn,d);
+    /* $.post(url, {"content": rtn, "oprateType": "DELETE"},
+            function (data) {
+
+    	timeout(data);
+                var resultCode = data.resultCode;
+                var resultContent = data.resultContent;
+                for(var i=0;i<allEvents.length;i++){
+                	if(allEvents[i].date==d){
+                		allEvents.splice(i,1);
+                	    setSchedule(d);
+                	}
+                }
+            }); */
+}
+function aaaaaa(url,rtn,d){
+	 $.post(url, {"content": rtn, "oprateType": "DELETE"},
+	            function (data) {
+
+	    	/* timeout(data,userid,password);
+	    	if(data=='userisnull'){
+	    		aaaaaa(url,rtn,d);
+	    	}else{ */
+	                var resultCode = data.resultCode;
+	                var resultContent = data.resultContent;
+	                for(var i=0;i<allEvents.length;i++){
+	                	if(allEvents[i].date==d){
+	                		allEvents.splice(i,1);
+	                	    setSchedule(d);
+	                	}
+	                }
+	    	/* } */
+	            });
+}
+/**
+ * 查询日程
+ * @param m 月份
+ * @param u 用户
+ * 要求返回结果：
+ * [
+ {
+     "date": "2014-10",
+     "isFinish": "是否完成 0、未完成1、已完成",
+     "body": "日程内容",
+     "create": "",
+     "operate":"",
+     "classname": "event"
+ }]
+ */
+var queryEventRequest = function (m, u) {
+    var rtn = { 'u': u, 'm': m };
+    $.post(url, {"content": rtn, "oprateType": 'QUERY'},
+            function (data) {
+                var resultCode = data.resultCode;
+                var resultContent = data.resultContent;
+            });
+}
+
+//根据日期查询当天的事件
+var queryDayEventRequest = function (d) {
+	 var events = [];
+    var rtn = "{\"date\":\""+d+"\"}" ;
+    dddddd(url,rtn,events,d);
+    return events;
+   
+}
+function dddddd(url,rtn,events,d){
+	$.ajax({ 
+        type : "post", 
+        url :url, 
+        data : {"content": rtn, "oprateType": 'QUERY_DATE'},
+        async : false, 
+        success : function(data){ 
+        	/* timeout(data,userid,password);
+        	if(data=='userisnull'){
+        		dddddd(url,rtn,events,d)
+        	}else{ */
+        	data = eval("("+data+")");
+            var resultCode = data.resultCode;
+            var resultContent = data.resultContent;
+            if(resultCode==1){
+                var dataList = eval("("+resultContent+")").dataList;
+                if(dataList!=null){
+                    $.each(dataList, function (k, v) {
+                    	v.date = d;
+                        	events.push(v);
+                    });
+                }
+            }/* } */
+        } 
+        }); 
+    selectEvents = events;
+    return events;
+}
+setSchedule(dateToStr(new Date()));
+
+ function goback(){
+	if(window.deviceType=="IOS"){
+        window.location.href="js-call://IOS/NavCallBack";
+    }else{
+        window.Android.closeAndroid();
+    }
+}
+ 
+ 
+
+</script>
+ <script src="../../js/calendar/calendar.js"></script>
+
+<!--     <script src="../../js/calendar/fastclick.js"></script> -->
+<!--     <script type="text/javascript"> -->
+<!-- //     $(function () { -->
+<!-- // 	    FastClick.attach(document.body); -->
+<!-- // 	}); -->
+<!--     </script> -->
+</body>
+</html>

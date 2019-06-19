@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+        <artifactId>dpm</artifactId>
+        <groupId>com.deppon</groupId>
+        <version>1.0</version>
+    </parent>
+
+	<artifactId>dpm-wfs</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0.0</version>
+	<name>dpm-wfs</name>
+	<properties>
+	  	<bps.version>6.6</bps.version>
+  	</properties>
+	<build>
+	    <resources>
+			<resource>
+				<directory>${basedir}/config/${environment}</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+		    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-common</artifactId>
+			<version>1.0.0</version> 
+		</dependency>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-tongxunlu</artifactId>
+			<version>1.0.0</version> 
+		</dependency>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-login</artifactId>
+			<version>1.0.0</version> 
+		</dependency>
+		<dependency>
+            <groupId>com.deppon</groupId>
+            <artifactId>dpm-news</artifactId>
+            <version>1.0.0</version> 
+        </dependency>
+		<dependency>
+			<groupId>com.deppon</groupId>
+			<artifactId>dpm-projecttools</artifactId>
+			<version>1.0.0</version> 
+		</dependency>
+		<dependency>
+			<groupId>com.bps.json</groupId>
+			<artifactId>json-lib-2.4-jdk15</artifactId>
+			<version>2.4</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>2.5.11</version>
+		</dependency>
+		<dependency>
+		  <groupId>net.sf.ezmorph</groupId>
+		  <artifactId>ezmorph</artifactId>
+		  <version>1.0.6</version>
+		</dependency>
+		<dependency>
+		  <groupId>org.apache.cxf</groupId>
+		  <artifactId>cxf-rt-frontend-jaxws</artifactId>
+		  <version>3.0.2</version>
+		</dependency>
+		
+		
+		<dependency>
+		  	<groupId>javax.ws.rs</groupId>
+		  	<artifactId>jsr311-api</artifactId>
+		  	<version>1.1.1</version>
+		</dependency>
+		
+		
+		<!-- bpms 工作流引擎 API 2015.9.28 gcl -->
+		<!-- bpms-client -->
+	  	<dependency>
+	  		<groupId>com.deppon.bpms</groupId>
+	  		<artifactId>bpms-client</artifactId>
+	  		<version>3.2.1</version>
+	  	</dependency>
+		<!--  hessian-->
+		<dependency>
+		  <groupId>com.deppon.oa</groupId>
+		  <artifactId>hessian</artifactId>
+		  <version>4.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>xstream-1.2.2</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>sdo-api-v2.1.0</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+
+		<!-- BPS -->
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bfs_client</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bfs_client_eos</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bfs_common</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bfs_console</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bfs_engineall</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bfs_interface</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bps-api</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bps-tag</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>bps-taglib4j</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>com.eos.foundation</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-access</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-access-ejb</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-common</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-das</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-data</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-infra</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-runtime</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-sca</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.deppon.bps</groupId>
+			<artifactId>eos-system</artifactId>
+			<version>${bps.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>axis</groupId>    
+			<artifactId>axis</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.22</version>
+		</dependency>
+
+	<!-- 工作流客户端包 -->
+	<dependency>
+		<groupId>com.deppon.weaver</groupId>
+		<artifactId>weaver-client</artifactId>
+		<version>1.0.0 </version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/src/main/lib/weaver-client.jar</systemPath>
+	</dependency> 
+	<dependency>
+		<groupId>com.deppon.weaver</groupId>
+		<artifactId>weaver-client-docs</artifactId>
+		<version>1.0.0 </version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/src/main/lib/weaver-client-docs.jar</systemPath>
+	</dependency> 
+	</dependencies>
+</project>

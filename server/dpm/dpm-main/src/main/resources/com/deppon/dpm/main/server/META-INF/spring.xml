@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xsi:schemaLocation="
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context 
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd
+      http://www.springframework.org/schema/jee 
+      http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+      http://www.springframework.org/schema/tx 
+      http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+      http://www.springframework.org/schema/aop 
+      http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+      
+      http://cxf.apache.org/core
+      http://cxf.apache.org/schemas/core.xsd
+      http://cxf.apache.org/jaxws
+      http://cxf.apache.org/schemas/jaxws.xsd
+      http://cxf.apache.org/jaxrs
+      http://cxf.apache.org/schemas/jaxrs.xsd"
+	default-autowire="byName" default-lazy-init="true">
+	
+	<!-- 首页改版 -->
+	<bean id="mainPageDao"
+		class="com.deppon.dpm.module.main.server.dao.impl.MainPageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="mainPageService"
+		class="com.deppon.dpm.module.main.server.service.impl.MainPageService">
+		<property name="mainPageDao" ref="mainPageDao" />
+		<!-- <property name="emailService" ref="emailService" /> -->
+		<property name="addmessageservice" ref="addmessageservice"></property>
+		<property name="weaverService" ref="weaverWfsService"></property>
+		<property name="calendarService" ref="calendarService" />
+		<property name="noticeMessageService" ref="noticeMessageService"></property>
+		<property name="workItemsListService" ref="workItemsListService"/>
+		<property name="otherOffDutiesService" ref="otherOffDutiesService"></property>
+		<property name="doubtfulExAuditService" ref="doubtfulExAuditService"></property>
+	</bean>
+	
+	<bean id="mainPageAction" 
+	    class="com.deppon.dpm.module.main.server.action.MainPageAction" scope="prototype">
+    	<property name="mainPageService" ref="mainPageService"></property>
+    	<property name="tongxunLuService" ref="tongxunLuService" />
+    </bean>
+    <!-- end -->
+    
+	<!-- 首页广告 -->
+	<bean id="rollAdDao"
+		class="com.deppon.dpm.module.main.server.dao.impl.RollAdDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="rollAdService"
+		class="com.deppon.dpm.module.main.server.service.impl.RollAdService">
+		<property name="rollAdDao" ref="rollAdDao" />
+		
+	</bean>
+	
+	<bean id="rollAdAction" 
+	    class="com.deppon.dpm.module.main.server.action.RollAdAction" scope="prototype">
+    	<property name="rollAdService" ref="rollAdService"></property>
+    	<property name="webUrl" value="${dmp.announce.webUrl}"></property>
+    </bean>
+    <!-- end -->
+    
+    <!-- 首页提示 -->
+	<bean id="messagePointAction" class="com.deppon.dpm.module.main.server.action.MessagePointAction"
+		scope="prototype">
+		<property name="messagePointService" ref="messagePointService"></property>
+		<property name="externalMethodService" ref="externalMethodService"></property>
+	</bean>
+	
+	<!-- 首页提示service -->
+	<bean id="messagePointService" 
+		class="com.deppon.dpm.module.main.server.service.impl.MessagePointService">
+		<property name="messagePointDao" ref="messagePointDao"></property>
+	</bean>
+	
+	<!--首页提示 -->	
+	<bean id="messagePointDao"
+		class="com.deppon.dpm.module.main.server.dao.impl.MessagePointDao" />
+		
+	<!-- 全国打卡 -->
+	<bean id="punchClockGlobalDao"
+		class="com.deppon.dpm.module.main.server.dao.impl.PunchClockGlobalDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="punchClockGlobalService"
+		class="com.deppon.dpm.module.main.server.service.impl.PunchClockGlobalService">
+		<property name="punchClockGlobalDao" ref="punchClockGlobalDao" />
+		<property name="mainPageDao" ref="mainPageDao" />
+		<property name="template" ref="jdbcTemplate"/>
+	</bean>
+	<bean id="punchClockGlobalAction" 
+	    class="com.deppon.dpm.module.main.server.action.PunchClockGlobalAction" scope="prototype">
+    	<property name="punchClockGlobalService" ref="punchClockGlobalService"></property>
+    	<property name="punchUrl" value="${globalPunchUrl}"></property>
+    </bean>
+    <!-- end -->
+    
+    <!-- 全国自动打卡监控 -->
+	<bean id="autoPunchClockMonitorGlobalAction" class="com.deppon.dpm.module.main.server.action.AutoPunchClockMonitorGlobalAction" scope="prototype">
+		<property name="autoPunchClockMonitorService" ref="autoPunchClockMonitorGlobalService"/>
+	</bean>
+	<bean id="autoPunchClockMonitorGlobalService" class="com.deppon.dpm.module.main.server.service.impl.AutoPunchClockMonitorGlobalService">
+		<property name="autoPunchClockMonitorDao" ref="autoPunchClockMonitorGlobalDao"/>
+	</bean>
+	<bean id="autoPunchClockMonitorGlobalDao" class="com.deppon.dpm.module.main.server.dao.impl.AutoPunchClockMonitorGlobalDao"/>
+
+</beans>

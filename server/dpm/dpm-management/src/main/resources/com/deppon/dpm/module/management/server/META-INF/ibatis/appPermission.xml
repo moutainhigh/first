@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.impl.AppPermissionDao">
+
+	<resultMap type="com.deppon.dpm.module.management.shared.domain.AppPermissionEntity"
+		id="permissionMap">
+		<result property="appid" column="appid" />
+		<result property="orgid" column="orgid" />
+		<result property="userid" column="userid"/>
+		<result property="level" column="level"/>
+	</resultMap>
+	
+	<select id="selectPermission" parameterType="int"
+		resultMap="permissionMap">
+		SELECT * FROM app_permission t 
+		WHERE t.status = 'on'
+		<if test="_parameter != null">
+			AND t.appid = #{_parameter}
+		</if>
+	</select>
+	
+	<select id="selectDeptseq" parameterType="string"
+		resultType="string">
+		SELECT t1.deptseq deptseq FROM om_employee t INNER JOIN om_organization
+		t1 ON t.orgid = t1.orgid
+		<where>
+			t.empstatus = 'on'
+			<if test="_parameter != null">
+				AND t.empcode = #{_parameter}
+			</if>
+		</where>
+		limit 1;
+	</select>
+	
+</mapper>

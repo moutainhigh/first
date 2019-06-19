@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.announce.shared.domain.AnnounceUserEntity" >
+	<resultMap id="BaseResultMap" type="com.deppon.dpm.module.announce.shared.domain.AnnounceUserEntity" >
+	    <result column="ID" property="id" jdbcType="VARCHAR" />
+	    <result column="APP_ANNOUNCE_ID" property="appAnnounceId" jdbcType="VARCHAR" />
+	    <result column="EMP_CODE" property="empCode" jdbcType="VARCHAR" />
+	    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+	    <result column="TITLE" property="title" jdbcType="VARCHAR" />
+	    <result column="CREATE_USER_CODE" property="createUserCode" jdbcType="VARCHAR" />
+	    <result column="CREATE_USER_NAME" property="createUserName" jdbcType="VARCHAR" />
+	    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="ANNOUNCE_TYPE" property="announceType" jdbcType="VARCHAR" />
+	    <result column="PUB_TIME_STR" property="pubTimeStr" jdbcType="VARCHAR" />
+	    
+  	</resultMap>
+  	<insert id="insert" parameterType="com.deppon.dpm.module.announce.shared.domain.AnnounceUserEntity" >
+	    INSERT into T_APP_ANNOUNCE_USER
+	    <trim prefix="(" suffix=")" suffixOverrides="," >
+	      <if test="id != null" >
+	        ID,
+	      </if>
+	      <if test="appAnnounceId != null" >
+	        APP_ANNOUNCE_ID,
+	      </if>
+	      <if test="empCode != null" >
+	        EMP_CODE,
+	      </if>
+	      <if test="type != null" >
+	        TYPE,
+	      </if>
+	      <if test="createUserCode != null" >
+	        CREATE_USER_CODE,
+	      </if>
+	      <if test="createUserName != null" >
+	        CREATE_USER_NAME,
+	      </if>
+	      <if test="createTime != null" >
+	        CREATE_TIME,
+	      </if>
+	      <if test="title != null" >
+	        TITLE,
+	      </if>
+	      <if test="announceType != null" >
+	        ANNOUNCE_TYPE,
+	      </if>
+	    </trim>
+	    <trim prefix="values (" suffix=")" suffixOverrides="," >
+	      <if test="id != null" >
+	        #{id,jdbcType=VARCHAR},
+	      </if>
+	      <if test="appAnnounceId != null" >
+	        #{appAnnounceId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="empCode != null" >
+	        #{empCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="type != null" >
+	        #{type,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createUserCode != null" >
+	        #{createUserCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createUserName != null" >
+	        #{createUserName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createTime != null" >
+	        #{createTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="title != null" >
+	        #{title,jdbcType=VARCHAR},
+	      </if>
+	      <if test="announceType != null" >
+	        #{announceType,jdbcType=VARCHAR},
+	      </if>     
+	    </trim>
+   	</insert>
+   	
+   	<sql id="SELECT_BASE_LIST">
+		ID, APP_ANNOUNCE_ID, EMP_CODE, 
+      	TYPE, CREATE_USER_CODE, CREATE_USER_NAME, 
+      	CREATE_TIME,TITLE,ANNOUNCE_TYPE,DATE_FORMAT(CREATE_TIME,'%Y-%m-%d %H:%i:%s') AS PUB_TIME_STR
+   	</sql>
+	
+   	<select id="queryCommonId" parameterType="com.deppon.dpm.module.announce.shared.domain.AnnounceUserEntity"
+		resultType="String">
+		SELECT ID FROM T_APP_ANNOUNCE_USER
+		<where>
+			<if test="appAnnounceId !=null and appAnnounceId != null">
+	      		AND APP_ANNOUNCE_ID =  #{appAnnounceId,jdbcType=VARCHAR}
+			</if>
+			<if test="empCode !=null and empCode != null">
+	      		AND EMP_CODE =  #{empCode,jdbcType=VARCHAR}
+			</if>
+			<if test="type !=null and type != null">
+	      		AND TYPE =  #{type,jdbcType=VARCHAR}
+			</if>
+		</where>
+    </select>
+    
+    <select id="queryCommonAll" parameterType="com.deppon.dpm.module.announce.shared.domain.AnnounceUserEntity"
+		resultMap="BaseResultMap">
+		SELECT 
+		<include refid="SELECT_BASE_LIST" />
+		FROM T_APP_ANNOUNCE_USER
+		<where>
+			<if test="appAnnounceId !=null and appAnnounceId != null">
+	      		AND APP_ANNOUNCE_ID =  #{appAnnounceId,jdbcType=VARCHAR}
+			</if>
+			<if test="empCode !=null and empCode != null">
+	      		AND EMP_CODE =  #{empCode,jdbcType=VARCHAR}
+			</if>
+			<if test="type !=null and type != null">
+	      		AND TYPE =  #{type,jdbcType=VARCHAR}
+			</if>
+		</where>
+		ORDER BY CREATE_TIME DESC
+    </select>
+	
+	<update id="update" parameterType="com.deppon.dpm.module.announce.shared.domain.AnnounceUserEntity" >
+	    UPDATE T_APP_ANNOUNCE_USER
+	     <set >
+	      <if test="id != null" >
+	        ID = #{id,jdbcType=VARCHAR},
+	      </if>
+	      <if test="appAnnounceId != null" >
+	        APP_ANNOUNCE_ID = #{appAnnounceId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="empCode != null" >
+	        EMP_CODE = #{empCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="type != null" >
+	        TYPE = #{type,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createUserCode != null" >
+	        CREATE_USER_CODE = #{createUserCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createUserName != null" >
+	        CREATE_USER_NAME = #{createUserName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createTime != null" >
+	        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="title != null" >
+	        TITLE = #{title,jdbcType=VARCHAR},
+	      </if>
+	      <if test="announceType != null" >
+	        ANNOUNCE_TYPE = #{announceType,jdbcType=VARCHAR},
+	      </if>      
+    	</set>
+	    WHERE ID = #{id,jdbcType=VARCHAR}
+  	</update>
+  
+  	<delete id="delete" parameterType="String" >
+  	 	DELETE FROM T_APP_ANNOUNCE_USER
+  	 		WHERE ID = #{id,jdbcType=VARCHAR}
+  	</delete>
+  
+</mapper>

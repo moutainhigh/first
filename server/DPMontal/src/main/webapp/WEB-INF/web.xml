@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>DPMontal</display-name>
+
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>dpm.root</param-value>
+	</context-param>
+	
+	<!-- 定时任务，向redis服务器中添加登录用户信息和权限信息 -->
+	<listener>
+		<listener-class>com.deppon.montal.util.redis.util.TaskListener</listener-class>
+	</listener>
+	<!-- 定时任务，定时推送工作流代办数 -->
+<!--   	<listener>  -->
+<!--  		<listener-class>com.deppon.dpm.sendMsg.listener.SendMsgTaskListener</listener-class>  -->
+<!--   	</listener> -->
+	<!-- 定时任务，定时推送工作流代办数  重写使用 quartz-->
+	  	<listener> 
+ 		<listener-class>com.deppon.dpm.sendMsg.listener.JpushTaskListenner</listener-class> 
+  	</listener>
+	<listener> 
+ 		<listener-class>com.deppon.montal.module.news.listenner.CompressListenner</listener-class> 
+  	</listener>
+  	<!-- 加载Spring容器配置 -->
+	<listener>
+    	<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>  
+    </listener>
+	<!-- 设置Spring容器加载配置文件路径 -->
+	<context-param>
+    	<param-name>contextConfigLocation</param-name>
+    	<param-value>/WEB-INF/spring.xml</param-value>
+	</context-param>
+	<servlet>
+    	<servlet-name>CXFService</servlet-name>
+    	<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+	</servlet>
+ 
+	<servlet-mapping>
+    	<servlet-name>CXFService</servlet-name>
+    	<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+	
+	
+
+	<!-- Application's user threads launcher -->
+	<!-- <servlet> <servlet-name>AppThreadLaunchAction</servlet-name> <servlet-class>com.deppon.montal.action.AppThreadLaunchAction</servlet-class> 
+		<init-param> <param-name>ImageCompressService</param-name> <param-value>com.deppon.montal.service.ImageCompressService</param-value> 
+		</init-param> <load-on-startup>3</load-on-startup> </servlet> -->
+	<!-- end launch -->
+
+	<!-- GZIP BIGEN <filter> <filter-name>Set Character Encoding</filter-name> 
+		<filter-class>com.deppon.montal.util.gzip.SetCharacterEncodingFilter</filter-class> 
+		<init-param> <param-name>encoding</param-name> <param-value>UTF-8</param-value> 
+		</init-param> </filter> <filter> <filter-name>Compression Filter</filter-name> 
+		<filter-class>com.deppon.montal.util.gzip.CompressionFilter</filter-class> 
+		<init-param> <param-name>compressionThreshold</param-name> <param-value>512</param-value> 
+		</init-param> <init-param> <param-name>debug</param-name> <param-value>0</param-value> 
+		</init-param> </filter> <filter-mapping> <filter-name>Set Character Encoding</filter-name> 
+		<url-pattern>/*</url-pattern> </filter-mapping> <filter-mapping> <filter-name>Compression 
+		Filter</filter-name> <url-pattern>/*</url-pattern> </filter-mapping> GZIP 
+		END -->
+
+	<!--登录session验证filter -->
+	<filter>
+		<filter-name>UserLoginCheckFilter</filter-name>
+		<filter-class>com.deppon.montal.util.UserLoginCheckFilter</filter-class>
+		<init-param>
+			<param-name>include</param-name>
+			<param-value>jsp</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>UserLoginCheckFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
+	<!--登录session验证filter -->
+
+	<!--中文乱码处理过滤 -->
+	<filter>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>com.deppon.montal.util.EncodingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>*</url-pattern> <!--“/*”表示项目下所有资源 -->
+	</filter-mapping>
+	<!--中文乱码处理过滤 -->
+	
+	<welcome-file-list>
+		<welcome-file>login</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!--初始化配置文件信息 -->
+	<servlet>
+		<description></description>
+		<display-name>InitDataServlet</display-name>
+		<servlet-name>InitDataServlet</servlet-name>
+		<servlet-class>com.deppon.montal.util.InitDataServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>InitDataServlet</servlet-name>
+		<url-pattern>/InitDataServlet</url-pattern>
+	</servlet-mapping>
+	
+	<!-- DPM TO APP Server -->
+<!-- 	<servlet> -->
+<!-- 		<description>DPM TO APP Server</description> -->
+<!-- 		<display-name>dpmToApp</display-name> -->
+<!-- 		<servlet-name>DpmToAppServiceAction</servlet-name> -->
+<!-- 		<servlet-class>com.deppon.dpm.webservice.action.DpmToAppServiceAction</servlet-class> -->
+<!-- 		<load-on-startup>3</load-on-startup> -->
+<!-- 	</servlet> -->
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>DpmToAppServiceAction</servlet-name> -->
+<!-- 		<url-pattern>/dpmToAppServiceAction</url-pattern> -->
+<!-- 	</servlet-mapping> -->
+
+	<!-- 场地搬迁资源协调  工作流校验 -->
+	<servlet>
+		<description>check processinstid</description>
+		<servlet-name>CheckProcessinstIdAction</servlet-name>
+		<servlet-class>com.deppon.wfs.workflow.action.CheckProcessinstIdAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CheckProcessinstIdAction</servlet-name>
+		<url-pattern>/checkProcessinstIdAction</url-pattern>
+	</servlet-mapping>
+	
+	<!--FSSC动态客户端-->
+	<servlet>
+		<description></description>
+		<display-name>FSSCWorkItemServiceClient</display-name>
+		<servlet-name>FSSCWorkItemServiceClient</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.webservice.client.FSSCWorkItemServiceClient</servlet-class>
+<!-- 		<load-on-startup>2</load-on-startup> -->
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FSSCWorkItemServiceClient</servlet-name>
+		<url-pattern>/FSSCWorkItemServiceClient</url-pattern>
+	</servlet-mapping>
+	
+	<!-- BAMP系统日志接口 -->
+	<!-- <servlet>
+		<description></description>
+		<display-name>LogRestServiceClient</display-name>
+		<servlet-name>LogRestServiceClient</servlet-name>
+		<servlet-class>com.deppon.bamp.module.log.client.LogRestServiceClient</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LogRestServiceClient</servlet-name>
+		<url-pattern>/LogRestServiceClient</url-pattern>
+	</servlet-mapping> -->
+	
+	<!--初始化配置文件信息 -->
+
+	<servlet>
+		<description></description>
+		<display-name>UserLoginAction</display-name>
+		<servlet-name>UserLoginAction</servlet-name>
+		<servlet-class>com.deppon.montal.login.action.UserLoginAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserLoginAction</servlet-name>
+		<url-pattern>/login</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>UserLoginCheckAction</display-name>
+		<servlet-name>UserLoginCheckAction</servlet-name>
+		<servlet-class>com.deppon.montal.login.action.UserLoginCheckAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserLoginCheckAction</servlet-name>
+		<url-pattern>/UserLoginCheckAction</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>SSOLogonAction</display-name>
+		<servlet-name>SSOLogonAction</servlet-name>
+		<servlet-class>com.deppon.montal.login.action.SSOLogonAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SSOLogonAction</servlet-name>
+		<url-pattern>/logincheck</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>显示首页</description>
+		<display-name>UserShowMainAction</display-name>
+		<servlet-name>UserShowMainAction</servlet-name>
+		<servlet-class>com.deppon.montal.login.action.UserShowMainAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserShowMainAction</servlet-name>
+		<url-pattern>/showmain</url-pattern>
+	</servlet-mapping>
+	<!-- liao begin -->
+	<servlet>
+		<description>ToWorkItemsListAction</description>
+		<display-name>ToWorkItemsListAction</display-name>
+		<servlet-name>ToWorkItemsListAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.ToWorkItemsListAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ToWorkItemsListAction</servlet-name>
+		<url-pattern>/toWorkItemsList</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>ToWorkItemsListIOSAction</description>
+		<display-name>ToWorkItemsListIOSAction</display-name>
+		<servlet-name>ToWorkItemsListIOSAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.ToWorkItemsListIOSAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ToWorkItemsListIOSAction</servlet-name>
+		<url-pattern>/toworklistios</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>QueryWorkItemsListAction</description>
+		<display-name>QueryWorkItemsListAction</display-name>
+		<servlet-name>QueryWorkItemsListAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.QueryWorkItemsListAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>QueryWorkItemsListAction</servlet-name>
+		<url-pattern>/queryWorkItems</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>ToApproveAction</description>
+		<display-name>ToApproveAction</display-name>
+		<servlet-name>ToApproveAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.ToApproveAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ToApproveAction</servlet-name>
+		<url-pattern>/toApprove</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>ToAnnouncementAction</description>
+		<display-name>ToAnnouncementAction</display-name>
+		<servlet-name>ToAnnouncementAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.notice.action.ToAnnouncementAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ToAnnouncementAction</servlet-name>
+		<url-pattern>/toAnnouncement</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>AnnouncementDetailAction</description>
+		<display-name>AnnouncementDetailAction</display-name>
+		<servlet-name>AnnouncementDetailAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.notice.action.AnnouncementDetailAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AnnouncementDetailAction</servlet-name>
+		<url-pattern>/announcementDetail</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<description>QueryWfActivityInstListAction</description>
+		<display-name>QueryWfActivityInstListAction</display-name>
+		<servlet-name>QueryWfActivityInstListAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.QueryWfActivityInstListAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>QueryWfActivityInstListAction</servlet-name>
+		<url-pattern>/querWfActivityInst</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>RollBackWorkFlowAction</description>
+		<display-name>RollBackWorkFlowAction</display-name>
+		<servlet-name>RollBackWorkFlowAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.RollBackWorkFlowAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RollBackWorkFlowAction</servlet-name>
+		<url-pattern>/rollBackWorkFlow</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>GetWFApproverAction</description>
+		<display-name>GetWFApproverAction</display-name>
+		<servlet-name>GetWFApproverAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.GetWFApproverAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetWFApproverAction</servlet-name>
+		<url-pattern>/getApprover</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>GetOutsideCarEntry</description>
+		<display-name>GetOutsideCarEntry</display-name>
+		<servlet-name>GetOutsideCarEntry</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.GetOutsideCarEntryAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetOutsideCarEntry</servlet-name>
+		<url-pattern>/getOutsideCarEntry</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<description>车辆付款</description>
+		<display-name>getVehicleEntry</display-name>
+		<servlet-name>getVehicleEntry</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.GetVehicleEntryAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>getVehicleEntry</servlet-name>
+		<url-pattern>/getVehicleEntry</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>房租</description>
+		<display-name>getRentEntry</display-name>
+		<servlet-name>getRentEntry</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.GetRentEntryAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>getRentEntry</servlet-name>
+		<url-pattern>/getRentEntry</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>通用费用报销单</description>
+		<display-name>getExpenseClaimEntry</display-name>
+		<servlet-name>getExpenseClaimEntry</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.GetExpenseClaimEntryAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>getExpenseClaimEntry</servlet-name>
+		<url-pattern>/getExpenseClaimEntry</url-pattern>
+	</servlet-mapping>
+<!-- 	<servlet> -->
+<!-- 		<description>课程研发</description> -->
+<!-- 		<display-name>curriculumAudit</display-name> -->
+<!-- 		<servlet-name>curriculumAudit</servlet-name> -->
+<!-- 		<servlet-class>com.deppon.montal.module.workitems.action.CurriculumAuditAction</servlet-class> -->
+<!-- 	</servlet> -->
+<!-- 	<servlet-mapping> -->
+<!-- 		<servlet-name>curriculumAudit</servlet-name> -->
+<!-- 		<url-pattern>/curriculumAudit</url-pattern> -->
+<!-- 	</servlet-mapping> -->
+	<servlet>
+		<description>福利费用报销申请</description>
+		<display-name>getbenifitFeeEntry</display-name>
+		<servlet-name>getbenifitFeeEntry</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.GetBenifitFeeEntryAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>getbenifitFeeEntry</servlet-name>
+		<url-pattern>/getbenifitFeeEntry</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>日常付款</description>
+		<display-name>GetDailyPaymentEntry</display-name>
+		<servlet-name>GetDailyPaymentEntry</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.GetDailyPaymentEntryAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetDailyPaymentEntry</servlet-name>
+		<url-pattern>/getDailyPaymentEntry</url-pattern>
+	</servlet-mapping>
+	<!-- liao end -->
+	<!-- yin rollnew begin -->
+	<servlet>
+		<description>图片新闻</description>
+		<display-name>RollNewsListAction</display-name>
+		<servlet-name>RollNewsListAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.notice.action.RollNewsListAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RollNewsListAction</servlet-name>
+		<url-pattern>/rollnewslist</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>图片新闻详情</description>
+		<display-name>RollNewsDetailAction</display-name>
+		<servlet-name>RollNewsDetailAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.notice.action.RollNewsDetailAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RollNewsDetailAction</servlet-name>
+		<url-pattern>/rollnewsdetail</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>压缩图片</description>
+		<display-name>RollNewsImageAction</display-name>
+		<servlet-name>RollNewsImageAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.notice.action.RollNewsImageAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>RollNewsImageAction</servlet-name>
+		<url-pattern>/rollnewsimage</url-pattern>
+	</servlet-mapping>
+	<!-- yin rollnew end -->
+
+	<!-- yin begin -->
+	<servlet>
+		<description>AdresslistDetailAction</description>
+		<display-name>AdresslistDetailAction</display-name>
+		<servlet-name>AdresslistDetailAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.addresslist.action.AdresslistDetailAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AdresslistDetailAction</servlet-name>
+		<url-pattern>/getAdressDetail</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<description>AdresslistQueryAction</description>
+		<display-name>AdresslistQueryAction</display-name>
+		<servlet-name>AdresslistQueryAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.addresslist.action.AdresslistQueryAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AdresslistQueryAction</servlet-name>
+		<url-pattern>/queryAdresslist</url-pattern>
+	</servlet-mapping>
+	<!-- yin end -->
+
+	<!-- WORKFLOW begin -->
+	<servlet>
+		<description>显示审批记录</description>
+		<display-name>ShowApproveInfoAction</display-name>
+		<servlet-name>ShowApproveInfoAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.ShowApproveInfoAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ShowApproveInfoAction</servlet-name>
+		<url-pattern>/showAproval</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>ApproveWFAction</description>
+		<display-name>ApproveWFAction</display-name>
+		<servlet-name>ApproveWFAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.ApproveWFAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ApproveWFAction</servlet-name>
+		<url-pattern>/approveWFAction</url-pattern>
+	</servlet-mapping>
+	<!-- 门户二期httpclient操作 包含获取数据操作，审批操作，获取可回退列表操作，回退操作 -->
+	<servlet>
+		<description>DWFShttpClient</description>
+		<servlet-name>DWFSHttpClient</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.WFSDataAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DWFSHttpClient</servlet-name>
+		<url-pattern>/DWFSHttpClient</url-pattern>
+	</servlet-mapping>
+	<!-- 报账审批Action -->
+	<servlet>
+		<description>FSSCApproveWFAction</description>
+		<display-name>FSSCApproveWFAction</display-name>
+		<servlet-name>FSSCApproveWFAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.FSSCApproveWFAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FSSCApproveWFAction</servlet-name>
+		<url-pattern>/fsscApproveAction</url-pattern>
+	</servlet-mapping>
+	<!-- CRM审批Action -->
+	<servlet>
+		<description>OtherSysApproveWFAction</description>
+		<display-name>OtherSysApproveWFAction</display-name>
+		<servlet-name>OtherSysApproveWFAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.OtherSysApproveWFAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OtherSysApproveWFAction</servlet-name>
+		<url-pattern>/crmApproveWFAction</url-pattern>
+	</servlet-mapping>
+	<!-- 后勤审批servlet -->
+	<servlet>
+		<description>LSPApproveAction</description>
+		<display-name>LSPApproveAction</display-name>
+		<servlet-name>LSPApproveAction</servlet-name>
+		<servlet-class>com.deppon.montal.module.workitems.action.LSPApprovalAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LSPApproveAction</servlet-name>
+		<url-pattern>/lspApproveAction</url-pattern>
+	</servlet-mapping>
+	<!-- 后勤审批走ESB的servlet -->
+  	<servlet>
+	    <servlet-name>LSPESBApproveAction</servlet-name>
+	    <servlet-class>com.deppon.montal.module.workitems.action.LSPESBApproveAction</servlet-class>
+  	</servlet>
+	<servlet-mapping>
+	    <servlet-name>LSPESBApproveAction</servlet-name>
+	    <url-pattern>/lspESBApproveAction</url-pattern>  
+  	</servlet-mapping> 
+	<!-- WORKFLOW end -->
+	<!-- 选择器请求处理的action -->
+  	<servlet>
+	    <servlet-name>GetSelectorAction</servlet-name>
+	    <servlet-class>com.deppon.montal.common.action.SelectorAction</servlet-class>
+  	</servlet>
+	<servlet-mapping>
+	    <servlet-name>GetSelectorAction</servlet-name>
+	    <url-pattern>/getSelectorAction</url-pattern>  
+  	</servlet-mapping> 
+	<servlet>
+		<description></description>
+		<display-name>autofresh</display-name>
+		<servlet-name>autofresh</servlet-name>
+		<servlet-class>com.deppon.montal.util.redis.service.impl.Autofresh</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>autofresh</servlet-name>
+		<url-pattern>/autofresh</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description>download files</description>
+		<display-name>download files</display-name>
+		<servlet-name>downloadFile</servlet-name>
+		<servlet-class>com.deppon.wfs.workflow.action.DownLoadAction</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>downloadFile</servlet-name>
+		<url-pattern>/downloadFiles</url-pattern>
+	</servlet-mapping>
+  
+  <!--出差小助手-->
+  <servlet>
+    <description>ToBusAssistantAction</description>
+    <display-name>ToBusAssistantAction</display-name>
+    <servlet-name>ToBusAssistantAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.ToBusAssistantAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ToBusAssistantAction</servlet-name>
+    <url-pattern>/ToBusAssistant</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>ToBusAssistantDetailAction</description>
+    <display-name>ToBusAssistantDetailAction</display-name>
+    <servlet-name>ToBusAssistantDetailAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.ToBusAssistantDetailAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ToBusAssistantDetailAction</servlet-name>
+    <url-pattern>/ToBusAssistantDetail</url-pattern>
+  </servlet-mapping>
+  <mime-mapping>
+    <extension>xhtml</extension>
+    <mime-type>application/vnd.wap.xhtml+xml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>wml</extension>
+    <mime-type>text/vnd.wap.wml</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>wmls</extension>
+    <mime-type>text/vnd.wap.wmlscript</mime-type>
+  </mime-mapping>
+  <mime-mapping>
+    <extension>wbmp</extension>
+    <mime-type>image/vnd.wap.wbmp</mime-type>
+  </mime-mapping>
+  <jsp-config>
+    <taglib>
+      <taglib-uri>/WEB-INF/tlds/tags.tld</taglib-uri>
+      <taglib-location>/WEB-INF/tld/dpmontaltlds.tld</taglib-location>
+    </taglib>
+  </jsp-config>
+  <servlet>
+    <description></description>
+    <display-name>NewOfRollNewsListAction</display-name>
+    <servlet-name>NewOfRollNewsListAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.NewOfRollNewsListAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>NewOfRollNewsListAction</servlet-name>
+    <url-pattern>/NewOfRollNewsListAction</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>NewOfRollNewsDetailAction</display-name>
+    <servlet-name>NewOfRollNewsDetailAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.NewOfRollNewsDetailAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>NewOfRollNewsDetailAction</servlet-name>
+    <url-pattern>/NewOfRollNewsDetailAction</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>NewToAnnouncementAction</display-name>
+    <servlet-name>NewToAnnouncementAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.NewToAnnouncementAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>NewToAnnouncementAction</servlet-name>
+    <url-pattern>/NewToAnnouncementAction</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>NewAnnouncementDetailAction</display-name>
+    <servlet-name>NewAnnouncementDetailAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.NewAnnouncementDetailAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>NewAnnouncementDetailAction</servlet-name>
+    <url-pattern>/NewAnnouncementDetailAction</url-pattern>
+  </servlet-mapping>
+  
+  <!--zxy 20141014 add -->
+  <servlet>
+    <description>日程管理servlet</description>
+    <display-name>CalendarManagerServlet</display-name>
+    <servlet-name>CalendarManagerServlet</servlet-name>
+    <servlet-class>com.deppon.montal.module.calendar.action.CalendarManagerServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CalendarManagerServlet</servlet-name>
+    <url-pattern>/calendarManagerServlet</url-pattern>
+  </servlet-mapping>
+  <!--gcl 20141018 add-->
+  <servlet>
+    <description>月报--期刊 </description>
+    <display-name>MonthPeriodicalAction</display-name>
+    <servlet-name>MonthPeriodicalAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.MonthPeriodicalAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MonthPeriodicalAction</servlet-name>
+    <url-pattern>/MonthPeriodicalAction</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>月报--文章 </description>
+    <display-name>MonthPaperAction</display-name>
+    <servlet-name>MonthPaperAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.MonthPaperAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MonthPaperAction</servlet-name>
+    <url-pattern>/MonthPaperAction</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>月报--文章详情 </description>
+    <display-name>MonthPaperDetailAction</display-name>
+    <servlet-name>MonthPaperDetailAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.MonthPaperDetailAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MonthPaperDetailAction</servlet-name>
+    <url-pattern>/MonthPaperDetailAction</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>月报--板块 </description>
+    <display-name>MonthPlayoutAction</display-name>
+    <servlet-name>MonthPlayoutAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.MonthPlayoutAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MonthPlayoutAction</servlet-name>
+    <url-pattern>/MonthPlayoutAction</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>月报--板块 </description>
+    <display-name>MonthPaperBylayoutAction</display-name>
+    <servlet-name>MonthPaperBylayoutAction</servlet-name>
+    <servlet-class>com.deppon.montal.module.notice.action.MonthPaperBylayoutAction</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MonthPaperBylayoutAction</servlet-name>
+    <url-pattern>/MonthPaperBylayoutAction</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description>公告图片查询servlet</description>
+    <display-name>AfficheManagerServlet</display-name>
+    <servlet-name>AfficheManagerServlet</servlet-name>
+    <servlet-class>com.deppon.montal.module.affiche.action.AfficheManagerServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AfficheManagerServlet</servlet-name>
+    <url-pattern>/afficheManagerServlet</url-pattern>
+  </servlet-mapping>
+    <servlet>
+    <description>newsListHtml5Action</description>
+    <servlet-name>NewsListHtml5Action</servlet-name>
+    <servlet-class>com.deppon.montal.module.news.action.NewsListHtml5Action</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>NewsListHtml5Action</servlet-name>
+    <url-pattern>/NewsListHtml5Action</url-pattern>
+  </servlet-mapping>  
+  
+  <servlet>
+    <servlet-name>ReplaceNewsList</servlet-name>
+    <servlet-class>com.deppon.montal.module.news.action.ReplaceNewsList</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ReplaceNewsList</servlet-name>
+    <url-pattern>/replace_image</url-pattern>
+  </servlet-mapping>
+  
+  <error-page>
+    <error-code>404</error-code>
+    <location>/appTimeOut.jsp</location>
+  </error-page>
+  <error-page>
+    <error-code>500</error-code>
+    <location>/appTimeOut.jsp</location>
+  </error-page>
+</web-app>

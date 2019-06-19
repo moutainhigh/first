@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.manWorkSet">
+	<!-- 班车管理开始*********************** -->
+	<resultMap id="busSiteResult" type="com.deppon.dpm.module.management.shared.domain.BusSiteInfo">		
+		<result property="id" column="id" jdbcType="INTEGER"/>
+		<result property="siteName" column="site_name" jdbcType="VARCHAR"/>
+		<result property="address" column="address" jdbcType="VARCHAR"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+		<result property="isAct" column="is_act" jdbcType="INTEGER"/>
+		<result property="lineName" column="line_name" jdbcType="VARCHAR"/>
+		<result property="userName" column="user_name" jdbcType="VARCHAR"/>
+		<result property="tel" column="tel" jdbcType="VARCHAR"/>
+	</resultMap>
+	<!-- 根据主键ID查询 -->
+	<select id="selectBusSiteByID" parameterType="String" resultType="com.deppon.dpm.module.management.shared.domain.BusSiteInfo">
+		select *from bus_site_info b where b.id=#{id,jdbcType=INTEGER}
+	</select>
+	<!-- 查询所有站点集合 -->	
+	<select id="selectAllBusSite"  resultMap="busSiteResult">
+		select bsi.id,bsi.site_name,bsi.address,bsi.remark,bsi.is_act,bsi.line_name,bsi.user_name,bsi.tel from bus_site_info bsi
+	</select>
+	<!-- 保存站点维护信息 -->
+	<update id="updateBusSite" parameterType="com.deppon.dpm.module.management.shared.domain.BusSiteInfo">
+		update bus_site_info b set 
+		b.site_name=#{siteName,jdbcType=VARCHAR},
+		b.address=#{address,jdbcType=VARCHAR},
+		b.line_name=#{lineName,jdbcType=VARCHAR},
+		b.user_name=#{userName,jdbcType=VARCHAR},
+		b.tel=#{tel,jdbcType=VARCHAR} where b.id=#{id,jdbcType=INTEGER}
+	</update>	
+	<!-- 根据线路ID删除线路信息 -->
+	<delete id="deleteBusLine" parameterType="int" >
+		delete from bus_line_info where id=#{id,jdbcType=INTEGER}
+	</delete>
+	<!-- 根据线路ID删除线路的所有站点 -->
+	<delete id="deleteBusSiteOfLine" parameterType="int">
+		delete from bus_line_of_site where line_id=#{id,jdbcType=INTEGER}
+	</delete>
+	<!-- 根据下班时间获取线路站点信息 -->
+	<select id="selectSiteOfLineByTime" parameterType="Date" resultType="com.deppon.dpm.module.management.shared.domain.BusMessageView">
+		select *from bus_one_message_view bs where bs.startDate=#{startDate,jdbcType=TIME}
+	</select>
+	<!-- 根据工号判断当前员工是不是班车管理员 -->
+	<select id="checkIsAdmin" parameterType="String" resultType="java.lang.Integer">
+	SELECT COUNT(oe.empname) from om_employee oe,om_organization om 
+	where oe.empcode=#{managerId} and oe.EMPSTATUS='on' and oe.ORGID=om.ORGID and om.orgcode='W01110302'
+	</select>
+	<!-- 班车服务-数据监控 -->
+	<insert id="busServiceWatch"
+		parameterType="com.deppon.dpm.module.common.shared.domain.MonitorCountInfoEntity">
+		INSERT INTO
+			COLLECT_COUNTINFO(USERID,START_TIME,END_TIME,TYPE)
+		values(#{userId,jdbcType=VARCHAR},#{startTime,jdbcType=TIMESTAMP}
+			,#{endTime,jdbcType=TIMESTAMP},#{type,jdbcType=INTEGER})
+	</insert>
+	<!-- 班车管理结束*********************** -->
+	<!-- 工程验收开始****************************************************** -->	
+	<!-- 保存验收任务 -->
+	<insert id="saveCheckTask" parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckTaskEntity">
+		INSERT into proc_check_task(dept_code,dept_name,provider_name,branch_ischeck,is_current_check,check_current_empno,update_date,check_empNo,check_empName,remark)
+		VALUES(
+			#{deptCode,jdbcType=VARCHAR},
+			#{deptName,jdbcType=VARCHAR},
+			#{providerName,jdbcType=VARCHAR},
+			#{branchIsCheck,jdbcType=INTEGER},
+			#{isCurrentCheck,jdbcType=INTEGER},
+			#{checkCurrentEmpNo,jdbcType=VARCHAR},
+			#{updateDate},
+			#{checkEmpNo,jdbcType=VARCHAR},
+			#{checkEmpName,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR}
+		)
+	</insert>
+	<!-- 查询验收任务数量 -->
+	<select id="selectTaskNumByEmpNo" parameterType="String" resultType="java.lang.Integer">
+		SELECT count(*) from proc_check_task pct WHERE pct.check_empNo LIKE 
+		concat('%',#{empNo,jdbcType=VARCHAR},'%') 
+		AND pct.branch_ischeck != 3
+	</select>
+	<!-- 检验项目编号是否重复 -->
+	<select id="checkDeptCode" parameterType="String" resultType="java.lang.Integer">
+		SELECT count(*) from proc_check_task pct WHERE pct.dept_code=#{deptCode,jdbcType=VARCHAR} and pct.branch_ischeck != 0
+	</select>
+	<!--状态为0 ， 检验项目编号是否重复 -->
+	<select id="checkDeptCodeZero" parameterType="String" resultType="java.lang.Integer">
+		SELECT count(*) from proc_check_task pct WHERE pct.dept_code=#{deptCode,jdbcType=VARCHAR} and pct.branch_ischeck = 0
+	</select>
+	<update id="updateCheckTask" parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckTaskEntity">
+		update proc_check_task b set 
+		b.dept_name=#{deptName,jdbcType=VARCHAR}, 
+		b.provider_name=#{providerName,jdbcType=VARCHAR}, 
+		b.branch_ischeck=#{branchIsCheck,jdbcType=INTEGER}, 
+		b.is_current_check=#{isCurrentCheck,jdbcType=INTEGER}, 
+		b.check_current_empno=#{checkCurrentEmpNo,jdbcType=VARCHAR}, 
+		b.update_date=#{updateDate}, 
+		b.check_empNo=#{checkEmpNo,jdbcType=VARCHAR}, 
+		b.check_empName=#{checkEmpName,jdbcType=VARCHAR}, 
+		b.remark=#{remark,jdbcType=VARCHAR} 
+		where b.dept_code=#{deptCode,jdbcType=VARCHAR}
+	</update>
+	<!-- 工程验收结束****************************************************** -->
+	<!-- 收发室开始***************************************** -->
+	<!-- 判断是否收发室管理员 -->
+	<resultMap id="empVO" type="com.deppon.dpm.module.management.shared.vo.EmpVO">		
+		<result property="empId" column="EMPID" jdbcType="INTEGER"/>
+		<result property="empCode" column="empcode" jdbcType="VARCHAR"/>
+		<result property="empName" column="empname" jdbcType="VARCHAR"/>
+		<result property="orgName" column="ORGNAME" jdbcType="VARCHAR"/>
+	</resultMap>
+	<resultMap id="parcelListVO" type="com.deppon.dpm.module.management.shared.vo.ParcelListVO">
+		<result property="id" column="Id" jdbcType="INTEGER"/>
+		<result property="packageId" column="packageId" jdbcType="INTEGER"/>
+		<result property="packageTypeCode" column="packageTypeCode" jdbcType="INTEGER"/>
+		<result property="packageType" column="packageType" jdbcType="VARCHAR"/>
+		<result property="userNo" column="userNo" jdbcType="VARCHAR"/>
+		<result property="userName" column="userName" jdbcType="VARCHAR"/>
+		<result property="receiveDate" column="receiveDate" jdbcType="VARCHAR"/>
+		<result property="parcelState" column="parcelState" jdbcType="INTEGER"/>
+		<result property="postStatus" column="postStatus" jdbcType="INTEGER"/>
+	</resultMap>
+	<select id="checkIsSendAdm" parameterType="String" resultType="java.lang.Integer">
+		SELECT COUNT(oe.empname) from om_employee as  oe,om_organization as  om  
+	where oe.empcode=#{empCode,jdbcType=VARCHAR} and oe.EMPSTATUS='on' and oe.ORGID=om.ORGID and om.orgcode='W010003010205'
+	</select>
+	<!-- 查询详细人员信息 -->	
+	<select id="queryEmpInfo" parameterType="com.deppon.dpm.module.management.shared.vo.EmpVO" resultMap="empVO">
+		SELECT oe.EMPID,oe.empcode,oe.empname,og.ORGNAME,oe.mobileno from om_employee  as  oe ,om_organization  as og  
+		<where>
+			oe.ORGID=og.ORGID   
+			<if test="empName != null and empName != ''">
+				and  oe.empname like CONCAT('%',#{empName,jdbcType=VARCHAR},'%')  LIMIT 0,20  
+			</if>
+			<if test="empCode != null and empCode != ''">
+				and  oe.empcode =#{empCode,jdbcType=VARCHAR}  
+			</if>
+		</where>
+	</select>
+	<!-- 根据当前登录人账号查询已领取包裹列表 -->
+	<select id="queryParcelList" parameterType="String" resultMap="parcelListVO">
+		 SELECT  
+		DISTINCT spm.id as Id ,  
+		spm.packageId as packageId,  
+		spm.packageTypeCode AS packageTypeCode,  
+		spm.packageType AS packageType,  
+		if(spm.postStatus=0,spm.userNo,spa.userNo)  AS userNo,  
+		if(spm.postStatus=0,spm.userName,spa.`name`)  AS userName,  
+		if(spm.postStatus=0,left(spm.toReceiveDate,16),left(spa.updateTime,16))  AS receiveDate,  
+		spm.parcelState AS parcelState,  
+		spm.postStatus AS postStatus  
+		 from send_parcel_massage  as  spm , send_parcel_acting  as spa  
+		 WHERE spm.userNo=#{userNo,jdbcType=VARCHAR}  and if(spm.postStatus=0,spm.postStatus=0,spm.packageId=spa.packageId)  
+		and if(spm.postStatus=1,spm.postStatus=1,spm.postStatus=0)   
+		 <![CDATA[
+		and TO_DAYS(NOW()) - TO_DAYS(DATE_FORMAT(if(spm.postStatus=0,left(spm.toReceiveDate,16),left(spa.updateTime,16)),'%Y-%m-%d')) <= 30
+		 ]]>   
+		and ( spm.parcelState=1 or spm.parcelState=2 )  
+		ORDER BY receiveDate DESC
+	</select>
+	<!-- 委托代领确认接口 -->
+	<insert id="saveParcelAct" parameterType="com.deppon.dpm.module.management.shared.vo.ParcelListVO">
+		INSERT INTO send_parcel_acting(`name`,userNo,packageId,updateTime)
+		VALUES(#{userName,jdbcType=VARCHAR}
+			,#{userNo,jdbcType=VARCHAR}
+			,#{packageId,jdbcType=INTEGER}
+			,#{receiveDate,jdbcType=VARCHAR}
+		)
+	</insert>
+	<!-- 更新包裹代领状态 -->
+	<update id="updatePostStatus" parameterType="com.deppon.dpm.module.management.shared.vo.ParcelListVO">
+	    update send_parcel_massage as spm SET spm.postStatus=1 WHERE spm.packageId =#{packageId,jdbcType=INTEGER}
+	</update>
+	<!-- 校验委托代领重复提交 -->
+	<select id="checkIsRepeat" resultType="java.lang.Integer"  parameterType="com.deppon.dpm.module.management.shared.vo.ParcelListVO">
+		SELECT COUNT(*) from send_parcel_acting as sa where sa.userNo=#{userNo,jdbcType=VARCHAR} and sa.packageId=#{packageId,jdbcType=INTEGER}
+	</select>
+	<!-- 查询通告 -->
+	<select id="queryNotice" resultType="java.lang.String">
+		SELECT content from send_parcel_notice
+	</select>
+	<!-- 更新通告 -->
+	<update id="updateNotice" parameterType="java.lang.String">
+		UPDATE send_parcel_notice SET content=#{noticeContent}
+	</update>	
+	<!-- 收发室结束***************************************** -->
+	<!-- 工程维修   开始 -->
+	<resultMap id="procMainVO" type="com.deppon.dpm.module.management.shared.domain.ProcMaintainEntity">
+		<result property="id" column="id" jdbcType="VARCHAR"/>
+		<result property="userNo" column="userNo" jdbcType="VARCHAR"/>
+		<result property="userName" column="userName" jdbcType="VARCHAR"/>
+		<result property="bill" column="bill" jdbcType="VARCHAR"/>
+		<result property="proName" column="proName" jdbcType="VARCHAR"/>
+		<result property="proCode" column="proCode" jdbcType="VARCHAR"/>
+		<result property="department" column="department" jdbcType="VARCHAR"/>
+		<result property="approvalMark" column="approvalMark" jdbcType="INTEGER"/>
+		<result property="self" column="self" jdbcType="INTEGER"/>
+		<result property="applyReason" column="applyReason" jdbcType="VARCHAR"/>
+		<result property="createDate" column="createDate" jdbcType="VARCHAR"/>
+		<result property="updateDate" column="updateDate" jdbcType="VARCHAR"/>
+		<result property="imgOne" column="imgOne" jdbcType="VARCHAR"/>
+		<result property="imgTwo" column="imgTwo" jdbcType="VARCHAR"/>
+		<result property="imgThree" column="imgThree" jdbcType="VARCHAR"/>
+		<result property="imgFour" column="imgFour" jdbcType="VARCHAR"/>
+		<result property="imgFive" column="imgFive" jdbcType="VARCHAR"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+	</resultMap>
+	<!-- 查询维修申请是否有重复 -->
+	<select id="checkIsRepMan"  resultType="java.lang.Integer" parameterType="java.lang.String">
+		SELECT COUNT(*) from proc_maintain_info as pmi where pmi.userNo=#{userNo}   and  pmi.approvalMark=2 
+	</select>
+	<!-- 保存维修申请单 -->
+	<insert id="saveProcMan" parameterType="com.deppon.dpm.module.management.shared.domain.ProcMaintainEntity">
+		INSERT into proc_maintain_info(userNo,proName,proCode,department,approvalMark,applyReason,createDate,updateDate,
+			imgOne,imgTwo,imgThree,imgFour,imgFive,fisNOtMonitor)
+		VALUES(#{userNo,jdbcType=VARCHAR}
+			,#{proName,jdbcType=VARCHAR}
+			,#{proCode,jdbcType=VARCHAR}
+			,#{department,jdbcType=VARCHAR}
+			,#{approvalMark,jdbcType=INTEGER}
+			,#{applyReason,jdbcType=VARCHAR}
+			,#{createDate}
+			,#{updateDate}
+			,#{imgOne,jdbcType=VARCHAR}
+			,#{imgTwo,jdbcType=VARCHAR}
+			,#{imgThree,jdbcType=VARCHAR}
+			,#{imgFour,jdbcType=VARCHAR}
+			,#{imgFive,jdbcType=VARCHAR}
+			,#{fisNOtMonitor,jdbcType=VARCHAR}
+		)
+	</insert>
+	<!-- 更新维修申请单 和  实时缓存  -->
+	<update id="updateProcMan" parameterType="com.deppon.dpm.module.management.shared.domain.ProcMaintainEntity">
+		UPDATE proc_maintain_info SET	 updateDate=#{updateDate}
+		<if test="proName != null and proName != ''">		
+			,proName=#{proName,jdbcType=VARCHAR} 
+		</if>
+		<if test="proCode != null and proCode != ''">		
+			,proCode=#{proCode,jdbcType=VARCHAR} 
+		</if>	
+		<if test="department != null and department != ''">			
+			,department=#{department,jdbcType=VARCHAR} 
+		</if>
+		<if test="applyReason != null and applyReason != ''">				
+			,applyReason=#{applyReason,jdbcType=VARCHAR} 
+		</if>
+		<if test="imgOne != null and imgOne != ''">		
+			,imgOne=#{imgOne,jdbcType=VARCHAR} 
+		</if>
+		<if test="imgTwo != null and imgTwo != ''">			
+			,imgTwo=#{imgTwo,jdbcType=VARCHAR} 
+		</if>
+		<if test="imgThree != null and imgThree != ''">			
+			,imgThree=#{imgThree,jdbcType=VARCHAR} 
+		</if>
+		<if test="imgFour != null and imgFour != ''">			
+			,imgFour=#{imgFour,jdbcType=VARCHAR} 
+		</if>
+		<if test="imgFive != null and imgFive != ''">			
+			,imgFive=#{imgFive,jdbcType=VARCHAR} 
+		</if>
+		<if test="fisNOtMonitor != null and fisNOtMonitor != ''">			
+			,fisNOtMonitor=#{fisNOtMonitor,jdbcType=VARCHAR} 
+		</if>
+		where id=#{id,jdbcType=VARCHAR}
+	</update>
+	<!-- 点击 “我要申请” 按钮查询暂存的维修单 -->
+	<select id="queryForBtn"  resultMap="procMainVO"  parameterType="java.lang.String">
+		<![CDATA[
+		SELECT pmi.id,pmi.bill,pmi.proName,pmi.proCode,pmi.department,pmi.applyReason,pmi.imgOne,
+		pmi.imgTwo,pmi.imgThree,pmi.imgFour,pmi.imgFive,pmi.fisNOtMonitor
+		from proc_maintain_info as pmi where pmi.userNo=#{userNo}  and  pmi.approvalMark=2
+		 ]]> 
+	</select>
+	<select id="queryForList"  resultMap="procMainVO"  parameterType="java.lang.String">
+		<![CDATA[
+		SELECT pmi.id,pmi.bill,pmi.proName,pmi.proCode,pmi.department,pmi.applyReason,pmi.imgOne,
+		pmi.imgTwo,pmi.imgThree,pmi.imgFour,pmi.imgFive,pmi.fisNOtMonitor
+		from proc_maintain_info as pmi where pmi.id=#{id}
+		 ]]> 
+	</select>
+	<!-- 工程维修   结束 -->
+	<!-- 预订羽毛球室，瑜伽室开始 -->
+	<resultMap id="reserveManWorkVO" type="com.deppon.dpm.module.management.shared.vo.ReserveManWorkVO">		
+		<result property="id" column="id" jdbcType="INTEGER"/>
+		<result property="playRoomId" column="PlayroomId" jdbcType="INTEGER"/>
+		<result property="orderNum" column="orderNum" jdbcType="INTEGER"/>
+		<result property="siteMark" column="siteMark" jdbcType="INTEGER"/>		
+		<result property="status" column="status" jdbcType="INTEGER"/>
+		<result property="roomCode" column="roomCode" jdbcType="VARCHAR"/>
+		<result property="reserveTime" column="reserveTime" jdbcType="VARCHAR"/>
+		<result property="roomName" column="roomName" jdbcType="VARCHAR"/>
+		<result property="areaCode" column="areaCode" jdbcType="VARCHAR"/>
+		<result property="areaName" column="areaName" jdbcType="VARCHAR"/>
+		<result property="siteName" column="siteName" jdbcType="VARCHAR"/>
+		<result property="userNo" column="userNo" jdbcType="VARCHAR"/>
+		<result property="startTime" column="startTime" />
+		<result property="endTime" column="endTime" />
+	</resultMap>
+	<!-- 根据工号判断当前员工是不是场地预订管理员 -->
+	<!-- <select id="checkIsAdmByOrgCode"  parameterType="hashmap"   resultType="java.lang.Integer">
+		SELECT COUNT(oe.empname) from om_employee oe,om_organization om 
+		where oe.empcode=#{userNO} and oe.EMPSTATUS='on' and oe.ORGID=om.ORGID and om.orgcode=#{orgCode}		
+	</select> -->
+	<!-- 根据工号判断当前员工是不是场地预订管理员-->
+	<select id="checkIsAdmByOrgCode"  parameterType="hashmap"   resultType="java.lang.Integer">
+		SELECT if(emp.empNum=1,2,if(us.userNum=1,3,1)) as manaType from  
+		(SELECT COUNT(oe.empname) as empNum  from om_employee oe,om_organization om  
+			where oe.empcode=#{userNO} and oe.EMPSTATUS='on' and oe.ORGID=om.ORGID and om.orgcode=#{orgCode}) as emp , 
+		(SELECT COUNT(rmp.userName) as userNum from reserve_manage_permission as rmp where rmp.userNo=#{userNO}) as us 
+	</select>
+	<!-- 根据查询条件查询当前工号的预订列表 -->
+	<!-- and TO_DAYS(rd.startTime) - TO_DAYS(NOW()) <=#{limitDayNum}  -->
+	<select id="queryResList" resultMap="reserveManWorkVO" parameterType="hashmap">
+	 <![CDATA[
+		SELECT rd.id,rd.PlayroomId,rd.startTime,rd.endTime,CONCAT(DATE_FORMAT(rd.startTime,'%Y-%m-%d %H:%i'),'-',DATE_FORMAT(rd.endTime,'%H:%i')) as reserveTime,rmp.siteName,rmp.roomName,rmp.roomCode,rmp.areaName,rmp.areaCode,rmp.orderNum,rd.status 
+		   from reserve_manage_date rd ,reserve_manage_playroom rmp  
+		where rmp.id=rd.PlayroomId 
+		and rd.userNo=#{userNo} 		
+		and TO_DAYS(rd.startTime) - TO_DAYS(NOW()) >=0 		
+		and rmp.siteMark=#{siteMark} 
+		ORDER BY rd.startTime ASC
+		]]> 	
+	</select>	
+	<!-- 预订羽毛球室，瑜伽室结束 -->
+	<!-- 拼车活动     开始 -->
+	<!-- 发起拼车或者活动取消，修改拼车或者活动 -->
+	<update id="updateOrigInfo" parameterType="com.deppon.dpm.module.management.shared.domain.ServeOriginatorsInfoEntity">
+		update serve_originators_info  as soi	 set soi.updateTime=NOW()
+		<if test="origTel != null and origTel != ''">		
+			,soi.origTel=#{origTel,jdbcType=VARCHAR}
+		</if>
+		<if test="limitNum != null and limitNum != 0">	
+			,soi.limitNum=#{limitNum,jdbcType=INTEGER} 
+		</if>
+		<if test="startPlace != null and startPlace != ''">	
+			,soi.startPlace=#{startPlace,jdbcType=VARCHAR}
+		</if>
+		<if test="midPlace != null and midPlace != ''">	
+			,soi.midPlace=#{midPlace,jdbcType=VARCHAR} 
+		</if>
+		<if test="endPlace != null and endPlace != ''">	
+			,soi.endPlace=#{endPlace,jdbcType=VARCHAR} 
+		</if>
+		<if test="startTime != null">	
+			,soi.startTime=#{startTime} 
+		</if>
+		<if test="partTime != null">	
+			,soi.partTime=#{partTime} 
+		</if>
+		<if test="origState != null and origState != 0">	
+			,soi.origState=#{origState,jdbcType=INTEGER} 
+		</if>
+		<if test="origTitle != null and origTitle != ''">
+			,soi.origTitle=#{origTitle,jdbcType=VARCHAR} 
+		</if>
+		<if test="origImg != null and origImg != ''">
+			,soi.origImg=#{origImg,jdbcType=VARCHAR}  
+		</if>		
+		where soi.id=#{id,jdbcType=INTEGER}		
+	</update>
+	<update id="updatePartInfo" parameterType="com.deppon.dpm.module.management.shared.domain.ServeParticipantsInfoEntity">
+		update serve_participants_info as spi SET spi.updateTime=NOW()  
+		<if test="updateNO != null and updateNO != ''">		
+			,spi.updateNO=#{updateNO,jdbcType=VARCHAR}
+		</if>
+		<if test="partState != null and partState != 0">		
+			,spi.partState=#{partState,jdbcType=INTEGER}	 
+		</if>
+		where spi.id=#{id,jdbcType=INTEGER}	
+	</update>
+	<!-- 拼车活动     结束 -->
+	<!-- 工程勘测     开始 -->
+	<update id="updateSurveyState" parameterType="hashmap">
+		 <![CDATA[
+			UPDATE proc_survey_check set check_state=#{checkState} WHERE id=#{pkyId}
+			]]> 	
+	</update>
+	<!-- 工程勘测     结束 -->
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.LoginInfoMonitorDao">
+	
+	<insert id="saveLoginInfo" parameterType="com.deppon.dpm.module.common.shared.domain.LoginInfoMonitorEntity">
+		INSERT INTO login_info (
+			id,
+			user_id,
+			location,
+			os_type,
+			device_token,
+			app_version,
+			phone_model,
+			os_version,
+			phone_mac,
+			login_time,
+			access_ip,
+			create_time
+		)
+		VALUES
+			(
+				NULL,
+				#{userId},
+				#{location},
+				#{osType},
+				#{deviceToken},
+				#{appVersion},
+				#{phoneModel},
+				#{osVersion},
+				#{phoneMac},
+				#{loginTime},
+				#{accessIp},
+				NOW()
+			)
+	</insert>
+</mapper>

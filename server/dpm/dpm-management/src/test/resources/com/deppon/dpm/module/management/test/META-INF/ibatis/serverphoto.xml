@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.photo">
+	<!-- 判断是否有权限 -->
+	<select id="getPermissions"
+		resultType="String">
+         SELECT r.ORGID
+          FROM om_organization r ,om_employee t 
+         WHERE r.ORGID = t.ORGID 
+         AND r.orgcode ='W01110302' 
+         AND t.empcode=#{userNo};
+	</select>
+
+    <!-- 拼车吧保存图片sql -->
+    
+   <!--  <insert id="insertPhoto" parameterType="java.util.List">
+    
+     insert into serve_notice_info
+     (userNo,noticeImg,createDate)
+      values
+    <foreach collection="list" item="item" index="index" separator=",">
+    <![CDATA[
+     (#{item.userNo},
+     #{item.noticeImg},
+     NOW()) 
+     ]]>
+    </foreach>  
+    </insert> -->
+    
+    <insert id="insertPhoto" parameterType="com.deppon.dpm.module.management.shared.domain.ServeNoticeInfo" >
+    insert into serve_notice_info
+     (userNo,noticeImg,createDate)
+     values (#{userNo},#{noticeImg},NOW());
+    
+    </insert>
+    
+    
+    <!--                   更新图片sql                -->
+   <!-- <update id="updatePhoto" parameterType="java.util.List">
+    <foreach collection="list"  item="item" index="index"  >
+	     update serve_notice_info set
+	    
+	     <![CDATA[
+	      updateDate=NOW(),
+	      userNo = #{item.userNo},
+	      noticeImg=#{item.noticeImg}
+			 where 
+			 id = #{item.id};
+		 ]]>
+		</foreach>
+	</update>  -->
+	
+	<update id="updatePhoto" parameterType="com.deppon.dpm.module.management.shared.domain.ServeNoticeInfo">
+	 update serve_notice_info 
+	 set
+	  updateDate=NOW(),
+	  userNo =#{userNo},
+	   noticeImg=#{noticeImg}
+			 where 
+			 id = #{id};
+	
+	</update>
+	<!--              查询图片sql                 -->
+	<select id="listSer" resultType="com.deppon.dpm.module.management.shared.domain.ServeNoticeInfo">
+	 SELECT
+	 a.id,
+	 a.noticeImg
+	 FROM serve_notice_info a ;
+	</select>
+	
+</mapper>

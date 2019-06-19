@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.foss.module.sync.business.rocket.statement.StatementDao">
+	<resultMap type="com.deppon.foss.module.sync.business.rocket.statement.DidiStatementEntity" id="didiStatementResult">
+		<result column="id" property="id" />
+		<result column="same_or_difference" property="sameOrDifference"/>
+		<result column="offtime" property="offTime"/>
+		<result column="billno" property="billno" />
+		<result column="from_name" property="fromName" />
+		<result column="to_name" property="toName" />
+		<result column="deppon_price" property="depponPrice" />
+		<result column="didi_price" property="didiPrice" />
+		<result column="difference" property="difference" />
+		<result column="lower_price" property="lowerPrice" />
+		<result column="company" property="company" />
+		<result column="applyEmpName" property="applyEmpName" />
+		<result column="applyEmpCode" property="applyEmpCode" />
+		<result column="mcName" property="mcName" />
+		<result column="invoiceTitle" property="invoiceTitle" />
+		<result column="financialDept" property="financialDept" />
+		<result column="accountName" property="accountName" />
+		<result column="contactInfo" property="contactInfo" />
+		<result column="expenseIsOvertime" property="expenseIsOvertime" />
+		<result column="costExplain" property="costExplain" />
+		<result column="accountNature" property="accountNature" />
+		<result column="bankName" property="bankName" />
+		<result column="bankProvinceName" property="bankProvinceName" />
+		<result column="bankCityName" property="bankCityName" />
+		<result column="subbankName" property="subbankName" />
+		<result column="account" property="account" />
+		<result column="costCenterName" property="costCenterName" />
+		<result column="scName" property="scName" />
+		<result column="actualAmount" property="actualAmount" />
+		<result column="bizOccurDate" property="bizOccurDate" />
+		<result column="itemCostExplain" property="itemCostExplain" />
+	</resultMap>
+	<!-- 根据工作流号查询对账单汇总 -->
+	<select id="queryStatementSummaryByNum" parameterType="String" resultType="int">
+		select count(1) from statement_summary where workflow_num =#{workflowNum,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据工作流号更新工作流状态 -->
+	<update id="updateStatementSummaryByWF" parameterType="map">
+		update statement_summary set workflow_status=#{workflowStatus,jdbcType=VARCHAR}
+		where company=#{company,jdbcType=VARCHAR} and
+		workflow_num=#{workflowNum,jdbcType=VARCHAR}
+	</update>
+	<!-- 根据月份和公司名更新工作流号和工作流状态 -->
+	<update id="updateStatementSummary" parameterType="map">
+		update statement_summary set workflow_status=#{workflowStatus,jdbcType=VARCHAR},
+		workflow_num=#{workflowNum,jdbcType=VARCHAR} where company=#{company,jdbcType=VARCHAR} and
+		offTime=#{offTime,jdbcType=VARCHAR}
+	</update>
+	<select id="queryStatement" parameterType="String" resultMap="didiStatementResult">
+		select * from didi_statement where company=#{company,jdbcType=VARCHAR} and left(id,6)=#{offTime,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据bizDataUUID更新工作流号和工作流状态 -->
+	<update id="updateStatementSummaryByMessage" parameterType="map">
+		UPDATE statement_summary
+		<set>
+			<if test="workflowStatus != null and workflowStatus != ''">workflow_status=#{workflowStatus,jdbcType=VARCHAR},</if>
+			<if test="workflowNum != null and workflowNum != ''">workflow_num=#{workflowNum,jdbcType=VARCHAR}</if>
+		</set> 
+		<where>
+			<if test="bizDataUUID != null and bizDataUUID != ''">bizDataUUID=#{bizDataUUID,jdbcType=VARCHAR}</if>
+		</where>
+	</update>
+</mapper>

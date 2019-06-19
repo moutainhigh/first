@@ -1,0 +1,158 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../css/jquery.mobile-1.4.3.min.css" />
+<link rel="stylesheet" href="../../css/jquery.mobile.iscrollview-pull.css" />
+<link rel="stylesheet" href="../../css/jquery.mobile.iscrollview.css" />
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/jquery.mobile-1.4.3.min.js"></script>
+<script src="../../js/iscroll.js"></script>
+<script src="../../js/jquery.mobile.iscrollview.js"></script>
+<script src="../../js/pull-load-data.js"></script>
+<script src="../../js/js.utils.js"></script>
+
+<!--  +"&ajaxAndroidSession="
+												+getvl('androidSession')
+												-->
+</head>
+<script type="text/javascript">
+
+	$(document).ready(function(){
+		query();
+		
+		  $("#keySubmit").on("tap",function(){
+			   	//alert(42143);
+			  });            
+	});
+
+	var pageNum = 1;
+	function query(){
+// 		var androidSession = '<%=request.getParameter("androidSession")%>';
+		query_flag = "0";
+		var pageSize = 8;
+		var key = $('#key').val();
+		
+		key = encodeURIComponent(encodeURIComponent(key)).replace(/%20/g, "+");
+		$.ajax({
+			   type: "GET",
+			   url: "../../../ToBusAssistant",
+					data : "key=" + filter(key) + "&pageNum=" + pageNum
+							+ "&pageSize=" + pageSize + "&timestamp="
+							+ new Date().getTime() + "&ajaxAndroidSession="
+							+ getvl('androidSession'),
+					async : false,
+					cache : false,
+					success : function(msg) {
+						   
+						  if(msg == ''){
+								 if(pageNum == 1){
+									// todo
+								 }
+						     }else{
+						    	 if(msg.indexOf("<html")>= 0){
+						    		 //重定向至appTimeOut页面
+						    		  window.location.href="../../../appTimeOut.jsp";
+// 						    		 window.location.href = "http://10.224.68.27:8080/DPMontal_0925/appTimeOut.jsp";
+						    		// window.location.href="../../../login.jsp";
+						    		 return;
+						    	 }
+						    		var datas = eval("(" + msg + ")");
+									for (var i = 0; i < datas.length; i++) {
+										var liStr = "<li data-filtertext=><a data-ajax='false' href=../../.."
+												+ "/html5/pages/assistant/assistant_detail.html?ID="
+												+ datas[i].ID
+												+"&ajaxAndroidSession="
+												+ getvl('androidSession')
+												+"&unread=1 class='ui-btn ui-btn-icon-right ui-icon-carat-r'><h3>"
+												+ datas[i].TITLE
+												+ "</h3></a></li>";
+										$("#key").append(liStr);
+									}
+									//window.location = "js-call://IOS/DataLoadFinish";
+						     }
+					}
+				});
+		page();
+	}
+	// 翻页
+	function page() {
+		pageNum++;
+	}
+
+	$(document).on("pageinit", "#pageView", function() {
+
+	});
+</script>
+
+<style >
+	.iscroll-scroller{
+		border:1px solid white;
+		position:relative;
+	}
+	
+	 .ui-icon-myicon:after {
+            background-image: url("../../../images/back.png");  /**你的图片，路径是相对于当前使用文件可以访问到的*/
+            background-size: 48px 48px;
+            border-radius: 0; /*图标形态，0=方形，不设置就是默认的圆形*/
+ }
+</style>
+
+<body>
+<!-- 
+	<div class="pull-demo-page"  data-role="page">
+
+		<div data-role="header">
+			<h1>任免公告</h1>
+		</div>
+		<div data-iscroll="" class="iscroll-pulldown">
+			<div class="iscroll-pulldown">
+				<span class="iscroll-pull-icon"></span><span
+					class="iscroll-pull-label"></span>
+			</div>
+		</div>
+		<div role="main" class="ui-content" id="pageView">
+
+			<ul data-role="listview" data-filter="true"
+				data-filter-placeholder="请输入你要搜索的关键字..." data-inset="true" id="key">
+				
+				<input type="button" id="keySubmit" value="历史搜索" />
+				
+			</ul>
+		</div>
+			<div data-role="footer">
+				<h4>Footer content</h4>
+			</div>
+
+	</div> -->
+	 <div class="pull-demo-page" data-role="page">
+       <div data-role="header" data-position="inline"  style="display: inline;">
+		<a href="#"  class="ui-shadow  ui-btn-icon-top ui-icon-myicon"  data-transition="slide"></a>  
+		<h1>02020202</h1>
+		</div>
+      
+      <div data-iscroll="" data-role="content">
+        
+        <!-- <div class="iscroll-pulldown">
+          <span class="iscroll-pull-icon"></span><span class="iscroll-pull-label"></span>
+        </div> -->
+
+			<ul data-role="listview" data-filter="true"
+				data-filter-placeholder="请输入你要搜索的关键字..." data-inset="true" id="key">
+			
+			</ul>
+
+			<div class="iscroll-pullup">
+          <span class="iscroll-pull-icon"></span>
+		  <span class="iscroll-pull-label" data-iscroll-loading-text="正在加载更多......" data-iscroll-pulled-text="上拉加载更多">Custom reset text</span>
+
+        </div>
+        
+        </div>
+      
+      </div>
+</body>
+</html>

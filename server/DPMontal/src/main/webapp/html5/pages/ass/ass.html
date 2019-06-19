@@ -1,0 +1,21 @@
+<ion-view title="出差助手" load-compent="isShow">
+    <ion-nav-buttons side="left">
+        <button class="depponback button-icon icon ion-ios7-arrow-left button back-button first-page" ng-click="back()"></button>
+    </ion-nav-buttons>
+<ion-content>
+    <ion-list>
+       <a class="item " ng-repeat="item in items track by $index"  href="#/assDetail/{{item.ID}}">
+             <span class="item-note">
+	       {{item.TITLE}}
+	    </span>
+        </a>
+    </ion-list>
+    <ion-infinite-scroll
+            ng-if="moreDataCanBeLoaded"
+            on-infinite="loadMore()"
+            icon="ion-loading-c"
+            distance="1%">
+    </ion-infinite-scroll>
+    <div class="center">{{nullNews==true?"没有更多内容":""}}</div>
+</ion-content>
+</ion-view>

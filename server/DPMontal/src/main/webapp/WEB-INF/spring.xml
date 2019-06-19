@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://cxf.apache.org/jaxws
+			http://cxf.apache.org/schemas/jaxws.xsd
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	
+	<context:property-placeholder location="classpath*:prop.properties" />
+	<bean id="calendarManagerService" class="com.deppon.montal.module.calendar.service.CalendarManagerService"></bean>
+	<bean id="afficheManagerService" class="com.deppon.montal.module.affiche.service.AfficheManagerService"></bean>
+	
+	<!-- 日程查询接口 -->
+	<jaxws:client id="calendarService"
+		serviceClass="com.deppon.dpm.webserviceclient.calendar.dip.portal.main.calendar.CalendarService"
+		address="${esb.ws}/dpm2dip/calendar?wsdl">
+		<!-- 打印Log，仅供测试 -->
+		<jaxws:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature"></bean>
+		</jaxws:features>
+	</jaxws:client>
+	<!-- 公告图片查询接口 -->
+	<jaxws:client id="innerGgService"
+		serviceClass="com.deppon.dpm.webserviceclient.affiche.dip.integrateportal.informationcenter.bulletinmanage.InnerGgService"
+		address="${esb.ws}/dpm2oa/popadvert?wsdl">
+		<!-- 打印Log，仅供测试 -->
+		<jaxws:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature"></bean>
+		</jaxws:features>
+	</jaxws:client>
+	<!-- 人员待办工作流数查询功能发布成为接口 -->
+	<bean id="dpmToAppServiceImpl" class="com.deppon.dpm.webservice.dpmtoappservice.DpmToAppServiceImpl">
+	</bean>
+	<jaxws:endpoint id="webServiceInterface" implementor="#dpmToAppServiceImpl" address="/dpmToAppServiceImpl">
+	</jaxws:endpoint>
+</beans>

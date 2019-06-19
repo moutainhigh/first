@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.reserveSubmit" >
+	
+	<!-- 查询某场地所有任务列表 -->
+	<select id="getReserveTimeList" parameterType="java.util.Map" resultType="com.deppon.dpm.module.management.shared.domain.TimeEntity">
+		SELECT startTime,endTime from reserve_manage_date 
+			where playroomId=#{playRoomId} AND DATE_FORMAT(startTime,'%Y-%m-%d')=#{date} AND status=0  for update;
+	</select>
+	
+	<insert id="insertEntity" parameterType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity">
+		INSERT INTO reserve_manage_date 
+		(playroomid,userNo,userName,userphone,startTime,endTime,createTime,updatetime,status,statusUserNo)
+		 VALUES 
+		(#{playRoomId},#{userNo},#{userName},#{userphone},#{startTime},#{endTime},NOW(),NOW(),0,#{userNo}) ;
+	</insert>
+	
+	<!--查询用户预定某类型场地的所有  -->
+	<select id="selectTimeList"  parameterType="java.util.Map" resultType="com.deppon.dpm.module.management.shared.domain.TimeEntity">
+		SELECT a.startTime,a.endTime from reserve_manage_date a,reserve_manage_playroom b 
+			where a.playroomId=b.id AND b.siteMark=#{siteMark} AND a.userNo=#{userNo} 
+			AND DATE_FORMAT(a.startTime,'%Y-%m-%d')=#{date} AND status!=1 ;
+	</select>
+	
+	<select id="getRecordList" parameterType="java.util.Map" resultType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity">
+		SELECT b.* , a.areaCode,a.areaName,a.roomCode,a.roomName,a.siteMark,a.siteName FROM reserve_manage_playroom a ,reserve_manage_date b
+		where a.id = b.PlayroomId  and startTime BETWEEN #{fromTime} and #{toTime} and b.status=0
+	</select>
+	
+</mapper>

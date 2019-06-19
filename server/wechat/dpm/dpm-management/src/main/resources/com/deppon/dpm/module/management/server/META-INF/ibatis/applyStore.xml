@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.applyStore">
+
+	<resultMap type="com.deppon.dpm.module.management.shared.domain.ApplyStore"
+		id="baseMap">
+		<result property="appId" column="id" />
+		<result property="count" column="down_load_count" />
+		<result property="size" column="size"/>
+		<result property="autoUpdate" column="auto_update"/>
+		<result property="enName" column="en_name" />
+		<result property="cnName" column="cn_name" />
+		<result property="summary" column="summary" />
+		<result property="status" column="status"/>
+		<result property="partnerPermission" column="partner_permission"/>
+		<result property="createTime" column="create_time" />
+		<result property="defaultApp" column="default_app" />
+		<result property="versionType" column="version_type" />
+		<result property="hasResources" column="has_resources" />
+		<result property="appContent" column="app_content" />
+		<result property="appFile" column="app_file" />
+		<result property="appStars" column="app_stars" />
+		<result property="appraiseCount" column="appraise_count" />
+		<result property="appOrder" column="app_order"/>
+		<result property="iosAppVersion" column="ios_appVersion"/>
+		<result property="androidAppVersion" column="android_appVersion"/>
+		<result property="downloadUrl" column="download_url"/>
+		<result property="downloadLine" column="download_line"/>
+	</resultMap>
+	
+	<resultMap type="com.deppon.dpm.module.management.shared.domain.ApplyStore" 
+		id="applyResult">
+		<id column="id" property="appId"/>
+		<result property="appId" column="id" />
+		<result property="count" column="down_load_count" />
+		<result property="size" column="size"/>
+		<result property="autoUpdate" column="auto_update"/>
+		<result property="enName" column="en_name" />
+		<result property="cnName" column="cn_name" />
+		<result property="summary" column="summary" />
+		<result property="status" column="status"/>
+		<result property="partnerPermission" column="partner_permission"/>
+		<result property="createTime" column="create_time" />
+		<result property="defaultApp" column="default_app" />
+		<result property="versionType" column="version_type" />
+		<result property="hasResources" column="has_resources" />
+		<result property="appContent" column="app_content" />
+		<result property="appFile" column="app_file" />
+		<result property="appStars" column="app_stars" />
+		<result property="appraiseCount" column="appraise_count" />
+		<result property="appOrder" column="app_order"/>
+		<result property="iosAppVersion" column="ios_appVersion"/>
+		<result property="androidAppVersion" column="android_appVersion"/>
+		<result property="downloadUrl" column="download_url"/>
+		<result property="downloadLine" column="download_line"/>
+		
+		<collection property="appAutoRefreshControlList" javaType="java.util.ArrayList"
+			ofType="com.deppon.dpm.module.common.shared.domain.AppAutoRefreshControlEntity">
+			<id column="bid" property="id"/>
+			<result property="id" column="bid" />
+			<result property="appId" column="appId"/>
+			<result property="osType" column="os_type"/>
+			<result property="judgeSymbol" column="judge_symbol"/>
+			<result property="appVersion" column="app_version"/>
+		</collection>
+	</resultMap>
+	
+	<resultMap type="com.deppon.dpm.module.management.shared.domain.ApplyDevice"
+		id="deviceBaseMap">
+		<result property="appDeviceId" column="id" />
+		<result property="applyStoreId" column="apply_store_id" />
+		<result property="versionType" column="version_type" />
+		<result property="deviceToken" column="device_token" />
+		<result property="osType" column="os_type" />
+		<result property="remark" column="remark" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+
+	<update id="download" parameterType="int">
+		update apply_store set
+		down_load_count=down_load_count+1
+		where id =#{id}
+	</update>
+
+	<select id="list" resultMap="applyResult">
+		select a.id,a.down_load_count,a.size,a.auto_update,a.en_name,a.cn_name,
+			a.partner_permission,a.summary,a.create_time,a.default_app,
+			a.version_type,a.has_resources,a.ios_appVersion,a.android_appVersion,
+			a.download_url,a.download_line, 
+			b.id bid,b.appId,b.os_type,b.judge_symbol,b.app_version
+		from apply_store a 
+		left join app_auto_refresh_control b on a.id = b.appId
+		where a.status = 'on'
+		order by a.app_order
+	</select>
+	
+	<select id="getApplyStoreCount" resultType="long">
+		select count(1) from apply_store
+	</select>
+
+	<select id="getSort" parameterType="string" resultType="string">
+		select
+		sort_str from apply_store_sort where emp_code =#{userId} limit 0,1 
+	</select>
+
+	<select id="updateSort" parameterType="map">
+		INSERT INTO
+		apply_store_sort (emp_code,sort_str)
+		VALUES (#{userId}, ${sortStr})
+		ON
+		DUPLICATE KEY
+		UPDATE emp_code =#{userId}, sort_str= ${sortStr}
+	</select>
+	
+	<select id="getApplyStoreByid" resultMap="baseMap" parameterType="int">
+		SELECT
+			t.id,
+			t.down_load_count,
+			t.size,
+			auto_update,
+			t.en_name,
+			t.cn_name,
+			t.summary,
+			t.create_time,
+			t.default_app,
+			t.version_type,
+			t.has_resources,
+			t.app_content,
+			t.app_file,
+			case WHEN tt.app_stars is null or tt.app_stars = '' THEN  0 ELSE  tt.app_stars end as app_stars,
+			case WHEN tt.appraise_count is null or tt.appraise_count = '' THEN  0 ELSE  tt.appraise_count end as appraise_count
+		FROM
+			apply_store t LEFT JOIN  
+			(
+				SELECT
+					appid,
+					COUNT(empcode) AS appraise_count,
+					round(avg(app_stars)) AS app_stars
+				FROM
+					apply_store_appraise
+				WHERE
+					`status` = '0'
+				AND appid = #{appId}
+			) tt on t.id = tt.appid
+		WHERE
+			 t.id = #{appId} 
+	</select>
+	
+	<select id="listApplyStore" resultMap="applyResult" parameterType="map">
+		select a.id,a.down_load_count,a.size,a.auto_update,a.en_name,a.cn_name,
+			a.status,a.partner_permission,a.summary,a.create_time,a.default_app,
+			a.version_type,a.has_resources,a.app_content,a.app_file,a.app_order,
+			a.ios_appVersion,a.android_appVersion,a.download_line,a.download_url,
+			b.id bid,b.appId,b.os_type,b.judge_symbol,b.app_version
+		from apply_store a
+		left join app_auto_refresh_control b on a.id = b.appId
+		<where>
+			1 = 1
+			<if test="appId != null and appId != 0">
+				and a.id=#{appId}
+			</if>
+		</where> 
+		order by a.app_order limit #{begin},#{pageSize}
+	</select>
+	
+	<delete id="deleteApplyStore" parameterType="int" >
+  	 	DELETE FROM APPLY_STORE 
+  	 		WHERE id = #{id} 
+  	</delete>
+  	
+  	<insert id="insertApplyStore" parameterType="com.deppon.dpm.module.management.shared.domain.ApplyStore">
+		insert into APPLY_STORE 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="appId != null">
+				id,
+			</if>
+			<if test="enName != null">
+				en_name,
+			</if>
+			<if test="cnName != null">
+				cn_name,
+			</if>
+			<if test="size != null and size != ''">
+				size,
+			</if>
+			<if test="autoUpdate != null">
+				auto_update,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+			<if test="partnerPermission != null">
+				partner_permission,
+			</if>
+			<if test="summary != null">
+				summary,
+			</if>
+			<if test="defaultApp != null">
+				default_app,
+			</if>
+			<if test="versionType != null">
+				version_type,
+			</if>
+			<if test="hasResources != null">
+				has_resources,
+			</if>
+			<if test="appContent != null">
+				app_content,
+			</if>
+			<if test="appFile != null">
+				app_file,
+			</if>
+			<if test="appOrder != null">
+				app_order,
+			</if>
+			<if test="downloadLine != 0">
+				download_line,
+			</if>
+			<if test="downloadUrl != null and downloadUrl != ''">
+				download_url,
+			</if>
+				ios_appVersion,
+				android_appVersion,
+				create_time,
+				update_time
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="appId != null">
+				#{appId},
+			</if>
+			<if test="enName != null">
+				#{enName},
+			</if>
+			<if test="cnName != null">
+				#{cnName},
+			</if>
+			<if test="size != null and size != ''">
+				#{size},
+			</if>
+			<if test="autoUpdate != null">
+				#{autoUpdate},
+			</if>
+			<if test="status != null">
+				#{status},
+			</if>
+			<if test="partnerPermission != null">
+				#{partnerPermission},
+			</if>
+			<if test="summary != null">
+				#{summary},
+			</if>
+			<if test="defaultApp != null">
+				#{defaultApp},
+			</if>
+			<if test="versionType != null">
+				#{versionType},
+			</if>
+			<if test="hasResources != null">
+				#{hasResources},
+			</if>
+			<if test="appContent != null">
+				#{appContent},
+			</if>
+			<if test="appFile != null">
+				#{appFile},
+			</if>
+			<if test="appOrder != null">
+				#{appOrder},
+			</if>
+			<if test="downloadLine != 0">
+				#{downloadLine},
+			</if>
+			<if test="downloadUrl != null and downloadUrl != ''">
+				#{downloadUrl},
+			</if>
+				#{iosAppVersion},
+				#{androidAppVersion},
+				now(),
+				now()
+		</trim>
+	</insert>
+	<update id="updateApplyStore" parameterType="com.deppon.dpm.module.management.shared.domain.ApplyStore" >
+	    UPDATE APPLY_STORE 
+	     <set >
+	      <if test="enName != null" >
+	        en_name = #{enName},
+	      </if>
+	      <if test="cnName != null" >
+	        cn_name = #{cnName},
+	      </if>
+	        size = #{size},
+	      <if test="autoUpdate != null">
+	      	auto_update = #{autoUpdate},
+	      </if>
+	      <if test="status != null" >
+	        status = #{status},
+	      </if>
+	      <if test="partnerPermission != null" >
+	        partner_permission = #{partnerPermission},
+	      </if>
+	      <if test="summary != null" >
+	        summary = #{summary},
+	      </if>
+	      <if test="defaultApp != null" >
+	        default_app = #{defaultApp},
+	      </if>
+	      <if test="versionType != null" >
+	        version_type = #{versionType},
+	      </if>
+	      <if test="hasResources != null" >
+	        has_resources = #{hasResources},
+	      </if>
+	      <if test="appContent != null" >
+	        app_content = #{appContent},
+	      </if>
+	      <if test="appFile != null" >
+	        app_file = #{appFile},
+	      </if>
+	      <if test="appOrder != null" >
+	        app_order = #{appOrder},
+	      </if>
+	       ios_appVersion = #{iosAppVersion},
+		   android_appVersion = #{androidAppVersion},
+		   download_line = #{downloadLine},
+		   download_url = #{downloadUrl},
+	       update_time = now() 
+    	</set>
+	    WHERE id = #{appId} 
+  	</update>
+  	
+  	<update id="updateDLoadLine" parameterType="int">
+  		UPDATE apply_store SET download_line = #{downloadLine} 
+  	</update>
+  	
+	<!-- 设备号对应应用编号 -->
+	<!-- 不传条件，默认只查询200条数据，防止数据过多 -->
+	<select id="applyDeviceList" resultMap="deviceBaseMap" parameterType="map">
+		select 
+		id,device_token,apply_store_id,version_type,os_type,remark,update_time 
+		FROM apply_store_device 
+		<where>
+			1 = 1 
+			<if test="deviceToken != null and deviceToken != ''">
+				and device_token=#{deviceToken} 
+			</if>
+			<if test="applyStoreId != null and applyStoreId != 0">
+				and apply_store_id=#{applyStoreId} 
+			</if>
+		</where>
+		limit 0,200 
+	</select>
+	
+	<delete id="deleteApplyDevice" parameterType="map" >
+  	 	DELETE FROM APPLY_STORE_DEVICE 
+  	 	<where>
+			 device_token=#{deviceToken} 
+			 AND apply_store_id IN (
+				 SELECT t.id  FROM  apply_store t  
+				 WHERE  t.id IN 
+				<foreach collection="appIdList" open="(" close=")" separator="," item="id">
+					#{id}
+				</foreach>
+				AND t.default_app != '0'
+			) 
+		</where>
+  	</delete>
+  	<delete id="deleteAllApplyDevice" parameterType="map" >
+  	 	DELETE FROM APPLY_STORE_DEVICE 
+  	 	<where>
+			 device_token=#{deviceToken} 
+			 AND apply_store_id not IN (
+				 SELECT t.id FROM apply_store t 
+				 WHERE t.default_app = '0'
+			 )
+		</where>
+  	</delete>
+  	
+  	<insert id="insertApplyDevice" parameterType="com.deppon.dpm.module.management.shared.domain.ApplyDevice">
+		insert into apply_store_device 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="deviceToken != null">
+				device_token,
+			</if>
+			<if test="applyStoreId != null">
+				apply_store_id,
+			</if>
+			<if test="versionType != null">
+				version_type,
+			</if>
+			<if test="osType != null">
+				os_type,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+				update_time
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="deviceToken != null">
+				#{deviceToken},
+			</if>
+			<if test="applyStoreId != null">
+				#{applyStoreId},
+			</if>
+			<if test="versionType != null">
+				#{versionType},
+			</if>
+			<if test="osType != null">
+				#{osType},
+			</if>
+			<if test="remark != null">
+				#{remark},
+			</if>
+				now() 
+		</trim>
+	</insert>
+	<update id="updateApplyDevice" parameterType="com.deppon.dpm.module.management.shared.domain.ApplyDevice" >
+	    UPDATE APPLY_STORE_DEVICE 
+	     <set>
+	      <if test="versionType != null" >
+	        version_type = #{versionType},
+	      </if>
+	      <if test="osType != null" >
+	        os_type = #{osType},
+	      </if>
+	      <if test="remark != null" >
+	        remark = #{remark}
+	      </if>
+    	</set>
+	    <where>
+			 apply_store_id = #{applyStoreId} and device_token=#{deviceToken} 
+		</where>
+  	</update>
+  	
+  	<select id="queryVersionByCondition" parameterType="map" resultType="string">
+  		SELECT
+			version_type
+		FROM
+			apply_store_device
+		WHERE
+			apply_store_id = #{appId}
+		AND device_token = #{deviceToken}
+		AND os_type = #{osType}
+		LIMIT 1
+  	</select>
+	
+</mapper>

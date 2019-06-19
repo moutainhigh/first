@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+			default-autowire="byName" default-lazy-init="true">
+			
+	 <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+   		<!--  使用locations属性定义多个配置文件 -->
+        <property name="locations">
+             <list>
+                 <value>classpath*:config.properties</value>
+             </list>
+    	</property>
+    </bean>	
+	
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.68.118:3306/app" />
+		<property name="username" value="mysql1" />
+		<property name="password" value="mysql1" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- <property name="configLocation" value="com/deppon/dpm/module/announce/test/META-INF/ibatis.xml" /> -->
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:com/deppon/dpm/module/management/server/META-INF/ibatis/*.xml</value>
+				<value>classpath:ibatis/*.xml</value>
+			</list>
+		</property>
+			
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="applyStoreService" class="com.deppon.dpm.module.management.server.service.impl.ApplyStoreService">
+		<property name="iApplyStoreDao" ref="iApplyStoreDao"></property>
+		<property name="roleUrl" value="${roleurl}"></property>
+		<property name="iApplyDeviceDao" ref="iApplyDeviceDao" />
+		<property name="appPicDir" value="${appstore.picture.dir}" />
+		<property name="hostPort" value="${serverHostPort}" />
+	</bean>
+	
+	<bean id="employeeDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.EmployeeDao">
+		<property name="template" ref="jdbcTemplate"></property>
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<bean id="iApplyDeviceDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.ApplyDeviceDao" />
+	<bean id="iApplyStoreDao" class="com.deppon.dpm.module.management.server.dao.impl.ApplyStoreServiceDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="appraiseService" class="com.deppon.dpm.module.management.server.service.impl.AppraiseService"> 
+		<property name="tpushNewsService" ref="tpushNewsService"></property>
+		<property name="appraiseDao" ref="appraiseDao"></property>
+		<property name="appraiseUrl" value="${isp_esb_confirm_url}"></property>
+		<property name="queryCountUrl" value="${isp_esb_reportcount_url}"></property>
+	</bean>
+	
+	<bean id="tpushNewsService"
+		class="com.deppon.dpm.module.news.server.service.impl.TpushNewsService">
+		<property name="tpushAddressService" ref="tpushAddressService"></property>
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+		<property name="url" value="${pushpageurl}" />
+	</bean>
+	
+	<!-- 推送地址 -->
+	<bean id="tpushAddressService"
+		class="com.deppon.dpm.module.news.server.service.impl.TpushAddressService">
+		<property name="tpushAddress" value="${tpush.address}"></property>
+		<property name="tpushAppKey" value="${tpush.appkey}"></property>
+		<property name="tpushMasterSercret" value="${tpush.master.sercret}"></property>
+		<property name="tpushTimeLive" value="${tpush.time.live}"></property>
+	</bean>
+	
+	<bean id="appraiseDao" class="com.deppon.dpm.module.management.server.dao.impl.AppraiseDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="emailService" class="com.deppon.dpm.module.management.server.service.impl.EmailService">
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+		<property name="serverHostPort" value="${serverHostPort}"></property>
+		<property name="host" value="${dpmMailHost}"></property>
+	</bean>
+	
+	<bean id="informationService" class="com.deppon.dpm.module.management.server.service.impl.InformationService">
+		<property name="informationDao" ref="informationDao"></property>
+		<property name="roleUrl" value="${roleurl}"></property>
+		<property name="uUMSRoleService" ref="uUMSRoleService"/>
+	</bean>
+	
+	<bean id="uUMSRoleService" class="com.deppon.dpm.module.common.server.service.impl.UUMSRoleServiceImpl">
+		<property name="roleUrl" value="${roleurl}"/>
+	</bean>
+	
+	<bean id="informationDao" class="com.deppon.dpm.module.management.server.dao.impl.InformationDao"> 
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="itTerminalInformationService" class="com.deppon.dpm.module.management.server.service.impl.ItTerminalInformationService">
+		<property name="itQueryUrl" value="${it_query_terminal}"></property>
+		<property name="itDealUrl" value="${it_deal_terminal}"></property>
+	</bean>
+	
+	<bean id="outlookService" class="com.deppon.dpm.module.management.server.service.impl.OutlookService">
+		<property name="jdbcTemplate" ref="jdbcTemplate"></property>
+		<property name="serverHostPort" value="${serverHostPort}"></property>
+		<property name="host" value="${dpmMailHost}"></property>
+	</bean>
+	
+	<bean id="calendarService"
+		class="com.deppon.dpm.module.management.server.service.impl.CalendarService"
+		parent="outlookService">
+		<property name="calendarDao" ref="calendarDao" />
+		<property name="tongxunLuService" ref="tongxunLuService" />
+	</bean>
+	<bean id="calendarDao"
+		class="com.deppon.dpm.module.management.server.dao.impl.CalendarDao" />
+		
+	<bean id="tongxunLuService"
+		class="com.deppon.dpm.tongxunlu.server.service.impl.TongxunLuService">
+		<property name="empDao" ref="empDao"></property>
+		<property name="orgDao" ref="orgDao"></property>
+		<property name="systemConfigDao" ref = "systemConfigDao"></property>
+		<property name="personlyImageService" ref = "personlyImageService"></property>
+	</bean>
+	
+	<bean id="empDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.EmployeeDao">
+		<property name="template" ref="jdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="orgDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.OrganizationDao">
+		<property name="template" ref="jdbcTemplate" />
+	</bean>
+	<bean id="systemConfigDao"
+		class="com.deppon.dpm.tongxunlu.server.dao.impl.SystemConfigDao">
+		<property name="template" ref="jdbcTemplate" />
+	</bean>
+	<bean id="personlyImageService" class="com.deppon.dpm.tongxunlu.server.service.impl.PersonlyImageService">
+		<property name="personlyImageDao" ref="personlyImageDao"></property>
+		<property name="photoAddressService" ref="photoAddressService"></property>
+		<property name="webUrl" value="${dmp.announce.webUrl}"></property>
+	</bean>
+	<bean id="personlyImageDao" class="com.deppon.dpm.tongxunlu.server.dao.impl.PersonlyImageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	<!-- 图片存储地址 -->
+	<bean id="photoAddressService"
+		class="com.deppon.dpm.module.common.server.service.impl.PhotoAddressService">
+		<property name="headPortraitAddress" value="${tongxunlu.head.portrait}"></property>
+		<property name="taskPhotoAddress" value="${task.photo}"></property>
+		<property name="feedBackAddress" value="${feedback.picture.dir}"></property>
+		<property name="welcomeAddress" value="${welcome.page}"/>
+		<property name="serverHostPort" value="${serverHostPort}"/>
+	</bean>
+	<bean id="reportHistoryService"
+		class="com.deppon.dpm.module.management.server.service.impl.ReportHistoryService">
+		<property name="url" value="${isp_esb_reporthistory_url}"></property>
+	</bean>
+</beans>

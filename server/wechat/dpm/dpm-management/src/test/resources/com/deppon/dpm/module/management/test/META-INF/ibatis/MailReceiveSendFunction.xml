@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.MailReceiveSendFunctionDao" >
+	<!--更新为签收(本人)-->
+	<update id="updatePackageRec" parameterType="java.util.List">
+	      update send_parcel_massage set toReceiveDate=NOW(),updateTime=NOW(),parcelState=1  
+			 where packageId in(
+	     <foreach collection="list"  item="item" index="index" separator="," >
+			#{item.packagesId} 
+		</foreach>
+		)
+	</update>
+	<!--更新为签收(非本人)-->
+	<update id="updateUnOneself" parameterType="java.util.List">
+	      update send_parcel_massage set toReceiveDate=NOW(),updateTime=NOW(),parcelState=1,postStatus=1  
+			 where packageId in(
+	     <foreach collection="list"  item="item" index="index" separator="," >
+			#{item.packagesId} 
+		</foreach>
+		)
+	</update>
+	<!-- 保存待签人认信息 -->
+	<insert id="insertUnUser" parameterType="java.util.List">
+	    insert into send_parcel_acting(userNO,name,packageId,updateTime) 
+			 values
+	     <foreach collection="list"  item="item" index="index" separator="," >
+			( #{item.personCode},
+			         #{item.personName},
+			         #{item.packagesId},
+			         NOW())
+		</foreach>
+	</insert>
+	<!--根据包裹ID查询历史记录-->
+	<select id="selectPackageRec"
+		resultType="com.deppon.dpm.module.management.shared.domain.MailReceiveSendFunctionEntity"
+		parameterType="java.util.List">
+			 select packageId packagesId,userNo personCode from send_parcel_massage where packageId in(
+			 <foreach collection="list"  item="item" index="index" separator="," >
+		      #{item.packagesId} 
+		    </foreach>
+			)
+			
+	</select>
+	<!--更新为拒绝(只能本人)-->	
+	<update id="updatePackageOut" parameterType="java.util.List">
+	     update send_parcel_massage set toReceiveDate=NOW(),updateTime=NOW(),parcelState=2  
+			 where packageId in(
+	     <foreach collection="list"  item="item" index="index" separator="," >
+			#{item.packagesId} 
+		</foreach>
+		)
+	</update>
+	<!--更新为注销(错误数据，管理员操作)-->
+	<update id="updatePackageReject" parameterType="java.util.List">
+	     update send_parcel_massage set toReceiveDate=NOW(),updateTime=NOW(),parcelState=3  
+			 where packageId in(
+	     <foreach collection="list"  item="item" index="index" separator="," >
+			#{item.packagesId} 
+		</foreach>
+		)
+	</update>
+	<!--更新为催领(管理员操作)-->
+	<update id="updatePackageCorporal" parameterType="java.util.List">
+	     update send_parcel_massage set toReceiveDate=NOW(),updateTime=NOW(),parcelState=4  
+			 where packageId in(
+	     <foreach collection="list"  item="item" index="index" separator="," >
+			#{item.packagesId} 
+		</foreach>
+		)
+	</update>
+	<!--移动端包裹出库时状态更新-->
+	<update id="updatePackageNativeRec" parameterType="com.deppon.dpm.module.management.shared.domain.MailReceiveSendFunctionEntity">
+	      update send_parcel_massage set toReceiveDate=NOW(),updateTime=NOW(),
+	         parcelState=#{parcelState},
+	         postStatus=#{postStatus}    
+		  where packageId = #{packagesId} 
+		
+	</update>
+	
+</mapper>

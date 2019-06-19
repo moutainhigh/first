@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.store.server.dao.IStoreListDao">
+  <resultMap id="ListMap" type="com.deppon.dpm.store.server.vo.StoreListVo">
+    <id column="listid" jdbcType="VARCHAR" property="listid" />
+    <result column="deptname" jdbcType="VARCHAR" property="deptname" />
+    <result column="deptlerdername" jdbcType="VARCHAR" property="deptlerdername" />
+    <result column="deptnum" jdbcType="VARCHAR" property="deptnum" />
+    <result column="updatetime" property="updatetime" />
+    <result column="ranking" jdbcType="VARCHAR" property="ranking" />
+    <result column="rankingnum" jdbcType="VARCHAR" property="rankingnum" />
+    <result column="depticon" jdbcType="VARCHAR" property="depticon" />
+    <result column="likenum" jdbcType="INTEGER" property="likenum" />
+    <result column="warningnum" jdbcType="INTEGER" property="warningnum" />
+    <result column="grade" jdbcType="DOUBLE" property="grade" />
+    <result column="likenumbool" jdbcType="VARCHAR" property="likenumbool" />
+    <result column="warningnumbool" jdbcType="VARCHAR" property="warningnumbool" />
+  </resultMap>
+  
+  <!-- 查询榜单 连接榜单log表,每个员工一个营业部一天只能点一次喜欢或警告 -->
+  <select id="fineList"  resultMap="ListMap" parameterType="java.util.Map">	
+	select li.listid listid,li.deptname deptname,li.deptlerdername deptlerdername,
+	li.deptnum deptnum,li.ranking ranking,li.rankingnum rankingnum,li.depticon depticon,li.grade grade,
+	(select likenum FROM store_like WHERE li.deptnum = deptnum) likenum,
+	(select warningnum FROM store_like WHERE li.deptnum = deptnum) warningnum,
+	(SELECT count(1) FROM store_likelog WHERE likelogtype = 1 and li.deptnum = deptnum 
+	 and creatorcode = #{creatorcode} and likelogtime like '%${likelogtime}%') islike,
+	(SELECT count(1) FROM store_likelog WHERE likelogtype = 2 and li.deptnum = deptnum and creatorcode = #{creatorcode} and likelogtime like '%${likelogtime}%') iswarn
+	from 
+	store_list li
+	inner join
+	(select listid FROM store_list where updatetime=(select updatetime from store_list GROUP BY updatetime desc LIMIT 1)) li2
+	on 
+	li.listid = li2.listid
+	<if test="deptName !=null and deptName != ''">
+	WHERE li.deptname like '%${deptName}%'
+	</if>
+	ORDER BY -li.ranking desc
+	<if test="rowBegin != null and limit != null">
+	 LIMIT <![CDATA[#{rowBegin}]]>,<![CDATA[#{limit} ]]>
+	</if>
+  </select>
+  
+  <!-- 查询当前员工是否继续点赞 -->
+  <select id="fineCountlikeIf" resultType="java.lang.Integer" parameterType="java.util.Map">
+  	 select count(1) from store_likelog where likelogtype in (1,2) and creatorcode = #{creatorcode} and deptnum = #{deptnum} and likelogtime like '%${likelogtime}%'
+  </select>
+  
+  <!-- 进行榜单点赞功能 -->
+  <update id="updateNum" parameterType="java.util.Map">
+  	UPDATE store_like SET 
+  	<if test="likelogtype == 1">
+  	likenum = likenum+1 
+  	</if>
+  	<if test="likelogtype == 2">
+  	warningnum = warningnum+1
+  	</if>
+  	WHERE deptnum = #{deptnum,jdbcType=VARCHAR};
+  </update>
+  
+  <!-- 添加日志信息 -->
+  <insert id="insertStorelog" parameterType="com.deppon.dpm.store.server.entity.StoreLikelog">
+    insert into store_likelog(creatorcode,deptnum,likelogtype,likelogtime,dr,ts)
+    values
+    ( #{creatorcode,jdbcType=VARCHAR},#{deptnum,jdbcType=VARCHAR},
+    #{likelogtype,jdbcType=INTEGER},#{likelogtime},#{dr,jdbcType=INTEGER},#{ts})
+  </insert>
+  
+</mapper>

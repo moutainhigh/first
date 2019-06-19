@@ -1,0 +1,70 @@
+@charset "utf-8";
+/* win8 list style */
+body { width:100%; height:100%;}
+div#list { background:#fff; font-size:16px; width:100%; }
+#div1 { width:100%; height:10%; overflow:hidden; position:relative;}
+#div1 a.return { display:block; width:12.5%; float:left; padding:10px 0 0 10px;}
+#div1 .logo { width:35%; float:right; padding:10px 20px 0 0;}
+#div2 { padding:15px 5px 5px; overflow-x:hidden;position:relative;top:66px;left:0;width:100%;}
+#div2 h3 { font-size:24px; line-height:28px; margin:0 10px;}
+#div2 h5 { width:100%; margin-top:15px; text-align:center; font-size:12px; font-weight:normal;}
+#div2 .tableBox, #div2 .tableBox3, #div2 .tableBox2, #div2 .newsBox { margin:10px 5px 5px;}
+#div2 .tableBox table tr.on, #div2 .tableBox3 table tr.on { background:#faaf19; color:#fff !important;}
+#div2 .tableBox th, td { line-height:20px;}
+#div2 table td { word-wrap:break-word; word-break:break-all; overflow:hidden;}
+#div2 .tableBox input[type="button"] { width:40%; padding:0 .5em; line-height:20px; text-align:center; border:1px solid #aaa; color:#373c64; background:#fff;}
+#div2 .tableBox table th, #div2 .tableBox2 table th, #div2 .tableBox3 table th {font-weight:normal;text-align:left; font-size:16px; padding:10px 5px; width:35%;}
+#div2 .tableBox2.sp table th { white-space:normal !important;}
+#div2 .tableBox table .bold { color:#000;}
+#div2 .tableBox table .ed { color:#999;}
+#div2 .tableBox table th em, #div2 .tableBox2 table th em, #div2 .tableBox3 table th em {font-size:12px;}
+#div2 .tableBox table td, #div2 .tableBox2 table td, #div2 .tableBox3 table td { font-size:14px; padding:10px 5px 10px 0;}
+#div2 table td.fyy-textRt { padding:10px 5px 0 0 !important;}
+#div2 table td.fyy-textRt i { color:#aaa; font-style:normal;}
+#div2 table td.area { padding:2px 5px 10px 0 !important;}
+#div2 table span { font-size:14px !important; color:#373c64 !important;}
+#div2 .tableBox table tr.yellow th { padding:15px 5px 10px;}
+#div2 .tableBox table tr.topLine th, #div2 table tr.topLine td { border-top:1px solid #373c64;}
+#div2 .tableBox table tr.sh { display:none;}
+#div2 .tableBox table th a { font-weight:normal;}
+#div2 .tableBox table .area { padding:.4em; border:1px solid #aaa;}
+#div2 .tableBox table .area i { font-style:normal;}
+#div2 .tableBox table .area h6 { text-align:right; font-weight:normal; color:#aaa; padding-right:.4em;}
+#div2 .tableBox table textarea { 
+	width:100%; line-height:1.4; font-size:14px; resize:none; background:#fff; color:#333; border:none;
+	word-break: break-all; work-wrap: break-word;
+	-webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; box-sizing:border-box;
+}
+#div2 .tableBox2 td>div { text-indent:28px !important;}
+#div2 .tableBox2 td>div>span { font-size:14px !important; color:#000 !important; word-wrap:break-word; word-break:break-all;}
+#div2 .tableBox3 th div.hidden { width:100%; height:36px; overflow:hidden;}
+#div2 .tableBox table textarea:focus { background:#fff;}
+#div2 .searchBox { border-bottom:2px solid #faaf19;}
+#div2 .searchBox table { width:100%; text-algin:center; border-collapse:separate; border-spacing:2px;}
+#div2 .searchBox .text {
+	display: block; margin:.25em 0; padding:.4em; width:100%; background-image:none; outline:0; border:1px solid #373c64; color:#373c64; font-size:14px; 
+	-webkit-appearance:none;
+	-webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; box-sizing:border-box;
+}
+#div2 .searchBox .btn { 
+	display:block; text-align:center; zoom:1; padding:.4em 11px; margin:.5em 0; width:100%; min-width:.75em; position:relative; text-overflow:ellipsis; white-space:nowrap; border:1px solid #373c64; background:#373c64; color:#fff; font-size:14px;
+	-webkit-box-sizing:border-box; -moz-box-sizing:border-box; -ms-box-sizing:border-box; box-sizing:border-box;
+}
+#div2 ul.persInfo { margin:15px 10px;}
+#div2 ul.persInfo li { line-height:24px; font-size:14px;}
+#div2 ul.persInfo li.yellow { font-size:18px; margin-top:10px;}
+#div2 .newsBox dl { border-top:1px solid #e3e3e3; width:100%; white-space:nowrap; color:#000; overflow:hidden;}
+#div2 .newsBox dt { width:27%; float:left; padding:15px 0;}
+#div2 .newsBox dd { float:right; width:70%; vertical-align:top; padding:15px 0 15px 5px; white-space:normal; position:relative;}
+#div2 .newsBox dd .read { padding-left:20px; height:15px; line-height:15px; position:absolute; top:15px; right:5px; background:url(../../imgnews/win8/read_tips.png) no-repeat 0 0; color:#fa990b; font-size:10px; z-index:9;}
+#div2 .newsBox dd .read.ed { background-position:0 -15px; color:#fa990b; color:#a0a0a0;}
+#div2 .newsBox dd .newTit { font-size:14px;}
+#div2 .newsBox dd p { padding:10px 0; font-size:14px;}
+#div2 .newsBox dd .newsInfo { font-size:12px; color:#888;}
+#div2 .moreBox { width:100%; text-align:center;}
+#div2 .moreBox .more { display:inline-block; padding:10px 30px; margin:10px auto; color:#faaf19; font-size:14px;}
+#div3 { text-align:center;position: relative;
+  top: 66px;
+  left: 0;}
+#div3 span.btn { display:inline-block; margin:.5em 5px; padding:8px 20px; background:#faaf19; font-size:18px; color:#fff;}
+#div3 .btn.on { background:#ca8b0d;}

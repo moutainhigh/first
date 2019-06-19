@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procSurveyCheckDao">
+
+	<insert id="saveprocSurvey" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcSurveyCheck">
+		INSERT INTO proc_survey_check (
+		check_name,
+		check_code,
+		check_userNo,
+		check_no,
+		check_state,
+		check_mark,
+		create_date,
+		create_userNo,
+		update_date,
+		update_userNo,
+		proc_status,
+		principal_userNo,
+		principal_name
+		)
+		VALUES
+		(
+		#{checkName},
+		#{checkCode},
+		#{checkUserNo},
+		#{checkNo},
+		0,
+		0,
+		#{createDate},
+		#{createUserNo},
+		#{updateDate},
+		#{updateUserNo},
+		#{procStatus},
+		#{principalUserNo},
+		#{principalName}
+		);
+	</insert>
+
+	<select id="getCountByCode" parameterType="java.util.Map"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcSurveyCheck">
+		select * from proc_survey_check where check_mark = 0
+		and
+		check_name = #{checkName} and check_code =#{checkCode}
+	</select>
+
+
+	<update id="updSurveyMark" parameterType="int">
+		update
+		proc_survey_check set check_mark = 1 where id = #{id}
+	</update>
+
+	<select id="getProjectList" parameterType="java.util.Map"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcSurveyCheck">
+		select
+		id,
+		check_name AS checkName,
+		check_code AS checkCode,
+		check_state AS checkState,
+		check_no AS checkNo,
+		update_date AS updateDate
+		from proc_survey_check where check_mark = 0
+		and 
+		create_date >date_add(SYSDATE() ,interval -1 MONTH)
+		and
+		check_userNo like
+		conCat('%',${userNo},'%')
+		order by check_state,update_date DESC  
+	</select>
+
+</mapper>

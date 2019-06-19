@@ -1,0 +1,849 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.dpm.doc.server.dao.DidiOrderDao">
+
+	<resultMap id="didiOrderResult" type="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		<result column="ID" property="id" />
+		<result column="BILLNO" property="billno" />
+		<result column="NAME" property="name" />
+		<result column="EMPLOYEENO" property="employeeno" />
+		<result column="MODELS" property="models" />
+		<result column="FROM_NAME" property="fromName" />
+		<result column="TO_NAME" property="toName" />
+		<result column="TAXIDATE" property="taxidate" />
+		<result column="BOARDINGTIME" property="boardingtime" />
+		<result column="OFFTIME" property="offtime" />
+		<result column="ORDERSTATUS" property="orderstatus" />
+		<result column="NORMAL_DISTANCE" property="normalDistance" />
+		<result column="TOTAL_PRICE" property="totalPrice" />
+		<result column="DEPT" property="dept" />
+		<result column="FINANCEDEPT" property="financedept" />
+		<result column="BUDGETRATIO" property="budgetratio" />
+		<result column="TIMESCHEDULE" property="timeschedule" />
+		<result column="SUB_STATUS" property="sub_status" />
+		<result column="REMARK" property="remark" />
+		<result column="REMARKINFO" property="remarkinfo" />
+		<result column="COMPANY" property="company" />
+		<result column="ESTIMATEPRICE" property="estimateprice" />
+		<result column="CUSTOMNAME" property="customname" />
+		<result column="BANKCARDNUM" property="bankcardnum" />
+		<result column="CUSTOMTEL" property="customtel" />
+		<result column="CUSTOMCODE" property="customcode" />
+		<result column="MEETINGNAME" property="meetingname" />
+		<result column="FROMMANAGERNAME" property="frommanagername" />
+		<result column="TOMANAGERNAME" property="tomanagername" />
+		<result column="TOMANAGERCODE" property="tomanagercode" />
+		<result column="FROMMANAGERCODE" property="frommanagercode" />
+		<result column="AUDITORCODE" property="auditorcode" />
+		<result column="AUDITORNAME" property="auditorname" />
+		<result column="USERHEADPIC" property="userheadpic" />
+		<result column="DEPARTURETIME" property="departuretime" />
+		<result column="JOBLEVEL" property="joblevel" />
+		<result column="NEWMEETINGNAME" property="newmeetingname" />
+		<result column="NEWMEETINGSTART" property="newmeetingstart" />
+		<result column="NEWMEETINGEND" property="newmeetingend" />
+		<result column="REFUNDPRICE" property="refundprice" />
+		<result column="REFUNDAMOUNT" property="refundamount" />
+		<result column="PHONE" property="phone" />
+		<result column="TRAVELWORKFLOWNO" property="travelWorkflowNo" />
+	</resultMap>
+	<resultMap type="com.deppon.dpm.doc.server.entity.DidiStatementEntity" id="didiStatementResult">
+		<result column="id" property="id" />
+		<result column="same_or_difference" property="sameOrDifference"/>
+		<result column="offtime" property="offTime"/>
+		<result column="billno" property="billno" />
+		<result column="from_name" property="fromName" />
+		<result column="to_name" property="toName" />
+		<result column="deppon_price" property="depponPrice" />
+		<result column="didi_price" property="didiPrice" />
+		<result column="difference" property="difference" />
+		<result column="lower_price" property="lowerPrice" />
+		<result column="company" property="company" />
+		<result column="applyEmpName" property="applyEmpName" />
+		<result column="applyEmpCode" property="applyEmpCode" />
+		<result column="mcName" property="mcName" />
+		<result column="invoiceTitle" property="invoiceTitle" />
+		<result column="financialDept" property="financialDept" />
+		<result column="accountName" property="accountName" />
+		<result column="contactInfo" property="contactInfo" />
+		<result column="expenseIsOvertime" property="expenseIsOvertime" />
+		<result column="costExplain" property="costExplain" />
+		<result column="accountNature" property="accountNature" />
+		<result column="bankName" property="bankName" />
+		<result column="bankProvinceName" property="bankProvinceName" />
+		<result column="bankCityName" property="bankCityName" />
+		<result column="subbankName" property="subbankName" />
+		<result column="account" property="account" />
+		<result column="costCenterName" property="costCenterName" />
+		<result column="scName" property="scName" />
+		<result column="actualAmount" property="actualAmount" />
+		<result column="bizOccurDate" property="bizOccurDate" />
+		<result column="itemCostExplain" property="itemCostExplain" />
+	</resultMap>
+	<resultMap type="com.deppon.dpm.doc.server.entity.StatementSummaryEntity" id="StatementSummaryResult">
+		<result column="company" property="company"/>
+		<result column="workflow_status" property="workFlowStatus"/>
+		<result column="offtime" property="offTime"/>
+	</resultMap>
+	<resultMap type="com.deppon.dpm.doc.server.entity.StatementSummaryEntity" id="StatementSummary">
+		<result column="company" property="company"/>
+		<result column="workflow_status" property="workFlowStatus"/>
+		<result column="offtime" property="offTime"/>
+		<result column="money" property="money"/>
+		<result column="workflow_num" property="workFlowNum"/>
+		<result column="status" property="status"/>
+	</resultMap>
+	<!--表名-->
+	<sql id="table_name">
+		DIDI_ORDER
+	</sql>
+	
+	<sql id="columns">
+		ID, BILLNO, NAME, EMPLOYEENO, MODELS, FROM_NAME, TO_NAME, TAXIDATE, BOARDINGTIME, OFFTIME, ORDERSTATUS, NORMAL_DISTANCE, TOTAL_PRICE, DEPT, FINANCEDEPT, BUDGETRATIO, TIMESCHEDULE,SUB_STATUS,REMARK,REMARKINFO,COMPANY,ESTIMATEPRICE,CUSTOMNAME,BANKCARDNUM,CUSTOMTEL,CUSTOMCODE
+		,MEETINGNAME,FROMMANAGERNAME,TOMANAGERNAME,TOMANAGERCODE,FROMMANAGERCODE,AUDITORCODE,AUDITORNAME,USERHEADPIC,DEPARTURETIME,JOBLEVEL,NEWMEETINGNAME
+		,NEWMEETINGSTART,NEWMEETINGEND,REFUNDPRICE,REFUNDAMOUNT,PHONE,TRAVELWORKFLOWNO,EstimateDistance,is_carpool,is_carpool_success
+	</sql>
+
+	<sql id="didiOrder_conditon">
+		<if test="id != null"> and ID = #{id}</if>
+		<if test="billno != null and billno != '' "> and BILLNO = #{billno, jdbcType=VARCHAR}</if>
+		<if test="name != null and name != '' "> and NAME = #{name, jdbcType=VARCHAR}</if>
+		<if test="employeeno != null and employeeno != '' "> and EMPLOYEENO = #{employeeno, jdbcType=VARCHAR}</if>
+		<if test="models != null and models != '' "> and MODELS = #{models, jdbcType=VARCHAR}</if>
+		<if test="fromName != null and fromName != '' "> and FROM_NAME = #{fromName, jdbcType=VARCHAR}</if>
+		<if test="toName != null and toName != '' "> and TO_NAME = #{toName, jdbcType=VARCHAR}</if>
+		<if test="taxidate != null and taxidate != '' "> and TAXIDATE = #{taxidate, jdbcType=VARCHAR}</if>
+		<if test="boardingtime != null and boardingtime != '' "> and BOARDINGTIME = #{boardingtime, jdbcType=VARCHAR}</if>
+		<if test="offtime != null and offtime != '' "> and OFFTIME = #{offtime, jdbcType=VARCHAR}</if>
+		<if test="orderstatus != null"> and ORDERSTATUS = #{orderstatus}</if>
+		<if test="sub_status != null "> and SUB_STATUS = #{sub_status}</if>
+		<if test="totalPrice != null and totalPrice != '' "> and TOTAL_PRICE = #{totalPrice, jdbcType=VARCHAR}</if>
+		<if test="normalDistance != null and normalDistance != '' "> and NORMAL_DISTANCE = #{normalDistance, jdbcType=VARCHAR}</if>
+		<if test="dept != null and dept != '' "> and DEPT = #{dept, jdbcType=VARCHAR}</if>
+		<if test="financedept != null and financedept != '' "> and FINANCEDEPT = #{financedept, jdbcType=VARCHAR}</if>
+		<if test="budgetratio != null and budgetratio != '' "> and BUDGETRATIO = #{budgetratio, jdbcType=VARCHAR}</if>
+		<if test="timeschedule != null and timeschedule != '' "> and TIMESCHEDULE = #{timeschedule, jdbcType=VARCHAR}</if>
+		<if test="remark != null and remark != '' "> and REMARK = #{remark, jdbcType=VARCHAR}</if>
+		<if test="remarkinfo != null and remarkinfo != '' "> and REMARKINFO = #{remarkinfo, jdbcType=VARCHAR}</if>
+		<if test="company != null and company != '' "> and COMPANY = #{company, jdbcType=VARCHAR}</if>
+		<if test="estimateprice != null and estimateprice != '' "> and ESTIMATEPRICE = #{estimateprice, jdbcType=VARCHAR}</if>
+		<if test="joblevel != null and joblevel != '' "> and JOBLEVEL = #{joblevel, jdbcType=VARCHAR}</if>
+	</sql>
+	
+	<sql id="didiOrder_update_conditon">
+		<if test="billno != null and billno != '' "> BILLNO = #{billno, jdbcType=VARCHAR}</if>
+		<if test="name != null and name != '' "> ,NAME = #{name, jdbcType=VARCHAR}</if>
+		<if test="employeeno != null and employeeno != '' "> ,EMPLOYEENO = #{employeeno, jdbcType=VARCHAR}</if>
+		<if test="models != null and models != '' "> ,MODELS = #{models, jdbcType=VARCHAR}</if>
+		<if test="fromName != null and fromName != '' "> ,FROM_NAME = #{fromName, jdbcType=VARCHAR}</if>
+		<if test="toName != null and toName != '' "> ,TO_NAME = #{toName, jdbcType=VARCHAR}</if>
+		<if test="taxidate != null and taxidate != ''"> ,TAXIDATE = #{taxidate, jdbcType=VARCHAR}</if>
+		<if test="boardingtime != null and boardingtime != '' "> ,BOARDINGTIME = #{boardingtime, jdbcType=VARCHAR}</if>
+		<if test="offtime != null and offtime != '' "> ,OFFTIME = #{offtime, jdbcType=VARCHAR}</if>
+		<if test="orderstatus != null"> ,ORDERSTATUS = #{orderstatus}</if>
+		<if test="normalDistance != null and normalDistance != '' "> ,NORMAL_DISTANCE = #{normalDistance, jdbcType=VARCHAR}</if>
+		<if test="totalPrice != null and totalPrice != '' "> ,TOTAL_PRICE = #{totalPrice, jdbcType=VARCHAR}</if>
+		<if test="dept != null and dept != '' "> ,DEPT = #{dept, jdbcType=VARCHAR}</if>
+		<if test="financedept != null and financedept != '' "> ,FINANCEDEPT = #{financedept, jdbcType=VARCHAR}</if>
+		<if test="budgetratio != null and budgetratio != '' "> ,BUDGETRATIO = #{budgetratio, jdbcType=VARCHAR}</if>
+		<if test="timeschedule != null and timeschedule != '' "> ,TIMESCHEDULE = #{timeschedule, jdbcType=VARCHAR}</if>
+		<if test="sub_status != null"> ,SUB_STATUS = #{sub_status}</if>
+		<if test="remark != null and remark != '' "> ,REMARK = #{remark, jdbcType=VARCHAR}</if>
+		<if test="remarkinfo != null and remarkinfo != '' "> ,REMARKINFO = #{remarkinfo, jdbcType=VARCHAR}</if>
+		<if test="company != null and company != '' "> ,COMPANY = #{company, jdbcType=VARCHAR}</if>
+		<if test="estimateprice != null and estimateprice != '' "> ,ESTIMATEPRICE = #{estimateprice, jdbcType=VARCHAR}</if>
+		<if test="joblevel != null and joblevel != '' "> , JOBLEVEL = #{joblevel, jdbcType=VARCHAR}</if>
+		<if test="driveName != null and driveName != '' "> ,DRIVERNAME = #{driveName, jdbcType=VARCHAR}</if>
+		<if test="driverPhoneReal != null and driverPhoneReal != ''"> ,DRIVERPHONEREAL = #{driverPhoneReal, jdbcType=VARCHAR}</if>
+		<if test="driverCarType != null and driverCarType != '' "> ,DRIVERCARTYPE = #{driverCarType, jdbcType=VARCHAR}</if>
+		<if test="driverCard != null and driverCard != '' "> ,DRIVERCARD = #{driverCard, jdbcType=VARCHAR}</if>
+		<if test="driverLevel != null and driverLevel != '' "> ,DRIVERLEVEL = #{driverLevel, jdbcType=VARCHAR}</if>
+		<if test="dlng != null and dlng != '' "> ,DLNG = #{dlng, jdbcType=VARCHAR}</if>
+		<if test="dlat != null and dlat != '' "> , DLAT = #{dlat, jdbcType=VARCHAR}</if>
+		<if test="EstimateDistance != null and EstimateDistance != '' "> , EstimateDistance = #{EstimateDistance, jdbcType=VARCHAR}</if>
+		<if test="is_carpool != null and is_carpool != '' "> , is_carpool = #{is_carpool, jdbcType=VARCHAR}</if>
+		<if test="is_carpool_success != null and is_carpool_success != '' "> , is_carpool_success = #{is_carpool_success, jdbcType=VARCHAR}</if>
+	</sql>
+
+	<sql id="didiOrder_default_order">
+		order by TAXIDATE
+	</sql>
+	
+	<!--插入数据-->
+	<insert id="insertDidiOrder" parameterType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		insert into <include refid="table_name" /> ( <include refid="columns" /> )
+		values(#{id, jdbcType=VARCHAR}, #{billno, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{employeeno, jdbcType=VARCHAR}, #{models, jdbcType=VARCHAR}, #{fromName, jdbcType=VARCHAR}, #{toName, jdbcType=VARCHAR}, #{taxidate, jdbcType=VARCHAR}, #{boardingtime, jdbcType=VARCHAR}, #{offtime, jdbcType=VARCHAR}, #{orderstatus, jdbcType=VARCHAR}, #{normalDistance, jdbcType=VARCHAR}, #{totalPrice, jdbcType=VARCHAR}, #{dept, jdbcType=VARCHAR}, #{financedept, jdbcType=VARCHAR}, #{budgetratio, jdbcType=VARCHAR}, #{timeschedule, jdbcType=VARCHAR}, #{sub_status, jdbcType=VARCHAR}, #{remark, jdbcType=VARCHAR}, #{remarkinfo, jdbcType=VARCHAR},
+		 #{company, jdbcType=VARCHAR}, 
+		 #{estimateprice, jdbcType=VARCHAR},
+		 #{customname, jdbcType=VARCHAR},
+		 #{bankcardnum, jdbcType=VARCHAR},
+		 #{customtel, jdbcType=VARCHAR},
+		 #{customcode, jdbcType=VARCHAR},
+		 #{meetingname, jdbcType=VARCHAR},
+		 #{frommanagername, jdbcType=VARCHAR},
+		 #{tomanagername, jdbcType=VARCHAR},
+		 #{tomanagercode, jdbcType=VARCHAR},
+		 #{frommanagercode, jdbcType=VARCHAR},
+		 #{auditorcode, jdbcType=VARCHAR},
+		 #{auditorname, jdbcType=VARCHAR},
+		 #{userheadpic, jdbcType=VARCHAR},
+		 #{departuretime, jdbcType=VARCHAR},
+		 #{joblevel, jdbcType=VARCHAR},
+		 #{newmeetingname, jdbcType=VARCHAR},
+		 #{newmeetingstart, jdbcType=VARCHAR},
+		 #{newmeetingend, jdbcType=VARCHAR},
+		 #{refundprice, jdbcType=VARCHAR},
+		 #{refundamount, jdbcType=VARCHAR},  
+		 #{phone, jdbcType=VARCHAR},
+		 #{travelWorkflowNo, jdbcType=VARCHAR},  
+		 #{EstimateDistance,jdbcType=VARCHAR},
+		 #{is_carpool,jdbcType=VARCHAR},
+		 #{is_carpool_success,jdbcType=VARCHAR}
+		 )
+	</insert>
+	
+	<!-- 更新记录 -->
+	<update id="updateDidiOrder" parameterType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		update <include refid="table_name" />
+		set 
+		<include refid="didiOrder_update_conditon" />
+		where ID=#{id}
+	</update>
+	
+	<!-- 更新手机号 -->
+	<update id="updatePhone" parameterType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		update <include refid="table_name" />
+		set phone = #{phone,jdbcType=VARCHAR} 
+		where employeeno=#{userId,jdbcType=VARCHAR} and phone is null or phone = '' 
+	</update>
+	
+	
+	<!-- 根据主键查找 -->
+	<select id="getDidiOrder" parameterType="java.util.Map" resultMap="didiOrderResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where ID=#{id} 
+	</select>
+	
+	<!-- 查找符合条件的记录 -->
+	<select id="listDidiOrder" parameterType="com.deppon.dpm.doc.server.entity.DidiOrderEntity" resultMap="didiOrderResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 1=1
+		<include refid="didiOrder_conditon" />
+	</select>
+	
+	<!-- 查找服务中和预约的数据   add by gwl -->
+	<select id="findordermessage" parameterType="String" resultMap="didiOrderResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 
+		employeeno = #{userId,jdbcType=VARCHAR} and 
+		SUB_STATUS in('3000','3001','3002','3003','4000','4001','4002','4004','4005','4101','5000','6001','6002','6100')
+	</select>
+	
+	<!-- 查找完成的数据   add by gwl -->
+	<select id="findtodayorder" parameterType="String" resultMap="didiOrderResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 
+		employeeno = #{userId,jdbcType=VARCHAR} and 
+		SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000') and
+		date(taxidate)   =   curdate(); 
+	</select>
+	
+	<!-- 根据时间查找用户参加的会议 -->
+	<select id="meetingdidiOrder" parameterType="java.util.Map" resultMap="didiOrderResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 
+		employeeno = #{userId,jdbcType=VARCHAR} and 
+		meetingname = #{meetingname,jdbcType=VARCHAR} and 
+		LEFT(taxidate,10)=#{date,jdbcType=VARCHAR} ; 
+	</select>
+
+	<!-- 满足条件的记录数 -->
+	<select id="countDidiOrder" parameterType="java.util.Map" resultType="long">
+		select count(*) from <include refid="table_name" /> where 1=1
+		<include refid="didiOrder_conditon" />
+	</select>
+	
+	<!-- 分页查找记录 -->
+	<select id="pageDidiOrder" parameterType="java.util.Map" resultMap="didiOrderResult">
+		select * from <include refid="table_name" /> where 1=1
+		<include refid="didiOrder_conditon" />
+		<include refid="didiOrder_default_order" /> LIMIT  <![CDATA[${rowBegin}]]>,<![CDATA[ ${limit} ]]>
+	</select>
+	
+	<select id="statusCheck" parameterType="String" resultType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		select * from <include refid="table_name" /> 
+		 where 
+		EMPLOYEENO=#{userId,jdbcType=VARCHAR} and 
+		SUB_STATUS in('3000','3001','3002','3003','4000','4001','4002','4004','4005','4101','5000','6001','6002','6100')
+	</select>
+	
+	<!-- 根据员工号查询当月全部符合状态的订单 -->
+	<select id="myConsumptionByPersonal" parameterType="java.util.Map" resultMap="didiOrderResult">
+		select * from <include refid="table_name" />
+		where EMPLOYEENO=#{userId,jdbcType=VARCHAR}
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR} 
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+		order by TAXIDATE
+	</select>  
+	
+	<!-- 根据员工号年月查询 当月累计用车总金额 -->
+	<select id="queryTotalPriceById" parameterType="java.util.Map" resultType="String">
+		select sum(TOTAL_PRICE) totalPrice
+		from <include refid="table_name" />
+		where EMPLOYEENO=#{userId,jdbcType=VARCHAR}
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据员工号查询当月累计用车总公里数 -->
+	<select id="queryNormalDistanceById" parameterType="java.util.Map" resultType="String">
+		select sum(NORMAL_DISTANCE) normalDistance
+		from <include refid="table_name" />
+		where EMPLOYEENO=#{userId,jdbcType=VARCHAR}
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据员工查询当月累计用车订单总数-->
+	<select id="queryOrderCountById" parameterType="java.util.Map" resultType="String">
+		select count(*) count
+		from <include refid="table_name" />
+		where EMPLOYEENO=#{userId,jdbcType=VARCHAR}
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据员工号查询的当月打车分布 -->
+	<select id="queryTaxiDistribution" parameterType="java.util.Map" resultMap="didiOrderResult">
+		select  name,sum(case when remark='公务外出' then 1 else 0 end) billno,
+		sum(case when remark='加班' then 1 else 0 end) offtime,
+		sum(case when remark='公款存户' then 1 else 0 end) employeeno,
+		sum(case when remark='拜访客户' then 1 else 0 end) models,
+		sum(case when remark='参加会议' then 1 else 0 end) fromName,
+		sum(case when remark='跨区办公' then 1 else 0 end) taxidate,
+		sum(case when remark='办公区往返' then 1 else 0 end) budgetratio,
+		sum(case when remark='其他' then 1 else 0 end) timeschedule,
+		sum(case when remark='其他公务' then 1 else 0 end) tomanagername
+		from didi_order
+		where EMPLOYEENO=#{userId,jdbcType=VARCHAR}
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据员工号查询当月每日有效订单数和钱数 -->
+	<select id="queryCountAndPrice" parameterType="java.util.Map" resultMap="didiOrderResult">
+		select count(*) models,SUM(TOTAL_PRICE) employeeno,DATE_FORMAT(TAXIDATE, '%Y-%m-%d') taxidate
+		from <include refid="table_name" />
+		where EMPLOYEENO=#{userId,jdbcType=VARCHAR}
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+		GROUP BY DATE_FORMAT(TAXIDATE, '%Y-%m-%d')
+		ORDER BY DATE_FORMAT(TAXIDATE, '%Y-%m-%d')
+	</select>
+	
+	<!-- 根据部门查询它的月累计金额 -->
+	<select id="queryTotalProcieByDept" parameterType="java.util.Map" resultType="String">
+		select sum(TOTAL_PRICE)
+		from <include refid="table_name" />
+		where DEPT in 
+		<foreach item="deptNameList" index="index" collection="deptNameList" open="(" separator="," close=")">
+			#{deptNameList}
+		</foreach>
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据部门查询它的月累计公里数 -->
+	<select id="querynormalDistance" parameterType="java.util.Map" resultType="String">
+		select sum(NORMAL_DISTANCE)
+		from <include refid="table_name" />
+		where DEPT in 
+		<foreach item="deptNameList" index="index" collection="deptNameList" open="(" separator="," close=")">
+			#{deptNameList}
+		</foreach>
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据部门查询它的月累计订单数-->
+	<select id="queryCountMonthByDept" parameterType="java.util.Map" resultType="String">
+		select count(*)
+		from <include refid="table_name" />
+		where DEPT in 
+		<foreach item="deptNameList" index="index" collection="deptNameList" open="(" separator="," close=")">
+			#{deptNameList}
+		</foreach>
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据部门查询它的当月打车分布情况 -->
+	<select id="queryDistributionMonthByDept" parameterType="java.util.Map" resultType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		select  name,sum(case when remark='公务外出' then 1 else 0 end) billno,
+		sum(case when remark='加班' then 1 else 0 end) offtime,
+		sum(case when remark='公款存户' then 1 else 0 end) employeeno,
+		sum(case when remark='拜访客户' then 1 else 0 end) models,
+		sum(case when remark='参加会议' then 1 else 0 end) fromName,
+		sum(case when remark='跨区办公' then 1 else 0 end) taxidate,
+		sum(case when remark='办公区往返' then 1 else 0 end) budgetratio,
+		sum(case when remark='其他' then 1 else 0 end) timeschedule,
+		sum(case when remark='其他公务' then 1 else 0 end) tomanagername
+		from <include refid="table_name" />
+		where DEPT in 
+		<foreach item="deptNameList" index="index" collection="deptNameList" open="(" separator="," close=")">
+			#{deptNameList}
+		</foreach>
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据部门查询它的每日打车总金额 -->
+	<select id="queryVehicleData" parameterType="java.util.Map" resultMap="didiOrderResult">
+		select SUM(TOTAL_PRICE) employeeno,DATE_FORMAT(TAXIDATE, '%Y-%m-%d') taxidate
+		from <include refid="table_name" />
+		where DEPT in 
+		<foreach item="deptNameList" index="index" collection="deptNameList" open="(" separator="," close=")">
+			#{deptNameList}
+		</foreach>
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+		GROUP BY DATE_FORMAT(TAXIDATE, '%Y-%m-%d')
+		ORDER BY DATE_FORMAT(TAXIDATE, '%Y-%m-%d')
+	</select>
+	
+	
+	<!-- 部门名称集合查询多个部门明细 -->
+	<select id="queryDeptDetail" parameterType="java.util.Map" resultType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		select SUM(TOTAL_PRICE) billno,name name,USERHEADPIC USERHEADPIC,EMPLOYEENO EMPLOYEENO
+		from <include refid="table_name" />
+		where DEPT in 
+		<foreach item="deptNameList" index="index" collection="deptNameList" open="(" separator="," close=")">
+			#{deptNameList}
+		</foreach>
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+		GROUP BY EMPLOYEENO
+		ORDER BY SUM(TOTAL_PRICE) desc
+		LIMIT 0,5;
+	</select>
+	
+	<!-- 根据工号查询员工号,查询月累计订单总金额 -->
+	<select id="queryTotalPirceByEmpno" parameterType="java.util.Map" resultType="String">
+		select SUM(TOTAL_PRICE)
+		from  <include refid="table_name" /> 
+		where EMPLOYEENO=#{employeeno}
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE &lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+	</select>
+	
+	<!-- 根据订单号查询当月订单用于对账 -->   
+	<select id="accountOrder" parameterType="String" resultMap="didiOrderResult">
+		select * from  <include refid="table_name" /> 
+		where billno = #{date,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据日期查询当月订单用于对账 -->   
+	<select id="dateOrder" parameterType="String" resultMap="didiOrderResult">
+		SELECT 
+		billno,
+		total_price,
+		offtime,
+		from_name fromName,
+		to_name toName,
+		financedept,
+		taxidate 
+		FROM didi_order 
+		WHERE taxidate BETWEEN STR_TO_DATE(CONCAT(#{date,jdbcType=VARCHAR},'-01'),'%Y-%m-%d')
+		AND DATE_ADD(CONCAT(#{date,jdbcType=VARCHAR},'-01'),INTERVAL 1 MONTH) AND sub_status IN(7000,6102);
+	</select>
+	<!-- 根据订单编号列表批量查询订单信息用于对账 -->
+	<select id="dateOrderByOrderIds" parameterType="list" resultMap="didiOrderResult">
+		SELECT 
+		billno,
+		total_price,
+		offtime,
+		from_name fromName,
+		to_name toName,
+		financedept,
+		taxidate 
+		FROM didi_order 
+		WHERE billno IN 
+		<foreach collection="list" item="order" index="index" open="(" close=")" separator=",">
+		#{order.didiBillNo,jdbcType=VARCHAR}
+		</foreach>
+	</select>
+	
+	<!-- 根据日期查询当月订单用于对账 -->   
+	<select id="fileSelectFile" parameterType="String" resultMap="didiOrderResult">
+		SELECT * FROM  didi_order 
+		WHERE taxidate BETWEEN STR_TO_DATE(CONCAT(#{getDate,jdbcType=VARCHAR},'-01'),'%Y-%m-%d')
+		AND DATE_ADD(CONCAT(#{getDate,jdbcType=VARCHAR},'-01'),INTERVAL 1 MONTH) AND sub_status IN(7000,6102);
+	</select>
+	<!-- 对账数据更新 -->
+	<update id="updateFileOrder" parameterType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		update didi_abnormalorder
+		set TOTAL_PRICE = #{amount,jdbcType=VARCHAR} 
+		where id=#{id,jdbcType=VARCHAR} 
+	</update>
+	
+	<!-- 对账数据删除 -->
+	<delete id="deleteFileOrder" parameterType="java.lang.String">
+		delete from didi_abnormalorder where id=#{id,jdbcType=VARCHAR} 
+	</delete>
+	<!-- 根据日期查询传入月份订单分页数据  -->   
+	<select id="selectFileMsgBydate" parameterType="String" resultMap="didiOrderResult">
+		select * from  didi_order 
+		where taxidate BETWEEN STR_TO_DATE(CONCAT(#{getDate,jdbcType=VARCHAR},'-01'),'%Y-%m-%d')
+		AND DATE_ADD(CONCAT(#{getDate,jdbcType=VARCHAR},'-01'),INTERVAL 1 MONTH)  AND sub_status IN(7000,6102) 
+		LIMIT  <![CDATA[${pageNum}]]>,10
+	</select>
+	
+	<!-- 对账根据主键查找 -->
+	<select id="finddefentity" parameterType="java.util.Map" resultMap="didiOrderResult">
+		select *
+		from didi_abnormalorder where billno=#{order} 
+	</select>
+	
+	<!--插入数据-->
+	<insert id="insertdefentity" parameterType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		insert into didi_abnormalorder ( <include refid="columns" /> )
+		values(#{id, jdbcType=VARCHAR}, #{billno, jdbcType=VARCHAR}, #{name, jdbcType=VARCHAR}, #{employeeno, jdbcType=VARCHAR}, #{models, jdbcType=VARCHAR}, #{fromName, jdbcType=VARCHAR}, #{toName, jdbcType=VARCHAR}, #{taxidate, jdbcType=VARCHAR}, #{boardingtime, jdbcType=VARCHAR}, #{offtime, jdbcType=VARCHAR}, #{orderstatus, jdbcType=VARCHAR}, #{normalDistance, jdbcType=VARCHAR}, #{totalPrice, jdbcType=VARCHAR}, #{dept, jdbcType=VARCHAR}, #{financedept, jdbcType=VARCHAR}, #{budgetratio, jdbcType=VARCHAR}, #{timeschedule, jdbcType=VARCHAR}, #{sub_status, jdbcType=VARCHAR}, #{remark, jdbcType=VARCHAR}, #{remarkinfo, jdbcType=VARCHAR},
+		 #{company, jdbcType=VARCHAR}, 
+		 #{estimateprice, jdbcType=VARCHAR},
+		 #{customname, jdbcType=VARCHAR},
+		 #{bankcardnum, jdbcType=VARCHAR},
+		 #{customtel, jdbcType=VARCHAR},
+		 #{customcode, jdbcType=VARCHAR},
+		 #{meetingname, jdbcType=VARCHAR},
+		 #{frommanagername, jdbcType=VARCHAR},
+		 #{tomanagername, jdbcType=VARCHAR},
+		 #{tomanagercode, jdbcType=VARCHAR},
+		 #{frommanagercode, jdbcType=VARCHAR},
+		 #{auditorcode, jdbcType=VARCHAR},
+		 #{auditorname, jdbcType=VARCHAR},
+		 #{userheadpic, jdbcType=VARCHAR},
+		 #{departuretime, jdbcType=VARCHAR},
+		 #{joblevel, jdbcType=VARCHAR},
+		 #{newmeetingname, jdbcType=VARCHAR},
+		 #{newmeetingstart, jdbcType=VARCHAR},
+		 #{newmeetingend, jdbcType=VARCHAR},
+		 #{refundprice, jdbcType=VARCHAR},
+		 #{refundamount, jdbcType=VARCHAR},  
+		 #{phone, jdbcType=VARCHAR}  
+		 )
+	</insert>
+	<!-- 插入对账单信息 -->
+	<insert id="addStatement" parameterType="java.util.List">
+		INSERT INTO didi_statement(
+		billno,
+		company,
+		difference,
+		id,
+		same_or_difference,
+		didi_price,
+		lower_price,
+		offtime,
+		from_name,
+		to_name,
+		deppon_price,
+		costCenterName,
+		bizOccurDate,
+		statement_month)
+		VALUES 
+		<foreach collection="list" item="item" index="index" separator=",">
+		(
+		#{item.billno,jdbcType=VARCHAR},
+		#{item.subCompany,jdbcType=VARCHAR},
+		#{item.difference,jdbcType=VARCHAR},
+		concat(#{item.getDate,jdbcType=VARCHAR},LPAD(nextValue(#{item.getDate,jdbcType=VARCHAR},'YW'),8,'0')),
+		#{item.sameordifference,jdbcType=VARCHAR},
+		#{item.didi_price,jdbcType=VARCHAR},
+		#{item.lower_price,jdbcType=VARCHAR},
+		#{item.offtime,jdbcType=VARCHAR},
+		#{item.from_name,jdbcType=VARCHAR},
+		#{item.to_name,jdbcType=VARCHAR},
+		#{item.total_price,jdbcType=VARCHAR},
+		#{item.financedept,jdbcType=VARCHAR},
+		#{item.taxidate,jdbcType=VARCHAR},
+		#{item.getDate,jdbcType=VARCHAR}
+		)
+		</foreach>
+	</insert>
+	<insert id="addStatement2" parameterType="java.util.List">
+		INSERT INTO didi_statement(billno,company,difference,id,same_or_difference,didi_price,lower_price,deppon_price,statement_month)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		(
+		#{item.billno,jdbcType=VARCHAR},
+		#{item.subCompany,jdbcType=VARCHAR},
+		#{item.didi_price,jdbcType=VARCHAR},
+		concat(#{item.getDate,jdbcType=VARCHAR},LPAD(nextValue(#{item.getDate,jdbcType=VARCHAR},'YW'),8,'0')),
+		#{item.sameordifference,jdbcType=VARCHAR},
+		#{item.didi_price,jdbcType=VARCHAR},
+		'0.00','0.00',
+		#{item.getDate,jdbcType=VARCHAR}
+		)
+		</foreach>
+	</insert>
+	<insert id="addStatement4Didi" parameterType="java.util.List">
+		INSERT INTO didi_statement(billno,company,didi_price,id,statement_month)
+		VALUES
+		<foreach collection="list" item="item" index="index" separator=",">
+		(
+		#{item.didiBillNo,jdbcType=VARCHAR},
+		#{item.subCompany,jdbcType=VARCHAR},
+		CONVERT(#{item.amount,jdbcType=VARCHAR},DECIMAL(5,2)),
+		concat(#{item.getDate,jdbcType=VARCHAR},LPAD(nextValue(#{item.getDate,jdbcType=VARCHAR},'YW'),8,'0')),
+		#{item.getDate,jdbcType=VARCHAR}
+		)
+		</foreach>
+	</insert>
+	<!-- 把滴滴excal表格内容加入数据库中 -->
+	<insert id="addDidiExcal" parameterType="map">
+		insert into didi_excal (billno,didi_price) values (#{billno,jdbcType=VARCHAR},#{didi_price,jdbcType=VARCHAR})
+	</insert>
+	<!-- 验证滴滴传入excal中订单号是否重复 -->
+	<select id="checkExcal" parameterType="java.lang.String" resultType="Integer">
+		select count(*) from didi_excal where billno=#{billno,jdbcType=VARCHAR}
+	</select>
+	<!-- 验证对账单中订单号是否重复 -->
+    <select id="checkStatement" parameterType="java.lang.String" resultType="Integer">
+		select count(*) from didi_statement where billno=#{billno,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 获取当月订单总数 -->
+	<select id="getCountOfMonth" parameterType="java.lang.String" resultType="Integer">
+		SELECT count(1) FROM didi_order 
+		WHERE taxidate BETWEEN STR_TO_DATE(CONCAT(#{getDate,jdbcType=VARCHAR},'-01'),'%Y-%m-%d')
+		AND DATE_ADD(CONCAT(#{getDate,jdbcType=VARCHAR},'-01'),INTERVAL 1 MONTH) AND sub_status IN(7000,6102);
+	</select>
+	
+	<!-- 按主键删除记录 -->
+	<delete id="deleteDidiOrder" parameterType="java.lang.String">
+		delete from <include refid="table_name" /> where ID=#{id}
+	</delete>
+	<update id="addFinancialInfo" parameterType="Map">
+		UPDATE didi_statement SET 
+		applyEmpName=#{applyEmpName,jdbcType=VARCHAR},
+		applyEmpCode=#{applyEmpCode,jdbcType=VARCHAR},
+		mcName=#{mcName,jdbcType=VARCHAR},
+		invoiceTitle=#{invoiceTitle,jdbcType=VARCHAR},
+		financialDept=#{financialDept,jdbcType=VARCHAR},
+		accountName=#{accountName,jdbcType=VARCHAR},
+		contactInfo=#{contactInfo,jdbcType=VARCHAR},
+		costExplain=#{costExplain,jdbcType=VARCHAR},
+		accountNature=#{accountNature,jdbcType=VARCHAR},
+		bankName=#{bankName,jdbcType=VARCHAR},
+		bankProvinceName=#{bankProvinceName,jdbcType=VARCHAR},
+		bankCityName=#{bankCityName,jdbcType=VARCHAR},
+		subbankName=#{subbankName,jdbcType=VARCHAR},
+		account=#{account,jdbcType=VARCHAR},
+		actualAmount=IF(lower_price='' || lower_price=NULL,'0.00',lower_price),
+		itemCostExplain=id 
+		WHERE company=#{company,jdbcType=VARCHAR} 
+		AND statement_month=#{getDate,jdbcType=VARCHAR};
+	</update>
+	<update id="statementInDpm" parameterType="Map">
+		UPDATE didi_order o,didi_statement s SET 
+		s.same_or_difference=(CASE WHEN CONVERT(s.didi_price,DECIMAL(5,2)) != CONVERT(o.TOTAL_PRICE,DECIMAL(5,2)) THEN '1' ELSE '0' END),
+		s.offtime=o.OFFTIME,
+		s.from_name=o.FROM_NAME,
+		s.to_name=o.TO_NAME,
+		s.deppon_price=o.TOTAL_PRICE,
+		s.difference=ABS(CONVERT(s.didi_price,DECIMAL(5,2))-CONVERT(o.TOTAL_PRICE,DECIMAL(5,2))),
+		s.lower_price=(CASE WHEN CONVERT(s.didi_price,DECIMAL(5,2))>CONVERT(o.TOTAL_PRICE,DECIMAL(5,2)) THEN o.TOTAL_PRICE ELSE s.didi_price END),
+		s.costCenterName=o.FINANCEDEPT,
+		s.bizOccurDate=o.TAXIDATE,
+		s.statemented='1',
+		s.actualAmount=(CASE WHEN CONVERT(s.didi_price,DECIMAL(5,2))>CONVERT(o.TOTAL_PRICE,DECIMAL(5,2)) THEN o.TOTAL_PRICE ELSE s.didi_price END) 
+		WHERE s.BILLNO=o.BILLNO AND s.statement_month=#{getDate,jdbcType=VARCHAR} AND s.statemented='0';
+	</update>
+	<update id="statementNotInDpm" parameterType="Map">
+		UPDATE didi_statement s SET 
+		s.same_or_difference='1',
+		s.deppon_price='0.00',
+		s.difference=CONVERT(s.didi_price,DECIMAL(5,2)),
+		s.lower_price='0.00',
+		s.statemented='1'
+		WHERE s.statement_month=#{getDate,jdbcType=VARCHAR} AND s.statemented='0';
+	</update>
+	<!-- 查询对账单全部数据 -->
+	<select id="queryStatement" resultType="String" resultMap="didiStatementResult" parameterType="Map">
+		SELECT * FROM didi_statement 
+		WHERE statement_month = #{getDate,jdbcType=VARCHAR}
+		LIMIT #{pageNum,jdbcType=INTEGER},10
+	</select>
+	<select id="queryAllStatement" resultType="String" resultMap="didiStatementResult">
+		select * from didi_statement
+	</select>
+	<select id="queryStatementCount" parameterType="java.lang.String" resultType="Integer">
+		SELECT COUNT(1) FROM didi_statement
+		WHERE statement_month = #{getDate,jdbcType=VARCHAR};
+	</select>
+	<update id="updateStatement" parameterType="Map">
+		update didi_statement 
+		<set>
+			<if test="depponPrice!=null">deppon_Price=#{depponPrice,jdbcType=VARCHAR},</if>
+			<if test="lowerPrice!=null">lower_price=#{lowerPrice,jdbcType=VARCHAR},</if>
+			difference=FORMAT(ABS(deppon_price-didi_price),2),
+			<choose>
+				<when test="deppon_price-didi_price == 0">
+					same_or_difference=0
+				</when>
+				<otherwise>
+					same_or_difference=1
+				</otherwise>
+			</choose>
+		</set>
+		where id=#{id,jdbcType=VARCHAR}
+	</update>
+	<!-- 根据id删除对账单明细 -->
+	<delete id="deleteStatement" parameterType="String">
+		delete from didi_statement where id=#{id,jdbcType=VARCHAR}
+	</delete>
+	<!-- 模糊查询各个公司对账单 -->
+	<select id="fuzzySearchStatement" parameterType="String" resultMap="StatementSummaryResult">
+		select * from statement_summary 
+		<where>
+			<if test="company !=null and company != '' ">
+				company LIKE CONCAT(CONCAT('%', #{company,jdbcType=VARCHAR}), '%')
+			</if>  
+			<if test="workFlowStatus !=null and workFlowStatus != '' ">
+				AND workflow_status=#{workFlowStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="offTime !=null and offTime != ''">
+				AND offtime=#{offTime,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	<select id="fuzzySearchStatementFenYe" resultMap="StatementSummaryResult">
+		select * from statement_summary 
+		<where>
+			<if test="company !=null and company != '' ">
+				company LIKE CONCAT(CONCAT('%', #{company,jdbcType=VARCHAR}), '%')
+			</if>  
+			<if test="workFlowStatus !=null and workFlowStatus != '' ">
+				AND workflow_status=#{workFlowStatus,jdbcType=VARCHAR}
+			</if>
+			<if test="offTime !=null and offTime != ''">
+				AND offtime=#{offTime,jdbcType=VARCHAR}
+			</if>
+		</where>
+		limit <![CDATA[${pageNum}]]>,10
+	</select>
+	<!-- 根据公司查询对账单明细 -->
+	<select id="queryAllStatementByCompany" parameterType="String" resultMap="didiStatementResult">
+		select * from didi_statement where company=#{company,jdbcType=VARCHAR} and left(id,6)=#{offTime,jdbcType=VARCHAR}
+	</select>
+	<!-- 汇总各个公司对账明细 -->
+	<insert id="addStatementSummary" parameterType="String">
+		INSERT into statement_summary(company,money,offtime) values(#{company},#{money},#{offTime});
+	</insert>
+	<!-- 验证对账单是否全部改完，即same_or_difference全部是否为0 -->
+	<select id="queryStatus" parameterType="String" resultType="int">
+		select same_or_difference from didi_statement where id LIKE CONCAT(#{getDate,jdbcType=VARCHAR},'%')
+	</select>
+	<!-- 在明细表中查询对账汇总用于验证重复 -->
+	<select id="queryStatementSummary" parameterType="String" resultMap="StatementSummaryResult">
+		SELECT company,SUM(CONVERT(actualAmount,DECIMAL(10,2))) money,statement_month offTime FROM didi_statement 
+		WHERE statement_month = #{getDate,jdbcType=VARCHAR}
+		GROUP BY company; 
+	</select>
+	<!-- 在汇总表中查询对账单汇总 -->
+	<select id="SearchStatementSummary" parameterType="String" resultType="int">
+		select count(1) from statement_summary where company =#{company,jdbcType=VARCHAR} and offtime = #{offTime,jdbcType=VARCHAR} and workflowStatus != '不同意'
+	</select>
+	<!-- 在汇总表中查询对账单汇总不包含状态 -->
+	<select id="SearchStatementSummary2" parameterType="String" resultType="int">
+		select count(1) from statement_summary where company =#{company,jdbcType=VARCHAR} and offtime = #{offTime,jdbcType=VARCHAR}
+	</select>
+	<!-- 在汇总表中查询对账单汇总明细 -->
+	<select id="queryStatementSummaryDetails" parameterType="String" resultMap="StatementSummary">
+		select company,money,workflow_status,workflow_num,offtime,status from statement_summary where offtime = #{offTime,jdbcType=VARCHAR}
+	</select>
+	<!-- 查询工作流状态 -->
+	<select id="queryWorkFlowStatus" parameterType="String" resultType="String">
+		select workflow_status from statement_summary where company=#{company,jdbcType=VARCHAR} and offTime = #{offTime,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据id包含的月份删除对账单明细 -->
+	<delete id="deleteStatementByTime" parameterType="String">
+		delete from didi_statement where left(id,6)=#{offTime,jdbcType=VARCHAR}
+	</delete>
+	<delete id="deleteStatementSummaryByTime" parameterType="String">
+		delete from statement_summary where offtime=#{offTime,jdbcType=VARCHAR}
+	</delete>
+	<update id="updateStatementSummary" parameterType="map">
+		update statement_summary set status='已发送',bizDataUUID=#{bizDataUUID,jdbcType=VARCHAR} where company=#{company,jdbcType=VARCHAR} and
+		offTime=#{offTime,jdbcType=VARCHAR}
+	</update>
+	<!-- 根据工号查询上次打车记录 -->
+	<select id="selectLastOrder" parameterType="String" resultMap="didiOrderResult">
+		SELECT * FROM didi_order WHERE EMPLOYEENO=#{userId} ORDER BY OFFTIME DESC LIMIT 1,1;
+	</select>
+	<!-- 动态插入数据 -->
+	<insert id="insertDidiOrderSo" parameterType="com.deppon.dpm.doc.server.entity.DidiOrderEntity">
+		insert into <include refid="table_name" /> 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">ID,</if>
+			<if test="billno != null and billno != '' ">BILLNO,</if>
+			<if test="name != null and name != '' ">NAME,</if>
+			<if test="employeeno != null and employeeno != '' ">EMPLOYEENO,</if>
+			<if test="models != null and models != '' ">MODELS,</if>
+			<if test="fromName != null and fromName != '' ">FROM_NAME,</if>
+			<if test="toName != null and toName != '' ">TO_NAME,</if>
+			<if test="taxidate != null and taxidate != '' ">TAXIDATE,</if>
+			<if test="boardingtime != null and boardingtime != '' ">BOARDINGTIME,</if>
+			<if test="offtime != null and offtime != '' ">OFFTIME,</if>
+			<if test="orderstatus != null">ORDERSTATUS,</if>
+			<if test="normalDistance != null and normalDistance != '' ">NORMAL_DISTANCE,</if>
+			<if test="totalPrice != null and totalPrice != '' ">TOTAL_PRICE,</if>
+			<if test="dept != null and dept != '' ">DEPT,</if>
+			<if test="financedept != null and financedept != '' ">FINANCEDEPT,</if>
+			<if test="budgetratio != null and budgetratio != '' ">BUDGETRATIO,</if>
+			<if test="timeschedule != null and timeschedule != '' ">TIMESCHEDULE,</if>
+			<if test="sub_status != null ">SUB_STATUS,</if>
+			<if test="remark != null and remark != '' ">REMARK,</if>
+			<if test="remarkinfo != null and remarkinfo != '' ">REMARKINFO,</if>
+			<if test="company != null and company != '' ">company,</if>
+			<if test="estimateprice != null and estimateprice != '' ">estimateprice,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">#{id},</if>
+			<if test="billno != null and billno != '' ">#{billno, jdbcType=VARCHAR},</if>
+			<if test="name != null and name != '' ">#{name, jdbcType=VARCHAR},</if>
+			<if test="employeeno != null and employeeno != '' ">#{employeeno, jdbcType=VARCHAR},</if>
+			<if test="models != null and models != '' ">#{models, jdbcType=VARCHAR},</if>
+			<if test="fromName != null and fromName != '' ">#{fromName, jdbcType=VARCHAR},</if>
+			<if test="toName != null and toName != '' ">#{toName, jdbcType=VARCHAR},</if>
+			<if test="taxidate != null and taxidate != '' ">#{taxidate, jdbcType=VARCHAR},</if>
+			<if test="boardingtime != null and boardingtime != '' ">#{boardingtime, jdbcType=VARCHAR},</if>
+			<if test="offtime != null and offtime != '' ">#{offtime, jdbcType=VARCHAR},</if>
+			<if test="orderstatus != null">#{orderstatus},</if>
+			<if test="normalDistance != null and normalDistance != '' ">#{normalDistance, jdbcType=VARCHAR},</if>
+			<if test="totalPrice != null and totalPrice != '' ">#{totalPrice, jdbcType=VARCHAR},</if>
+			<if test="dept != null and dept != '' ">#{dept, jdbcType=VARCHAR},</if>
+			<if test="financedept != null and financedept != '' ">#{financedept, jdbcType=VARCHAR},</if>
+			<if test="budgetratio != null and budgetratio != '' ">#{budgetratio, jdbcType=VARCHAR},</if>
+			<if test="timeschedule != null and timeschedule != '' ">#{timeschedule, jdbcType=VARCHAR},</if>
+			<if test="sub_status != null">#{sub_status},</if>
+			<if test="remark != null and remark != '' ">#{remark, jdbcType=VARCHAR},</if>
+			<if test="remarkinfo != null and remarkinfo != '' ">#{remarkinfo, jdbcType=VARCHAR},</if>
+			<if test="company != null and company != '' ">#{company, jdbcType=VARCHAR},</if>
+			<if test="estimateprice != null and estimateprice != '' ">#{estimateprice, jdbcType=VARCHAR},</if>
+		</trim>	
+	</insert>
+</mapper>

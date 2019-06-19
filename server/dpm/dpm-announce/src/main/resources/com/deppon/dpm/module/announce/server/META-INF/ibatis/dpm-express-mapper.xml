@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.announce.shared.domain.express">
+
+	<resultMap type="com.deppon.dpm.module.announce.shared.domain.DpmExpress"
+		id="baseMap">
+		<result property="issuedId" column="id" />
+		<result property="learnDate" column="learn_date" />
+		<result property="quoContent" column="quo_content" />
+		<result property="divisionName" column="division_name" />
+		<result property="taTitleContent" column="ta_title_content" />
+		<result property="taContent" column="ta_content" />
+		<result property="buTitleContent" column="bu_title_content" />
+		<result property="buContent" column="bu_content" />
+		<result property="jiaoTitleContent" column="jiao_title_content" />
+		<result property="jiaoContent" column="jiao_content" />
+		<result property="morningType" column="morning_type" />
+		<result property="buTitle" column="bu_title" />
+		<result property="taTitle" column="ta_title" />
+		<result property="jiaoTitle" column="jiao_title" />
+		<result property="taStatus" column="part1" />
+		<result property="buStatus" column="part2" />
+		<result property="jiaoStatus" column="part3" />
+	</resultMap>
+
+	<insert id="insert"
+		parameterType="com.deppon.dpm.module.announce.shared.domain.DpmExpress">
+		insert into
+		om_dpm_express(learn_date,quo_content,division_name,ta_title_content,ta_content,
+		bu_title_content,bu_content,
+		jiao_title_content,jiao_content,morning_type,bu_title,ta_title,jiao_title)
+		values
+		(#{learnDate},#{quoContent},#{divisionName},#{taTitleContent},#{taContent},
+		#{buTitleContent},#{buContent},#{jiaoTitleContent},#{jiaoContent},#{morningType}
+		,#{buTitle},#{taTitle},#{jiaoTitle})
+	</insert>
+
+	<select id="selectById" parameterType="map" resultMap="baseMap">
+		select
+		a.*,case when
+		b.part1 is null then 0 else b.part1 end part1,
+		case when
+		b.part2 is
+		null then 0 else b.part2 end part2,
+		case when b.part3 is null
+		then 0
+		else b.part3 end part3
+		from om_dpm_express a left join
+		om_emp_express b
+		on a.id =b.express_id and b.emp_code=#{userId}
+		where
+		a.id =#{id} and a.morning_type=#{morningType}
+	</select>
+
+	<select id="expressToday" parameterType="map" resultMap="baseMap">
+		select
+		a.*,case when
+		b.part1 is null then 0 else b.part1 end part1,
+		case
+		when
+		b.part2 is
+		null then 0 else b.part2 end part2,
+		case when b.part3 is
+		null
+		then 0
+		else b.part3 end part3
+		from om_dpm_express a left join
+		om_emp_express b
+		on a.id =b.express_id
+		where
+		a.division_name=#{division} and
+		b.emp_code =#{userId}
+		and a.morning_type=#{morningType}
+		order by
+		a.learn_date desc limit 0,1
+	</select>
+
+	<select id="getOrgName" statementType="CALLABLE" parameterType="map"
+		resultType="string">
+		<![CDATA[  
+    		{call p_syb (#{userId,mode=IN,jdbcType=VARCHAR},#{orgNameResult,mode=OUT,jdbcType=VARCHAR})}  
+		]]>
+	</select>
+
+	<select id="expressLastInsert" statementType="CALLABLE"
+		parameterType="map">
+		<![CDATA[  
+    		{call p_dpm_express (#{userId,mode=IN,jdbcType=VARCHAR},#{morningType,mode=IN,jdbcType=VARCHAR},#{division,mode=IN,jdbcType=VARCHAR})}  
+		]]>
+	</select>
+
+	<select id="expressById" statementType="CALLABLE" parameterType="map">
+		<![CDATA[  
+    		{call p_express_insert (#{userId,mode=IN,jdbcType=VARCHAR},#{id,mode=IN,jdbcType=INTEGER})}  
+		]]>
+	</select>
+	
+	<select id="selectFirstStudyTime" parameterType="map" resultType="date">
+		SELECT
+			first_studytime
+		FROM
+			om_emp_express
+		WHERE
+			emp_code = #{userId}
+		AND express_id = #{id}
+	</select>
+
+	<update id="study" parameterType="map">
+		update om_emp_express
+		<set>
+			<if test="part1!=null and part1!=0">
+				part1=1,
+			</if>
+			<if test="part2!=null and part2!=0">
+				part2=1,
+			</if>
+			<if test="part3!=null and part3!=0">
+				part3=1,
+			</if>
+			<if test="studyTime == null">
+				first_studytime = NOW()
+			</if>
+		</set>
+		where emp_code =#{userId} and express_id=#{id}
+	</update>
+
+	<select id="history" parameterType="map" resultMap="baseMap">
+		SELECT
+		*
+		FROM
+		(
+		SELECT
+		a.*, CASE
+		WHEN b.part1 IS NULL THEN
+		0
+		ELSE
+		b.part1
+		END
+		part1,
+		CASE
+		WHEN
+		b.part2 IS NULL THEN
+		0
+		ELSE
+		b.part2
+		END part2,
+		CASE
+		WHEN
+		b.part3 IS NULL THEN
+		0
+		ELSE
+		b.part3
+		END part3
+		FROM
+		om_dpm_express a
+		LEFT JOIN
+		om_emp_express b ON
+		a.id = b.express_id
+		WHERE
+		a.division_name = #{divisionName}
+		AND a.morning_type = #{morningType}
+		AND
+		b.emp_code = #{userId}
+		UNION
+		SELECT
+		c.*, 0 part1,
+		0 part2,
+		0 part3
+		FROM
+		om_dpm_express c
+		WHERE
+		c.division_name = #{divisionName}
+		AND c.morning_type =
+		#{morningType}
+		AND c.id NOT IN (
+		SELECT
+		c.id
+		FROM
+		om_dpm_express c
+		LEFT JOIN
+		om_emp_express d ON c.id = d.express_id
+		WHERE
+		c.division_name = #{divisionName}
+		AND c.morning_type
+		=
+		#{morningType}
+		AND
+		d.emp_code = #{userId}
+		)
+		) t
+		ORDER BY
+		t.learn_date DESC
+		LIMIT 30
+
+	</select>
+	
+	<select id="getDivisionEntity" parameterType="string" 
+		resultType="com.deppon.dpm.module.announce.shared.domain.EmpDivisionEntity">
+		SELECT
+			ds.id,
+			ds.empCode,
+			ds.updateTime,
+			ds.division,
+			ds.currentDeptSeq,
+			org.DEPTSEQ deptSeq
+		FROM
+			emp_division ds
+		INNER JOIN om_employee emp ON ds.empCode = emp.empcode AND emp.empstatus = 'on'
+		INNER JOIN om_organization org ON emp.ORGID = org.ORGID
+		WHERE
+			ds.empCode = #{userId}  
+	</select>
+	
+	<select id="getDivisionName" statementType="CALLABLE"
+		parameterType="string" resultType="string">
+		
+		SELECT F_GETSYBBYEMPCODE(#{userId})
+	</select>
+	
+	<insert id="insetEmpDivisionInfo" 
+		parameterType="com.deppon.dpm.module.announce.shared.domain.EmpDivisionEntity">
+	
+		INSERT INTO emp_division 
+			(
+				empCode,
+				updateTime,
+				division,
+				currentDeptSeq
+			)
+		VALUES
+			(
+				#{empCode},
+				#{updateTime},
+				#{division},
+				#{currentDeptSeq}
+			)
+	</insert>
+	
+	<update id="updateEmpDivisionInfo" 
+		parameterType="com.deppon.dpm.module.announce.shared.domain.EmpDivisionEntity">
+	
+		UPDATE emp_division
+		SET updateTime = #{updateTime},division = #{division},currentDeptSeq = #{currentDeptSeq} 
+		WHERE
+			id = #{id}
+	</update>
+
+</mapper>

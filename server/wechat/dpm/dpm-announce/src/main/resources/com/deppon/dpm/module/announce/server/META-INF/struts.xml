@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="dpm-announce" namespace="/dpm-announce" extends="foss-default">
+		<!-- 模块主页面 -->
+		<!-- <action name="index">
+			<result name="success">index.jsp</result>
+		</action> -->
+		<interceptors>
+			<interceptor name="checkUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor" />
+		</interceptors>
+		<action name="queryCommonAnnounces" class="announceAction" method="queryCommonAnnounces">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="queryCommonNotices" class="announceAction" method="queryCommonNotices">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="queryBreachPrinciple" class="announceAction" method="queryBreachPrinciple">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="queryAnnounceDetail" class="announceAction" method="queryAnnounceDetail">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="operateAnnounce" class="announceAction" method="operateAnnounce">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<action name="queryIndexNews" class="announceAction" method="queryIndexNews">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="queryMyCollections" class="announceAction" method="queryMyCollections">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="deleteMyColls" class="announceAction" method="deleteMyColls">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="searchInter" class="announceAction" method="searchInter">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="searchInterDetail" class="announceAction" method="searchInterDetail">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<action name="getNormalQuestions" method="getNormalQuestions" 
+			class="com.deppon.dpm.module.announce.server.action.NormalQuestionAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 常见联系人负责人 -->
+		<action name="getNormalQuestionsHandle" method="getNormalQuestionHandle" 
+			class="com.deppon.dpm.module.announce.server.action.NormalQuestionHandleAction">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+	</package>
+</struts>

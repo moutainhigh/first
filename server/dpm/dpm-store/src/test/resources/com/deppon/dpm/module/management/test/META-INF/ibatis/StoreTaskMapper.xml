@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.store.server.dao.IStoreTaskDao">
+  <resultMap id="BaseResultMap" type="com.deppon.dpm.store.server.entity.StoreTask">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="Creater" jdbcType="VARCHAR" property="creater" />
+    <result column="CreattTme" jdbcType="VARCHAR" property="creatttme" />
+    <result column="DesignatedPerson" jdbcType="VARCHAR" property="designatedperson" />
+    <result column="OperatingDepartment" jdbcType="VARCHAR" property="operatingdepartment" />
+    <result column="CheckingModule" jdbcType="VARCHAR" property="checkingmodule" />
+    <result column="StarTime" jdbcType="VARCHAR" property="startime" />
+    <result column="EndTime" jdbcType="VARCHAR" property="endtime" />
+    <result column="CheckingType" jdbcType="VARCHAR" property="checkingtype" />
+    <result column="TaskState" jdbcType="VARCHAR" property="taskstate" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, Creater, CreattTme, DesignatedPerson, OperatingDepartment, CheckingModule, StarTime, 
+    EndTime, CheckingType, TaskState
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from store_task
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from store_task
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.deppon.dpm.store.server.entity.StoreTask">
+    insert into store_task (id, Creater, CreattTme, 
+      DesignatedPerson, OperatingDepartment, 
+      CheckingModule, StarTime, EndTime, 
+      CheckingType, TaskState)
+    values (#{id,jdbcType=INTEGER}, #{creater,jdbcType=VARCHAR}, #{creatttme,jdbcType=VARCHAR}, 
+      #{designatedperson,jdbcType=VARCHAR}, #{operatingdepartment,jdbcType=VARCHAR}, 
+      #{checkingmodule,jdbcType=VARCHAR}, #{startime,jdbcType=VARCHAR}, #{endtime,jdbcType=VARCHAR}, 
+      #{checkingtype,jdbcType=VARCHAR}, #{taskstate,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.deppon.dpm.store.server.entity.StoreTask">
+    insert into store_task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="creater != null">
+        Creater,
+      </if>
+      <if test="creatttme != null">
+        CreattTme,
+      </if>
+      <if test="designatedperson != null">
+        DesignatedPerson,
+      </if>
+      <if test="operatingdepartment != null">
+        OperatingDepartment,
+      </if>
+      <if test="checkingmodule != null">
+        CheckingModule,
+      </if>
+      <if test="startime != null">
+        StarTime,
+      </if>
+      <if test="endtime != null">
+        EndTime,
+      </if>
+      <if test="checkingtype != null">
+        CheckingType,
+      </if>
+      <if test="taskstate != null">
+        TaskState,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="creater != null">
+        #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="creatttme != null">
+        #{creatttme,jdbcType=VARCHAR},
+      </if>
+      <if test="designatedperson != null">
+        #{designatedperson,jdbcType=VARCHAR},
+      </if>
+      <if test="operatingdepartment != null">
+        #{operatingdepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="checkingmodule != null">
+        #{checkingmodule,jdbcType=VARCHAR},
+      </if>
+      <if test="startime != null">
+        #{startime,jdbcType=VARCHAR},
+      </if>
+      <if test="endtime != null">
+        #{endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="checkingtype != null">
+        #{checkingtype,jdbcType=VARCHAR},
+      </if>
+      <if test="taskstate != null">
+        #{taskstate,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.deppon.dpm.store.server.entity.StoreTask">
+    update store_task
+    <set>
+      <if test="creater != null">
+        Creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="creatttme != null">
+        CreattTme = #{creatttme,jdbcType=VARCHAR},
+      </if>
+      <if test="designatedperson != null">
+        DesignatedPerson = #{designatedperson,jdbcType=VARCHAR},
+      </if>
+      <if test="operatingdepartment != null">
+        OperatingDepartment = #{operatingdepartment,jdbcType=VARCHAR},
+      </if>
+      <if test="checkingmodule != null">
+        CheckingModule = #{checkingmodule,jdbcType=VARCHAR},
+      </if>
+      <if test="startime != null">
+        StarTime = #{startime,jdbcType=VARCHAR},
+      </if>
+      <if test="endtime != null">
+        EndTime = #{endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="checkingtype != null">
+        CheckingType = #{checkingtype,jdbcType=VARCHAR},
+      </if>
+      <if test="taskstate != null">
+        TaskState = #{taskstate,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.deppon.dpm.store.server.entity.StoreTask">
+    update store_task
+    set Creater = #{creater,jdbcType=VARCHAR},
+      CreattTme = #{creatttme,jdbcType=VARCHAR},
+      DesignatedPerson = #{designatedperson,jdbcType=VARCHAR},
+      OperatingDepartment = #{operatingdepartment,jdbcType=VARCHAR},
+      CheckingModule = #{checkingmodule,jdbcType=VARCHAR},
+      StarTime = #{startime,jdbcType=VARCHAR},
+      EndTime = #{endtime,jdbcType=VARCHAR},
+      CheckingType = #{checkingtype,jdbcType=VARCHAR},
+      TaskState = #{taskstate,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

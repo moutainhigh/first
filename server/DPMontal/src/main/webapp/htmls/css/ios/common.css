@@ -1,0 +1,10 @@
+@charset "utf-8";
+/* ios comment style */
+
+body { color:#373c64;}
+.gray { color:#b5b4b4 !important;}
+.yellow { color:#faaf19 !important;}
+.white { color:#fff !important;}
+.bgGray { background-color:#b5b4b4;}
+.bgYellow { background-color:#faaf19;}
+.button, .button em { display:inline-block; *display:inline; *zoom:1; vertical-align:middle; cursor:pointer;}

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.deppon.com/dpm/webService/domain/"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.deppon.com/dpm/webService/domain/">
+
+	<element name="queryWorkflowItemsResponse" type="tns:QueryWorkflowItemsResponse"></element>
+
+	<element name="queryWorkflowItemsRequest" type="tns:QueryWorkflowItemsRequest"></element>
+
+	<complexType name="QueryWorkflowItemsRequest">
+		<sequence>
+			<element name="userNo" type="string">
+				<annotation>
+					<documentation>当前登录人工号</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="QueryWorkflowItemsResponse">
+		<sequence>
+			<element name="IsSucess" type="boolean">
+				<annotation>
+					<documentation>是否成功</documentation>
+				</annotation>
+			</element>
+			<element name="failReason" type="string">
+				<annotation>
+					<documentation>失败原因</documentation>
+				</annotation>
+			</element>
+			<element name="workflowItems" type="int">
+				<annotation>
+					<documentation>代办数量</documentation>
+				</annotation>
+			</element>
+		</sequence>
+	</complexType>
+
+</schema>

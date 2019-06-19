@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.applyStore">
+
+	<resultMap type="com.deppon.dpm.module.management.shared.domain.ApplyStore"
+		id="baseMap">
+		<result property="appId" column="id" />
+		<result property="count" column="down_load_count" />
+		<result property="enName" column="en_name" />
+		<result property="cnName" column="cn_name" />
+		<result property="summary" column="summary" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<update id="download" parameterType="int">
+		update apply_store set
+		down_load_count=down_load_count+1
+		where id =#{id}
+	</update>
+
+	<select id="list" resultMap="baseMap">
+		select
+		id,down_load_count,en_name,cn_name,summary,create_time from
+		apply_store order by
+		create_time desc
+	</select>
+
+	<select id="getSort" parameterType="string" resultType="string">
+		select
+		sort_str from apply_store_sort where emp_code =#{userId}
+	</select>
+
+	<select id="updateSort" parameterType="map">
+		INSERT INTO
+		apply_store_sort (emp_code,sort_str)
+		VALUES (#{userId}, ${sortStr})
+		ON
+		DUPLICATE KEY
+		UPDATE emp_code =#{userId}, sort_str= ${sortStr}
+	</select>
+
+</mapper>

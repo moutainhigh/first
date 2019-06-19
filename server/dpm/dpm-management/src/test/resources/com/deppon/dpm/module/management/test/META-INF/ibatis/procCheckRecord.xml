@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procCheckRecord" >
+    
+    <resultMap id="baseResult"
+		type="com.deppon.dpm.module.management.shared.domain.ProcCheckTaskEntity">
+		<result property="taskId" column="id" />
+		<result property="deptCode" column="dept_code" />
+		<result property="deptName" column="dept_name" />
+		<result property="providerName" column="provider_name" />
+		<result property="updateDate" column="update_date" />
+		<result property="branchIsCheck" column="branch_ischeck" />
+	</resultMap>
+	
+	<resultMap id="basePc"
+		type="com.deppon.dpm.module.management.shared.domain.ProcCheckPCEntity">
+		<result property="navCode" column="navCode" />
+		<result property="navName" column="navName" />
+		<result property="userNo" column="userNo" />
+		<result property="origItemCode" column="origItemCode" />
+		<result property="origItemName" column="origItemName" />
+		<result property="imgOne" column="imgOne" />
+		<result property="imgTwo" column="imgTwo" />
+		<result property="imgThree" column="imgThree" />
+		<result property="imgFour" column="imgFour" />
+		<result property="imgFive" column="imgFive" />
+		<result property="score" column="score" />
+		<result property="opinion" column="opinion" />
+	</resultMap>
+	
+	
+	<!-- 查询任务列表 -->
+	<select id="getList" parameterType="java.util.Map" resultMap="baseResult">
+		select id,dept_code,dept_name,provider_name,update_date,branch_ischeck from proc_check_task 
+		where check_empNo like concat('%','${userNo}','%') 
+		<if test="deptName != null and deptName != ''">
+		and dept_name like concat('%','${deptName}','%') 
+		</if>
+		order by branch_ischeck ASC , update_date ASC LIMIT #{pageStart},#{pageSize}
+	</select>
+	
+	<!-- 查询任务总数用来分页 -->
+	<select id="getCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(id) from proc_check_task
+		where check_empNo like concat('%','${userNo}','%')  
+		<if test="deptName != null and deptName != ''">
+		and dept_name like concat('%','${deptName}','%') 
+		</if>
+	</select>
+	
+	<!-- 查询最终提交的附件 和 明细信息 -->
+	<select id="getTaskScoreList" resultMap="basePc" parameterType="java.lang.String">
+		select b.navCode,b.navName,b.userNo,a.origItemCode,a.origItemName,a.score,a.opinion,a.imgOne,a.imgTwo,a.imgThree,a.imgFour,a.imgFive 
+			from proc_check_score a,proc_check_record b 
+		 	where b.id=a.recordId and b.addressCode=#{_parameter} and submitNub=2
+	</select>
+	
+	<!-- 查询分数  第一次 或 最终提交  -->
+	<select id="getScoreSum" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select case when sum(a.score) is null then 0 else sum(a.score) end from proc_check_score a,proc_check_record b 
+			where b.id=a.recordId and b.addressCode=#{number} and submitNub=#{submitNub}	
+	</select>
+	
+	<!-- 查询初次提交时间 -->
+	<select id="getFirstDate" resultType="java.util.Date"  parameterType="java.lang.String">
+		select a.createDate from proc_check_score a,proc_check_record b 
+			where  b.id=a.recordId  and b.addressCode=#{number} and submitNub=1 
+			order by createDate desc limit 0,1
+	</select>
+	
+	<!-- 修改任务最终提交标志 -->
+	<update id="updateLastTime" parameterType="java.util.Map">
+		update proc_check_task set update_date=#{date} ,branch_ischeck=3 ,issubmit_pc='Y' where dept_code=#{deptCode}
+	</update>
+	
+	<!-- 修改历史记录最终提交标志 -->
+	<update id="updateRecordStatus" parameterType="java.lang.String">
+		update proc_check_record set isSubmit='Y' where addressCode=#{_parameter}
+	</update>
+	
+	<!-- 查询最终提交时间 -->
+	<select id="getLastDate" resultType="java.util.Date" parameterType="java.lang.String">
+		select update_date from proc_check_task where dept_code = #{_parameter} limit 0,1
+	</select>
+	
+	<!-- 判断任务是否存在 -->
+	<select id="hasThisTask" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(id) from proc_check_task where dept_code=#{_parameter}
+	</select>
+	
+	<!-- 插入任务信息 -->
+	<insert id="insertTask" parameterType="com.deppon.dpm.module.management.shared.domain.TaskCheckEntity">
+		insert into proc_check_task
+			(dept_code,dept_name,provider_name,check_empNo,check_empName,update_date,is_current_check)
+			values
+			(#{deptCode},#{deptName},#{providerName},#{checkEmpNo},#{checkEmpName},now(),0)
+	</insert>
+	
+	<!-- 查询项目编号是否已经提交 -->
+	<select id="getTaskStatus" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(id) from proc_check_task where dept_code=#{_parameter} and issubmit_pc='Y'
+	</select>
+	
+	
+</mapper>

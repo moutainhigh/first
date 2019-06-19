@@ -1,0 +1,31 @@
+@charset "utf-8";
+/* win8 menu style */
+
+div#menu { background:#373c64; font-size:32px; width:100%; min-height:960px; overflow:hidden;}
+#div1 { width:100%; margin:0 auto; height:100px; overflow:hidden; position:relative;}
+#div1 span { display:none;}
+#div1 a.return { display:block; width:80px; height:80px; background:url(../../images/return_btn.png) no-repeat; position:absolute; top:20px; left:20px;}
+#div1 .logo { width:221px; height:77px; background:url(../../images/menu_logo.png) no-repeat; position:absolute; top:20px; right:35px;}
+#div2 { width:81.25%; margin:35px auto 0;}
+#div2 ul.white { display:none;}
+#div2 .list { width:100%; overflow:hidden; position:relative;}
+#div2 .list .tips { display:inline-block; text-align:left; position:relative; z-index:1000;}
+#div2 .list .tips em { position:absolute; top:40%; font-size:48px;}
+#div2 .list a { margin:10px; display:inline-block; position:relative; color:#fff; text-align:right;}
+#div2 .list a.wide { width:96.1%;}
+#div2 .list a p { position:absolute; left:15px; bottom:10px;}
+#div2 .list a i { 
+	font-family:arail !important; font-style:normal; font-weight:bold; color:#fff;
+	width:80px; height:80px; text-align:center; line-height:80px; display:block; position:absolute; bottom:10px; 
+	-moz-text-shadow: 0 3px 2px rgba(0,0,0,.8);
+	-webkit-text-shadow: 0 3px 2px rgba(0,0,0,.8);
+	text-shadow: 0 3px 2px rgba(0,0,0,.8);
+}
+#div2 .list a i.arrowL { left:15px;}
+#div2 .list a i.arrowR { right:15px;}
+#div2 .list a.icon1  { background:url(../../images/icon1.png) no-repeat center center #0e70d2;}
+#div2 .list a.icon2  { background:url(../../images/icon2.png) no-repeat center center #fcaf16;;}
+#div2 .list a.icon3  { background:url(../../images/icon3.png) no-repeat center center #4942df;;}
+#div2 .list a.icon4  { background:url(../../images/icon4.png) no-repeat center center #0a6e30;}
+#div2 .list a.icon5  { background:url(../../images/icon5.png) no-repeat center center #fcaf16;;}
+#div3.ad { display:none;}

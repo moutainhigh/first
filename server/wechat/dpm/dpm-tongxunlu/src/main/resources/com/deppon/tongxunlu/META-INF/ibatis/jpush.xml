@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.jpush">
+	<resultMap id="pushVo" type="com.deppon.dpm.tongxunlu.shared.vo.JpushVO">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="pushId" column="id" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="userId" column="userId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="token" column="token" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deviceType" column="deviceType" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="sysCode" column="syscode" javaType="String"
+			jdbcType="VARCHAR" /> 
+	</resultMap>
+	<sql id="push_param">
+		id,userId,token,deviceType,sysCode
+	</sql>
+	<select id="getPushs" resultMap="pushVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.JpushVO">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="push_param" />
+        <![CDATA[
+            FROM push_user p 
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1=1 
+			<if test="userId!=null and userId!=''">
+				AND userId = #{userId}
+			</if>
+			<if test="token!=null and token!=''">
+				AND token = #{token}
+			</if>
+			<if test="deviceType!=null and deviceType!=''">
+				AND deviceType = #{deviceType}
+			</if>
+			<if test="sysCode!=null and sysCode!=''">
+				AND syscode = #{sysCode}
+			</if> 
+		</where>
+	  <![CDATA[
+            order by id  ]]> 
+	</select> 
+</mapper>

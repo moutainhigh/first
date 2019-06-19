@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.store.server.dao.IQueryTaskInfoDao">
+	<resultMap id="QueryTaskInfoMap" type="com.deppon.dpm.store.server.entity.QueryTaskInfo">
+		<id column="taskid" jdbcType="INTEGER" property="taskid" />
+		<result column="taskname" jdbcType="VARCHAR" property="taskname" />
+		<result column="endtime"  property="endtime" />
+		<result column="starttime"  property="starttime" />
+		<result column="taskcreator" jdbcType="VARCHAR" property="taskcreator" />
+		<result column="denominator"  property="denominator" />
+		<result column="numerator"  property="numerator" />
+		<result column="num"  property="num" />
+		<result column="overdueTime"  property="overdueTime" />
+		<result column="pictpath"  property="pictpath" />
+		<result column="orgname"  property="orgname" />
+		<result column="jobname"  property="jobname" />
+		<result column="sublistendtime"  property="sublistendtime" />
+		<result column="exeerid"  property="exeerid" />
+		<result column="exeer"  property="exeer" />
+		<result column="deptname"  property="deptname" />
+		<result column="testgrade"  property="testgrade" />
+		<result column="taskstatus"  property="taskstatus" />
+		<result column="isoverdue"  property="isoverdue" />
+	</resultMap>
+	<!-- 条件 -->
+	<sql id="conditions">
+		<if test="startTime!=null and startTime!=''  ">and st.starttime &gt;=#{startTime} </if>
+		<if test="endTime!=null and endTime!=''  ">and st.starttime &lt;=#{endTime} </if>
+		<if test="taskName!=null and taskName!=''  ">and st.taskname like CONCAT(CONCAT('%',#{taskName}),'%') </if>
+	</sql>
+	<!--根据传递查询条件(我创建已完成未完成我执行)查询任务信息  -->
+	<select id="selcetTaskByQueryCondition" parameterType="java.util.Map" resultMap="QueryTaskInfoMap">
+		select 
+		<if test="4==queryCondition">
+		DISTINCT  
+		</if>
+		st.taskid,st.taskname,st.starttime,st.taskstatus,st.endtime,st.creatorcode,
+		(SELECT count(1) from store_task_sublist sts WHERE sts.taskid = st.taskid and sts.taskstatus = #{taskStatus1,jdbcType=VARCHAR}) numerator,
+		(SELECT count(1) from store_task_sublist sts WHERE sts.taskid = st.taskid) denominator,
+		(SELECT submittime from store_task_sublist sts WHERE sts.taskid = st.taskid ORDER BY submittime desc limit 1) sublistendtime,
+		(select EMPNAME from om_employee where EMPSTATUS = 'on' and empCode = st.creatorcode) taskcreator,
+		(select pictPath from emp_pic where  EMPCODE = st.creatorcode) pictpath,
+		(SELECT count(1) from store_task_sublist sts WHERE sts.taskid = st.taskid AND sts.taskstatus NOT IN (#{taskStatus3,jdbcType=VARCHAR})) isedit
+		FROM store_task st
+		<if test="1 == queryCondition or 2== queryCondition or 3== queryCondition">
+			<where>
+				<if test="1==queryCondition">
+					 st.creatorcode=#{creatorcode,jdbcType=VARCHAR} AND st.taskstatus NOT IN(#{taskStatus2,jdbcType=VARCHAR})
+				</if>
+				<if test="2==queryCondition">
+					 st.creatorcode=#{creatorcode,jdbcType=VARCHAR} AND st.taskstatus  IN(#{taskStatus2,jdbcType=VARCHAR})
+				</if>
+				<if test="3==queryCondition">
+					 st.creatorcode=#{creatorcode,jdbcType=VARCHAR}
+				</if>
+				<include refid="conditions" />
+			</where>
+		</if>
+		<if test="4==queryCondition">
+		inner join
+		store_task_sublist sts on st.taskid = sts.taskid and sts.exeerid = #{creatorcode,jdbcType=VARCHAR}
+		where 1=1
+		<include refid="conditions" />
+		</if>
+		AND st.dr  IN ('0')
+		ORDER BY st.ts desc
+		<if test='rowBegin != null and pageSize!=null '>
+             LIMIT #{rowBegin},#{pageSize}
+        </if>
+	</select>
+	<!-- 根据执行id查询营业部负责人工号 start -->
+	<select id="querydeptapidByExeid" parameterType="java.lang.Long" resultType="java.lang.String">
+		SELECT deptapid
+		FROM store_task_sublist 
+		WHERE exeid=#{exeid,jdbcType=BIGINT}
+	</select>
+	<!-- 根据执行id 查询考评结果相关信息start -->
+	<select id="queryAppraisalByExeid" parameterType="java.lang.Long" resultType="com.deppon.dpm.store.server.entity.QueryTaskInfo">
+		SELECT task.creatorname taskcreator,task.starttime starttime,task.endtime endtime,sublist.endtime sublistendtime,task.taskname,sublist.exeer,sublist.exeerid
+		,deptname,testgrade,sublist.taskstatus taskstatus
+		FROM store_task task,store_task_sublist sublist
+		WHERE sublist.exeid=#{exeid} and task.taskid=sublist.taskid
+	</select>
+	<!-- 根据执行id 查询考评详情 start-->
+	<select id="queryAppraisal" parameterType="java.lang.Long" resultType="com.deppon.dpm.store.server.entity.QueryAppraisal">
+		SELECT modid,grade,markinfo,photo,secondmodname,modinfo
+		FROM store_mark mark,store_secondmode secondmode
+		WHERE  mark.modid=secondmode.secondmodid AND mark.exeid=#{exeid,jdbcType=BIGINT}
+	</select>
+	<!--查询反馈 start -->
+	<select id="queryFeedback" parameterType="java.lang.Long" resultType="com.deppon.dpm.store.server.entity.QueryAppraisal">
+		SELECT feedbackinfo,picpath
+		FROM store_feedback
+		WHERE exeid=#{exeid,jdbcType=BIGINT}
+	</select>
+	<!--根据执行id查询所有主任务下的所有子任务的任务状态和主任务id  start -->
+	<select id="queryAllTaskStatusByexeid" parameterType="java.lang.Long" resultType="com.deppon.dpm.store.server.entity.StoreTaskSublist">
+		SELECT taskstatus,taskid
+		FROM store_task_sublist
+		WHERE taskid in (SELECT taskid FROM store_task_sublist WHERE exeid=#{exeid,jdbcType=BIGINT})
+	</select>
+	<!-- 查询所有模块信息 start -->
+	<select id="queryAllModInfo" resultType="com.deppon.dpm.store.server.entity.QueryModInfo">
+		SELECT a.firstmodname,b.secondmodname,b.checkgrade,b.secondmodid,b.modinfo
+		FROM store_firstmod a,store_secondmode b 
+		WHERE a.firstmodid=b.firstmodid
+	</select>
+	<!-- 查询模块表的一级模块名称 start -->
+	<select id="queryfirstmodname"  resultType="com.deppon.dpm.store.server.entity.QueryModInfo">
+		SELECT firstmodname,checkallgrade
+		FROM store_firstmod
+	</select>
+	<!--反馈后  修改任务子表的任务状态 为已完成start -->
+	<update id="updatesublist" parameterType="map">
+	UPDATE store_task_sublist
+	SET taskstatus = '已反馈',submittime=#{submittime,jdbcType=VARCHAR}
+	WHERE exeid=#{exeid,jdbcType=BIGINT}	
+	</update>
+	<!-- 当子任务都已反馈，根据主任务id来修改主任务状态为已完成，完成时间为当前时间 start -->
+	<update id="updatetask" parameterType="map">
+	UPDATE store_task SET taskstatus = '已完成', finishtime = #{finishtime,jdbcType=VARCHAR}
+	WHERE taskid=#{taskid,jdbcType=INTEGER}
+	</update>
+	<!-- 添加模块 start -->
+		<insert id="insertfirstmod" parameterType="map" >
+		INSERT INTO store_firstmod
+		  <trim prefix="(" suffix=")" suffixOverrides="," >
+          firstmodid,firstmodname,
+          <if test='firstremarks != null and firstremarks != "" '>
+             firstremarks,
+          </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+          #{firstmodid, jdbcType=VARCHAR},
+          #{firstmodname, jdbcType=VARCHAR},
+          <if test='firstremarks != null and firstremarks != "" '>
+            #{firstremarks, jdbcType=VARCHAR},
+          </if>
+        </trim>  
+	</insert>
+	<!-- 添加模块分类表 start -->
+	<insert id="insertsecondmod" parameterType="map" >
+		INSERT INTO store_secondmod
+		  <trim prefix="(" suffix=")" suffixOverrides="," >
+          firstmodid,secondmodname,
+          <if test='secondremarks != null and secondremarks != "" '>
+             secondremarks,
+          </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+          #{firstmodid, jdbcType=VARCHAR},
+           #{secondmodname, jdbcType=VARCHAR},
+          <if test='secondremarks != null and secondremarks != "" '>
+            #{secondremarks, jdbcType=VARCHAR},
+          </if>
+        </trim>  
+	</insert>
+	<!--添加反馈 start -->
+	<insert id="insertFeedback" parameterType="map" >
+		INSERT INTO store_feedback(exeid,feedbackinfo,picpath)
+		VALUES(#{exeid},#{feedbackinfo,jdbcType=VARCHAR},#{picpath,jdbcType=VARCHAR})
+	</insert>
+	<!--添加反馈 end -->
+</mapper>

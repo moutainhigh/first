@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.outPerson">
+	<resultMap id="outPersonMap" type="com.deppon.dpm.tongxunlu.shared.domain.OutPersonEntity">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		
+		<result property="id" column="id"  />
+		<result property="name" column="name"  />
+		<result property="staffId" column="staff_id"  />
+		<result property="dpmDept" column="dpm_dept"  />
+		<result property="dpmProject" column="dpm_project"  />
+		<result property="mobileNo" column="mobileNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="userId" column="userId" />
+		<result property="tag" column="tag" />
+		<result property="gendar" column="gendar" />
+		<result property="remark" column="remark" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="email" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createTime" column="create_time" javaType="Date"
+			jdbcType="DATE" />
+		<result property="updateTime" column="update_time" javaType="Date"
+			jdbcType="DATE" />
+		<result property="company" column="company" javaType="String"
+			jdbcType="VARCHAR" />
+		
+	</resultMap>
+	
+	<resultMap id="outPersonTagMap" type="com.deppon.dpm.tongxunlu.shared.domain.OutPersonTagEntity">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		
+         <result property="id" column="id" />
+		<result property="mobileNo" column="mobileNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="userId" column="userId" />
+		<result property="tag" column="tag" />
+		<result property="createTime" column="create_time" javaType="Date"
+			jdbcType="DATE" />
+		<result property="updateTime" column="update_time" javaType="Date"
+			jdbcType="DATE" />
+		
+		
+	</resultMap>
+	
+    <!-- 添加外部联系人 -->
+	<insert id="addPerson"  parameterType="map">
+		INSERT INTO outperson_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="name != null">
+				name,
+			</if>
+			
+			<if test="mobileNo != null">
+				mobileNo,
+			</if>
+			<if test="gendar != null">
+				gendar,
+			</if>
+			
+			<if test="remark != null">
+				remark,
+			</if>
+			<if test="tag != null">
+				tag,
+			</if>
+			<if test="company != null">
+				company,
+			</if>
+			<if test="userId != null">
+				userId,
+			</if>
+			<if test="email != null">
+				email,
+			</if>
+				create_time,
+				update_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="name != null ">
+				#{name},
+			</if>
+			<if test="mobileNo != null">
+				#{mobileNo},
+			</if>
+			<if test="gendar != null">
+				#{gendar},
+			</if>
+			<if test="remark != null">
+				#{remark},
+			</if>
+			<if test="tag != null">
+				#{tag},
+			</if>
+			<if test="company != null">
+				#{company},
+			</if>
+			<if test="userId != null">
+				#{userId},
+			</if>
+			<if test="email != null">
+				#{email},
+			</if>
+				now(),
+				now()
+			   
+		</trim>
+	</insert>
+	
+    <!-- 添加外部联系人 标签-->
+	<insert id="addPersonTag"  parameterType="map">
+		INSERT INTO outperson_tag
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			
+			<if test="userId != null">
+				userId,
+			</if>
+			<if test="tag != null">
+				tag,
+			</if>
+			
+				create_time,
+				update_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			
+			
+			<if test="userId != null">
+				#{userId},
+			</if>
+			<if test="tag != null">
+				#{tag},
+			</if>
+				now(),
+				
+				now()
+		</trim>
+	</insert>
+	
+	<!-- 获取外部联系人 -->
+	<select id="getPersonList"  resultMap="outPersonMap">
+	   SELECT t.*,
+	   case when
+	   t1.staff_id is null then "" else staff_id end staff_id,
+	   case when
+	   t1.dpm_dept is null then "" else dpm_dept end dpm_dept,
+	   case when
+	   t1.dpm_project is null then "" else dpm_project end dpm_project
+	    from outperson_detail t LEFT JOIN outsource_user t1  
+
+		on t1.phone=t.mobileNo
+		where
+	   t.userId= #{userId}
+	   <if test="mobileNo != null">
+	    and t.mobileNo = #{mobileNo}
+	   </if>
+	   
+	   order by t.create_time desc
+	   
+	   <if test="pageSize>0">
+			limit #{startNo}, #{pageSize}
+		</if>
+       
+	</select>
+	
+	<!-- 获取外部联系人标签 -->
+	<select id="getPersonTag"  resultMap="outPersonTagMap">
+	   select 
+	   distinct
+	   t.*
+	   from 
+	   outperson_tag t
+	   where
+	   userId= #{userId}
+	   order by t.create_time desc
+	   
+       
+	</select>
+	
+	<!-- 删除外部联系人自定义标签 -->
+	<delete id="deletePersonTag" >
+	   delete
+	   from 
+	   outperson_tag 
+	   where
+	   userId= #{userId}
+	   and tag= #{tag}
+
+	</delete>
+	
+     <!-- 更新外部联系人 -->
+	<update id="updatePerson"  parameterType="map">
+		update outperson_detail
+		<set>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="mobileNo != null">
+				mobileNo = #{mobileNo},
+			</if>
+			<if test="gendar != null">
+				gendar = #{gendar},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="tag != null">
+				tag = #{tag},
+			</if>
+			<if test="company != null">
+				company = #{company},
+			</if>
+			<if test="email != null">
+				email = #{email},
+			</if>
+			
+				update_time=now()
+		</set>
+		where id = #{id}
+		
+	</update>
+	
+	<!-- 删除外部联系人 -->
+	<delete id="deletePerson">
+	delete from outperson_detail
+	where  id = #{id}
+	</delete>	
+	
+	
+
+	
+</mapper>

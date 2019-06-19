@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>备案</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="./js/layui/css/layui.css" media="all">
+    <!-- <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <link rel="stylesheet" href="/dpm/appdetail/lib/font-awesome-4.7.0/css/font-awesome.min.css"> -->
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <blockquote class="layui-elem-quote layui-text">
+        消息推送
+    </blockquote>
+    <form class="layui-form  layui-table shenhe" action="" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">层级</label>
+            <div class="layui-input-block">
+                <!--<select name="modules" lay-verify="required" lay-search>-->
+                <select name="modules" lay-verify="" lay-search>
+                    <option value="">请选择推送层级</option>
+                    <option value="27">工作流</option>
+                    <option value="05">其它</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">推送内容</label>
+            <div class="layui-input-block">
+                <input type="text" name="userId" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">截至时间</label>
+            <div class="layui-input-block">
+                <!-- 注意：这一层元素并不是必须的 -->
+                <input type="text" class="layui-input" lay-verify="required" id="day2" autocomplete="off" name="time">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn lay-submit" lay-submit lay-filter="query">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+    <table id="demo" lay-filter="test"></table>
+     <script type="text/javascript" src="./js/jq.js"></script> 
+    <!-- <script src="./js/jquery-3.3.1.min.js" charset="utf-8"></script> -->
+    <script src="./js/layui/layui.js" charset="utf-8"></script>
+    <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+    <script>
+
+        var BASEHOST_URL = "https://dpm.deppon.com:8881";  //生产环境  
+        //var  BASEHOST_URL = "http://192.168.68.117:8080";    //测试环境
+        //var BASEHOST_URL="http://10.224.195.70:8080";
+        //var  BASEHOST_URL = "http://10.224.195.48:8080";   //王
+        //*********本地开发环境************
+        // 后端服务地址
+        var ADDR = BASEHOST_URL;
+        //缓存
+        var sessionId = sessionStorage.getItem('sessionId');
+        var casCookie = sessionStorage.getItem('casCookie');
+        var userId = sessionStorage.getItem('userId');
+        var token = "casCookie=" + casCookie + "&sessionId=" + sessionId + "&userId=" + userId;
+
+        var ROOT_PATH = "/dpm/dpm-main/";
+        var TABLELIST = "messagePoint_getAllPoint.action?"+token;
+        var PUSHINFO = "messagePoint_insertPoint.action";
+        var CHANGSTATE = "messagePoint_updatePointState.action";
+
+        var TableListAll = ADDR + ROOT_PATH + TABLELIST;
+        var PushInfoAction =  ADDR + ROOT_PATH + PUSHINFO;
+        var ChangeStateUrl = ADDR + ROOT_PATH + CHANGSTATE;
+        
+        // var production = 'http://192.168.68.117:8080/dpm/dpm-doc/'
+        // var OtherOffDuties = otherOffDuties_transfer.action
+        layui.use('table', function(){
+            var table = layui.table;
+            //第一个实例
+            table.render({
+                elem: '#demo'
+                ,height: 412
+                ,url: TableListAll //数据接口
+                ,page: true //开启分页
+                , limit: 10
+                , limits: [10]
+                ,request: {
+                  pageName: 'currentPage',
+                  limitName: 'limit'
+                }
+                ,response: {
+                  statusName: 'errorCode' //规定数据状态的字段名称，默认：code
+                  ,statusCode: 0 //规定成功的状态码，默认：0
+                  ,msgName: 'errmsg' //规定状态信息的字段名称，默认：msg
+                  ,countName: 'count' //规定数据总数的字段名称，默认：count
+                  ,dataName: 'pointlist' //规定数据列表的字段名称，默认：data
+                } 
+                ,cols: [[ //表头
+                {field: 'id', title: '序号', width:'10%',  fixed: 'left'}
+                ,{field: 'content', title: '推送内容', width:'50%'}
+                ,{field: 'joblevel', title: '推送条件', width:'30%'}
+                //,{field: 'status', title: '推送状态', width:'10%', align:'center', toolbar: '#barDemo'} 
+                ,{field: 'status', title: '推送状态', width:'10%', align:'center'
+                  ,templet:function(d) {
+                    if (d.status === 'on') {
+                      return '<a class="layui-btn layui-btn-xs" lay-event="change">开启</a>';
+                    } else {
+                      return '<span class="layui-btn layui-btn-xs layui-btn-disabled">关闭</span>';//layui-btn-disabled
+                    }
+                  }
+                }
+                ]]
+            });
+            
+            table.on('tool(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+              var data = obj.data; //获得当前行数据
+              var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+              var tr = obj.tr; //获得当前行 tr 的DOM对象
+              
+              if(layEvent === 'change'){ //查看
+                //do somehing
+                if (data.status == 'on') {
+                   $.ajax({
+                    type:"get",
+                    url:ChangeStateUrl+'?'+token+'&pointId='+data.id,
+                    async: true,    //或false,是否异步
+                    timeout: 60000,       //超时时间
+                    dataType: 'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+                    success: function (data, textStatus, jqXHR) {
+                      console.log(data)
+                      if (data.return == 1) {
+                        layui.table.reload("demo");  
+                      }
+                    },
+                    error: function (data, xhr, textStatus) {
+                        console.log(data)                   
+                    }
+                  });
+                }                
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。 
+              } else if(layEvent === 'del'){ //删除
+                layer.confirm('真的删除行么', function(index){
+                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                  layer.close(index);
+                  //向服务端发送删除指令
+                });
+              } else if(layEvent === 'edit'){ //编辑
+                //do something
+                
+                //同步更新缓存对应的值
+                obj.update({
+                  username: '123'
+                  ,title: 'xxx'
+                });
+              }
+            });
+        });
+        layui.use(['form', 'laydate', 'upload', 'layer'], function () {
+            var form = layui.form,
+                upload = layui.upload,
+                laydate = layui.laydate,
+                date = new Date();
+            laydate.render({
+                elem: '#day1',
+                min: "date",
+                range: true
+            });
+            laydate.render({
+                elem: '#day2'
+                , min: "date"
+                , range: true
+            });
+        })
+        layui.use(['form'], function () {
+            var form = layui.form,layer = layui.layer
+
+            //自定义验证规则
+            /*form.verify({
+                title: function (value) {
+                    if (value.length < 5) {
+                        return '标题至少得5个字符啊';
+                    }
+                }
+                , pass: [/(.+){6,12}$/, '密码必须6到12位']
+                , userId: [/^\d{6}$/, '6位工号']
+
+            });*/
+            //监听提交
+            
+            form.on('submit(query)', function (data) {
+                console.log('1', data);
+                var fromdata = data.field;
+                 //token = "casCookie=" + casCookie + "&sessionId=" + sessionId + "&userId=" + fromdata.userId;
+                //其他公务
+                //var DUTIES_OFFICIAL = OfficialDuties + '?userId=' + fromdata.userId + '&time=' + fromdata.time+ '&modules=' + fromdata.modules + '&leaderId=' + fromdata.leaderId + '&sessionId=' + sessionId + '&casCookie=' + casCookie;
+                //推送消息
+                var SUBMITPUSHINFO = PushInfoAction + '?'+token+'&date='+fromdata.time+'&content='+fromdata.userId+'&joblevel='+fromdata.modules;
+                //console.log(fromdata)
+                $.ajax({
+                    url: SUBMITPUSHINFO,
+                    type: 'GET', //GET
+                    async: true,    //或false,是否异步
+                    timeout: 60000,       //超时时间
+                    dataType: 'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+                    success: function (data, textStatus, jqXHR) {
+                        
+                        layer.closeAll();
+                        layer.msg('提交成功');
+                        $(".shenhe input").val('');
+                        layui.table.reload("demo");
+
+                    },
+                    error: function (data, xhr, textStatus) {
+                        layer.closeAll();
+                        layer.msg('提交失败');
+                        $(".shenhe input").val('');
+
+                    }
+                });
+                return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。 
+            });
+        });
+    </script>
+
+</html>

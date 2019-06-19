@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.main.server.dao.rollAd">
+
+	<resultMap
+		type="com.deppon.dpm.module.main.shared.domain.RollAddDetailEntity"
+		id="rollAdMap">
+		<result property="id" column="id" />
+		<result property="adTitle" column="ad_title" />
+		<result property="adContent" column="ad_content" />
+		<result property="contentImage" column="ad_contentImage" />
+		<result property="adOrgName" column="ad_orgName" />
+		<result property="adPhoto" column="ad_photo" />
+		<result property="videoImage" column="ad_videoImage" />
+		<result property="videoUrl" column="ad_videoUrl" />
+		<result property="isExtraLink" column="isExtraLink" />
+		<result property="appType" column="app_type" />
+		<result property="extraLink" column="extraLink" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+
+	<!-- 添加广告 -->
+	<insert id="insert"
+		parameterType="com.deppon.dpm.module.main.shared.domain.RollAddDetailEntity">
+		INSERT INTO mainpage_rollingad_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="adTitle != null">
+				ad_title,
+			</if>
+			<if test="adContent != null">
+				ad_content,
+			</if>
+			<if test="appType != null">
+				app_type,
+			</if>
+			<if test="contentImage != null">
+				ad_contentImage,
+			</if>
+			<if test="adOrgName != null">
+				ad_orgName,
+			</if>
+			<if test="adPhoto != null">
+				ad_photo,
+			</if>
+			<if test="extraLink != null">
+				extraLink,
+			</if>
+
+			<if test="videoUrl != null">
+				ad_videoUrl,
+			</if>
+			<if test="videoImage != null">
+				ad_videoImage,
+			</if>
+			isExtraLink,
+
+			create_time
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="adTitle != null">
+				#{adTitle},
+			</if>
+			<if test="adContent != null">
+				#{adContent},
+			</if>
+			<if test="appType != null">
+				#{appType},
+			</if>
+			<if test="contentImage != null">
+				#{contentImage},
+			</if>
+			<if test="adOrgName != null">
+				#{adOrgName},
+			</if>
+			<if test="adPhoto != null">
+				#{adPhoto},
+			</if>
+			<if test="extraLink != null">
+				#{extraLink},
+			</if>
+			<if test="videoUrl != null">
+				#{videoUrl},
+			</if>
+			<if test="videoImage != null">
+				#{videoImage},
+			</if>
+			#{isExtraLink},
+			now()
+
+		</trim>
+	</insert>
+	
+	<update id="update" parameterType="com.deppon.dpm.module.main.shared.domain.RollAddDetailEntity">
+	   update   mainpage_rollingad_detail
+	   <set>
+	        <if test="adTitle != null">
+				ad_title=#{adTitle},
+			</if>
+			<if test="adContent != null">
+				ad_content=#{adContent},
+			</if>
+			<if test="appType != null">
+				app_type=#{appType},
+			</if>
+			<if test="contentImage != null">
+				ad_contentImage=#{contentImage},
+			</if>
+			<if test="adOrgName != null">
+				ad_orgName=#{adOrgName},
+			</if>
+			<if test="adPhoto != null">
+				ad_photo=#{adPhoto},
+			</if>
+			<if test="extraLink != null">
+				extraLink=#{extraLink},
+			</if>
+
+			<if test="videoUrl != null">
+				ad_videoUrl=#{videoUrl},
+			</if>
+			<if test="videoImage != null">
+				ad_videoImage=#{videoImage},
+			</if>
+			<if test="isExtraLink != null">
+				isExtraLink=#{isExtraLink},
+			</if>
+			
+	        
+	        create_time=now()
+	 </set>
+	 <where>
+			id = #{id}
+	 </where>
+	
+	</update>
+	
+	
+
+	<select id="getRollAdDetail" resultMap="rollAdMap">
+		select
+		t.id,
+		t.ad_title,
+		t.ad_content,
+		t.ad_contentImage,
+		t.ad_orgName,
+		t.ad_photo,
+		t.extraLink,
+		t.app_type,
+		t.ad_videoUrl,
+		t.ad_videoImage,
+		t.isExtraLink,
+		t.create_time
+
+		from mainpage_rollingad_detail t
+
+		where id= #{id}
+
+		order by t.create_time desc
+
+
+	</select>
+	
+	<select id="getRollAdList" resultMap="rollAdMap">
+
+		select
+		t.id,
+		t.ad_title,
+		t.ad_content,
+		t.ad_contentImage,
+		t.ad_orgName,
+		t.ad_photo,
+		t.app_type,
+		t.extraLink,
+		t.ad_videoUrl,
+		t.ad_videoImage,
+		t.isExtraLink,
+		t.create_time
+		from mainpage_rollingad_detail t
+		where
+		t.app_type =
+		#{appType}
+		order by t.create_time desc
+
+	</select>
+	
+	<select id="getAllRollAdList" resultMap="rollAdMap">
+
+		select
+		t.id,
+		t.ad_title,
+		t.ad_content,
+		t.ad_contentImage,
+		t.ad_orgName,
+		t.ad_photo,
+		t.app_type,
+		t.extraLink,
+		t.ad_videoUrl,
+		t.ad_videoImage,
+		t.isExtraLink,
+		t.create_time
+		from mainpage_rollingad_detail t
+		
+		order by t.create_time desc
+
+	</select>
+	
+	<delete id="deleteRollAd">
+	   delete from mainpage_rollingad_detail
+	   where id=#{id}
+	
+	</delete>
+
+
+</mapper>

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.uums.server.dao.taskEntityMapper">
+<!-- 
+	<resultMap id="baseResult" type="com.deppon.dpm.uums.server.domain.Task">
+
+		<result property="id" column="id" />
+		<result property="priority" column="priority" />
+		<result property="title" column="title" />
+		<result property="startDate" column="start_date" />
+		<result property="endDate" column="end_date" />
+		<result property="createTime" column="create_time" />
+		<result property="finish" column="finish" />
+		<result property="content" column="content" />
+		<result property="path" column="path" />
+		<result property="logicalDelete" column="logical_delete" />
+		<result property="createUserId" column="create_user_id" />
+		<result property="secondUserId" column="second_user_id" />
+		<result property="originUserId" column="origin_user_id" />
+		<result property="currentUserId" column="current_user_id" />
+		<result property="showDate" column="show_date" />
+
+		<result property="createUserName" column="create_user_name" />
+		<result property="secondUserName" column="second_user_name" />
+		<result property="originUserName" column="origin_user_name" />
+		<result property="currentUserName" column="current_user_name" />
+	</resultMap>
+
+	<insert id="insert" parameterType="com.deppon.dpm.uums.server.domain.Task" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="int" order="BEFORE">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		insert into om_task
+		(create_time,priority,create_user_id,path,content,logical_delete,second_user_id,origin_user_id,finish,end_date,start_date,current_user_id,title)
+		values(now(),#{priority},#{createUserId},#{path},#{content},#{logicalDelete},#{secondUserId},
+		#{originUserId},#{finish},#{endDate},now(),#{currentUserId},#{title})
+	</insert>
+
+	<update id="update" parameterType="com.deppon.dpm.uums.server.domain.Task">
+		update om_task set
+		<if test="priority!=null">
+			priority = #{priority},
+		</if>
+		<if test="content!=null">
+			content = #{content},
+		</if>
+		<if test="logicalDelete!=null">
+			logical_delete=#{logicalDelete},
+		</if>
+		<if test="secondUserId!=null">
+			second_user_id=#{secondUserId},
+		</if>
+		<if test="finish!=null">
+			finish=#{finish},
+		</if>
+		<if test="endDate!=null">
+			end_date=#{endDate},
+		</if>
+		<if test="currentUserId!=null">
+			current_user_id=#{currentUserId},
+		</if>
+		<if test="title!=null">
+			title=#{title}
+		</if>
+		where id =#{id}
+	</update>
+
+	逻辑删除
+	<delete id="delete" parameterType="int">
+		update om_task set
+		logical_delete = '1' where id=#{id}
+	</delete>
+
+	查出单个我的任务
+	<select id="selectById" parameterType="int" resultMap="baseResult">
+		<include refid="select" />
+		where id=#{id}
+	</select>
+
+	根据条件查处所有的任务
+	map.put("type", type); map.put("empcode", empCode); map.put("currentUserId", 
+		currentUserId); map.put("originUserId", originUserId); map.put("createUserId", 
+		createUserId);
+	0 待我执行未完成，1 待我执行已完成<br> * 2我的指派未完成，3我的指派已完成
+	<select id="selectByMap" parameterType="map" resultMap="baseResult">
+		<include refid="select" />
+		<where>
+			<if test="type==0">
+				a.finish ='0' and a.logical_delete ='0' and
+				a.current_user_id=#{empcode}
+			</if>
+			<if test="type==1">
+				a.finish='1' and a.logical_delete ='0' and
+				a.current_user_id=#{empcode}
+			</if>
+			<if test="type==2">
+				a.finish='0' and a.logical_delete ='0' and
+				a.create_user_id=#{empcode}
+			</if>
+			<if test="type==3">
+				a.finish='1' and a.logical_delete ='0' and
+				a.create_user_id=#{empcode}
+			</if>
+		</where>
+		order by a.create_time desc
+	</select>
+
+	<select id="selectByMapCount" resultType="int" parameterType="map">
+		select
+		count(1) from
+		om_task a
+		<where>
+			<if test="type==0">
+				a.finish ='0' and a.logical_delete ='0' and
+				a.current_user_id=#{empcode}
+			</if>
+			<if test="type==1">
+				a.finish='1' and a.logical_delete ='0' and
+				a.current_user_id=#{empcode}
+			</if>
+			<if test="type==2">
+				a.finish= '0' and a.logical_delete ='0' and
+				a.create_user_id=#{empcode}
+			</if>
+			<if test="type==3">
+				a.finish='1' and a.logical_delete ='0' and
+				a.create_user_id=#{empcode}
+			</if>
+		</where>
+	</select>
+
+	<sql id="select">
+		select
+		a.*,b.empname create_user_name,c.empname
+		current_user_name,d.empname origin_user_name,e.empname
+		second_user_name ,
+		case
+		DATE_FORMAT(a.create_time,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d')
+		when 1 then '今天'
+		else DATE_FORMAT(a.create_time,'%Y-%m-%d')
+		end
+		as
+		show_date
+		from
+		om_task a left
+		join om_employee b
+		on a.create_user_id
+		=b.empcode
+		left
+		join om_employee
+		c
+		on
+		a.current_user_id =c.empcode left
+		join
+		om_employee
+		d on
+		a.origin_user_id =d.empcode
+		left join om_employee e
+		on
+		a.second_user_id
+		=e.empcode
+	</sql>
+
+
+	任务完成
+	<update id="updateByMapFinish" parameterType="map">
+		update om_task set
+		finish= '1'
+		where id =#{id}
+	</update>
+
+	任务转发
+	<update id="updateByMapDispatcher" parameterType="map">
+		update om_task
+		set second_user_id =#{secondUserId},current_user_id=#{secondUserId}
+		where id =#{id}
+	</update>
+
+	任务重启
+	<update id="updateByMapRestart" parameterType="com.deppon.dpm.uums.server.domain.Task">
+		update om_task set start_date =now(), origin_user_id=#{originUserId}, 
+			end_date=#{endDate}, logical_delete='0', finish='0', current_user_id=#{originUserId} 
+			where id =#{id}
+		update om_task set start_date =now(),create_time =now(),
+		<if test="priority!=null">
+			priority = #{priority},
+		</if>
+		<if test="content!=null">
+			content = #{content},
+		</if>
+		<if test="logicalDelete!=null">
+			logical_delete='0',
+		</if>
+		<if test="endDate!=null">
+			end_date=#{endDate},
+		</if>
+		<if test="originUserId!=null">
+			origin_user_id =
+			#{originUserId},current_user_id=#{originUserId},
+		</if>
+		<if test="title!=null">
+			title=#{title},
+		</if>
+		<if test="finish!=null">
+			finish='0'
+		</if>
+		where id =#{id}
+	</update>
+
+	<delete id="clear" parameterType="map">
+		update om_task set
+		logical_delete = 1 where finish =1 and
+		<if test="type==1">
+			current_user_id =#{userId}
+		</if>
+		<if test="type==3">
+			creat_user_id =#{userId}
+		</if>
+	</delete>
+ -->
+</mapper>

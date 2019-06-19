@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.appVersionConfigDao">
+
+	<select id="queryOne" resultType="com.deppon.dpm.tongxunlu.shared.domain.AppVersionConfigEntity" parameterType="java.util.Map">
+       SELECT 
+			id 			as id,
+			`version` 	as `version`,
+			url 		as url,
+			app_name 	as appName,
+			content 	as content,
+			`force` 		as `force`,
+			os_type 	as osType,
+			update_time as updateTime
+ 		FROM
+ 			app_version_config avc 
+ 		WHERE
+ 			avc.app_name=#{appName} 
+ 			AND
+ 			avc.os_type=#{osType}
+ 		ORDER BY id desc
+		LIMIT 1
+	</select>
+</mapper>

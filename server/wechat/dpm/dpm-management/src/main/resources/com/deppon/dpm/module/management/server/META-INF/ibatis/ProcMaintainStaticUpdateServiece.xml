@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.ProcMaintainStaticUpdateServieceDao" >
+    <!--更新状态-->
+	<update id="updateStatus" parameterType="com.deppon.dpm.module.management.shared.domain.ProcMaintainEntity">
+	      update proc_maintain_info 
+	         set approvalMark=#{approvalMark} ,
+	             self=#{self},
+	             <if test="department !=null and department != '' ">
+	             	department=#{department},
+				 </if>
+	             updateDate=now()   
+	         where bill=#{bill} 
+	</update>
+	
+	<!--工程巡检、验收-->
+	<select id="managerCheck" parameterType="String" resultType="java.lang.Integer">
+	
+	<!--  select count(*) from om_employee oe,om_organization oo 
+        where oe.ORGID=oo.ORGID  and oo.orgcode 
+        in('W0000005021','W04000306010102','W0400030601010202','W0400030601010203','W01130505','W010003011018','W010003011021','W010003011020','W01130405','W01130605','W01130303','W030003050104','W040003060101020111','W010003011019')   
+        and EMPSTATUS='on'  
+        and oe.empcode=#{userNo}; -->
+        
+        SELECT COUNT(*) FROM om_organization a,proc_auth_dept b,om_employee c 
+         WHERE a.orgcode=b.orgcode AND c.ORGID = a.ORGID AND c.empcode =#{userNo};
+ 
+	
+	</select>
+	<!--工程维修-->
+	<select id="maintainRight" parameterType="String" resultType="java.lang.Integer">
+	
+	  select count(*) 
+	  from om_organization a 
+	  where a.managerId=#{userNo} 
+	   
+	</select>
+
+</mapper>

@@ -1,0 +1,13 @@
+<ion-view title="图片">
+    <ion-nav-buttons side="left">
+        <button class="depponback button-icon icon ion-ios7-arrow-left button back-button first-page" ng-click="back()"></button>
+    </ion-nav-buttons>
+
+<ion-content class="newsImage" >
+        <ion-scroll zooming="true" direction="xy" style="width: 100%; height:  100%; " >
+        <img  src="{{(url | transform:'|')}}"  width = '100%'  />
+    </ion-scroll>
+   <!--  <a href="{{url}}" class="button button-icon icon ion-archive option has-footer" ng-click="save()"> </a> -->
+</ion-content>
+
+</ion-view>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.store.server.dao.IStoreTaskSublistDao">
+  <resultMap id="BaseResultMap" type="com.deppon.dpm.store.server.entity.StoreTaskSublist">
+    <id column="exeid" jdbcType="BIGINT" property="exeid" />
+    <result column="taskid" jdbcType="INTEGER" property="taskid" />
+    <result column="exeer" jdbcType="VARCHAR" property="exeer" />
+    <result column="deptname" jdbcType="VARCHAR" property="deptname" />
+    <result column="testgrade"  property="testgrade" />
+    <result column="deptlerdername" jdbcType="VARCHAR" property="deptlerdername" />
+    <result column="likenum" jdbcType="BIGINT" property="likenum" />
+    <result column="warningnum" jdbcType="BIGINT" property="warningnum" />
+    <result column="starttime" jdbcType="DATE" property="starttime" />
+    <result column="endtime" jdbcType="DATE" property="endtime" />
+    <result column="deptnum" jdbcType="VARCHAR" property="deptnum" />
+    <result column="checkgrade"  property="checkgrade" />
+    <result column="taskstatus" jdbcType="VARCHAR" property="taskstatus" />
+    <result column="submittime" property="submittime" />
+    <result column="appraisaltime" property="appraisaltime" />
+	<result column="exeerid" jdbcType="VARCHAR" property="exeerid" />
+	<result column="deptapid" jdbcType="VARCHAR" property="deptapid" />
+	<result column="deptapname" jdbcType="VARCHAR" property="deptapname" />
+    <result column="dr" jdbcType="INTEGER" property="dr" />
+    <result column="ts" property="ts" />
+  </resultMap>
+  
+  <!-- 字段 -->
+  <sql id="columns">
+  	exeid,taskid,exeer,deptname,testgrade,deptlerdername,likenum,warningnum,starttime,endtime,deptnum,checkgrade,taskstatus,
+  	submittime,appraisaltime,exeerid,deptapid,deptapname,dr,ts
+  </sql>
+  
+  <select id="finelistdept" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+  	SELECT exeid,deptname,deptlerdername,deptnum,testgrade,deptapid FROM store_task_sublist WHERE taskid = #{taskid,jdbcType=VARCHAR}
+  </select>
+  
+  <!-- 批量插入子任务信息 -->
+  <insert id="insertSelectives" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="exeid">
+	  	insert into store_task_sublist
+	  	(exeid,taskid,exeer,deptname,testgrade,deptlerdername,checkgrade,starttime,endtime,deptnum,taskstatus,exeerid,deptapid,dr,ts)
+	  	VALUES
+	  	<foreach collection="list" item="storeTaskSublist" index="index"
+			separator=",">
+			(
+			#{storeTaskSublist.exeid},
+			#{storeTaskSublist.taskid,jdbcType=INTEGER},
+			#{storeTaskSublist.exeer,jdbcType=VARCHAR},
+			#{storeTaskSublist.deptname,jdbcType=VARCHAR},
+			#{storeTaskSublist.testgrade,jdbcType=DOUBLE},
+			#{storeTaskSublist.deptlerdername,jdbcType=VARCHAR},
+			#{storeTaskSublist.checkgrade,jdbcType=DOUBLE},
+			#{storeTaskSublist.starttime,jdbcType=VARCHAR},
+			#{storeTaskSublist.endtime,jdbcType=VARCHAR},
+			#{storeTaskSublist.deptnum,jdbcType=VARCHAR},
+			#{storeTaskSublist.taskstatus,jdbcType=VARCHAR},
+			#{storeTaskSublist.exeerid,jdbcType=VARCHAR},
+			#{storeTaskSublist.deptapid,jdbcType=VARCHAR},
+			#{storeTaskSublist.dr,jdbcType=INTEGER},
+			#{storeTaskSublist.ts}
+			)
+	    </foreach >
+  
+   </insert>
+  <!-- 修改子任务信息 -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.deppon.dpm.store.server.entity.StoreTaskSublist">
+    update store_task_sublist
+    <set>
+      <if test="taskid != null">
+        taskid = #{taskid,jdbcType=VARCHAR},
+      </if>
+      <if test="exeer != null">
+        exeer = #{exeer,jdbcType=VARCHAR},
+      </if>
+      <if test="deptname != null">
+        deptname = #{deptname,jdbcType=VARCHAR},
+      </if>
+      <if test="testgrade != null">
+        testgrade = #{testgrade,jdbcType=DOUBLE},
+      </if>
+      <if test="deptlerdername != null">
+        deptlerdername = #{deptlerdername,jdbcType=VARCHAR},
+      </if>
+      <if test="likenum != null">
+        likenum = #{likenum,jdbcType=BIGINT},
+      </if>
+      <if test="warningnum != null">
+        warningnum = #{warningnum,jdbcType=BIGINT},
+      </if>
+      <if test="starttime != null">
+        starttime = #{starttime},
+      </if>
+      <if test="endtime != null">
+        endtime = #{endtime},
+      </if>
+      <if test="deptnum != null">
+        deptnum = #{deptnum},
+      </if>
+      <if test="appraisaltime != null">
+        appraisaltime = #{appraisaltime},
+      </if>
+      <if test="checkgrade != null">
+        checkgrade = #{checkgrade,jdbcType=DOUBLE},
+      </if>
+      <if test="submittime != null">
+        submittime = #{submittime,jdbcType=VARCHAR},
+      </if>
+      <if test="taskstatus != null">
+        taskstatus = #{taskstatus,jdbcType=VARCHAR},
+      </if>
+      <if test="exeerid != null">
+        exeerid = #{exeerid,jdbcType=VARCHAR},
+      </if>
+      <if test="appraisaltime != null">
+      	appraisaltime = #{appraisaltime},
+      </if>
+      <if test="deptapid != null">
+        deptapid = #{deptapid,jdbcType=VARCHAR},
+      </if>
+      <if test="deptapname != null">
+        deptapname = #{deptapname,jdbcType=VARCHAR},
+      </if>
+      <if test="dr != null">
+        dr = #{dr,jdbcType=INTEGER},
+      </if>
+      <if test="ts != null">
+        ts = #{ts,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where exeid = #{exeid,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 条件 -->
+  <sql id="condition">
+  	<if test="exeerId!=null and exeerId!=''  ">and exeerid=#{exeerId,jdbcType=VARCHAR}</if>
+  	<if test="taskId!=null and taskId!=''  ">and taskid=#{taskId,jdbcType=VARCHAR}</if>
+	<if test="userId!=null and userId !='' ">and deptapid=#{userId,jdbcType=VARCHAR}</if>
+	<if test="deptName!=null and deptName !='' "> AND deptname LIKE CONCAT(CONCAT('%',#{deptName}),'%')</if>
+  </sql>
+  
+  <!-- 根据主任务ID查询子任务 -->
+  <select id="querySubtasks" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+ 		select <include refid="columns" />
+  		from store_task_sublist where taskid=#{taskId,jdbcType=VARCHAR}
+  </select>
+  
+   <!-- 根据主任务ID查询子任务(分组) -->
+  <select id="querySubtasksGroup" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  	    select <include refid="columns" />
+  		from store_task_sublist where taskid=#{taskId,jdbcType=VARCHAR}
+  		group by exeerid
+  </select>
+  
+  <!-- 根据执行人Id,查询子任务 -->
+  <select id="querySubtasksByExeerId"  parameterType="java.util.Map" resultMap="BaseResultMap">
+ 		select <include refid="columns" />
+  		from store_task_sublist 
+  		where 1=1
+  		<include refid="condition"></include>
+  </select>
+    
+  <!-- 根据营业部编号数组查询子任务 -->
+  <select id="querySubTasksByArray" parameterType="java.util.Map" resultMap="BaseResultMap">
+  	select exeid,taskid,exeer,deptname,testgrade,deptlerdername,likenum,warningnum,
+  	starttime,endtime,deptnum,checkgrade,taskstatus,submittime, appraisaltime,exeerid,
+	deptapid,deptapname,dr,ts
+  	from store_task_sublist 
+  	where deptnum in
+  	<foreach item="listBusiness" index="index" collection="listBusiness" open="(" separator="," close=")">
+			#{listBusiness}
+	</foreach>
+	<include refid="condition" />
+	and taskstatus in ('已反馈','待反馈')
+	and dr='0'
+	order by ts desc ,appraisaltime desc
+  </select>
+  
+  <!-- 根据执行id查询主任务id -->
+  <select id="queryTaskidByExeid" parameterType="java.lang.Long" resultType="String">
+  	select taskid from store_task_sublist where exeid=#{exeid}
+  </select>
+  
+  <!-- 根据taskId查询子任务状态 -->
+  <select id="querySubTaskState" parameterType="java.lang.Integer"  resultType="Integer" >
+  		select count(1) from store_task_sublist where taskid=#{taskId} and taskstatus !='待考评'
+  </select>
+  <!-- 修改子任务状态 -->
+  <update id="deleteSubTaskByTaskId" parameterType="java.lang.Integer">
+  		update store_task_sublist set dr='1' where taskid=#{taskId}
+  </update>
+</mapper>

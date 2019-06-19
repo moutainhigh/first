@@ -1,0 +1,107 @@
+CREATE TABLE `didi_message` (
+  `dept` int(11) NOT NULL,
+  `message` varchar(500) DEFAULT NULL,
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `state` varchar(20) DEFAULT NULL,
+  `savetime` date DEFAULT NULL,
+  `userid` varchar(20) NOT NULL,
+  `msgtitle` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE DIDI_ORDER (
+   ID int(11) NOT NULL AUTO_INCREMENT,
+   BILLNO varchar(100) ,
+   NAME varchar(20) ,
+   EMPLOYEENO varchar(50) ,
+   MODELS varchar(50) ,
+   FROM_NAME varchar(500) ,
+   TO_NAME varchar(500) ,
+   TAXIDATE date ,
+   BOARDINGTIME varchar(10) ,
+   OFFTIME varchar(10) ,
+   ORDERSTATUS int ,
+   SUB_STATUS int ,
+   NORMAL_DISTANCE varchar(100) ,
+   TOTAL_PRICE varchar(100) ,
+   DEPT varchar(100) ,
+   FINANCEDEPT varchar(100) ,
+   BUDGETRATIO varchar(100) ,
+   TIMESCHEDULE varchar(100) ,
+   REMARK varchar(100) ,
+   REMARKINFO varchar(500) ,
+   COMPANY varchar(100) ,
+   PRIMARY KEY (ID)
+);
+
+CREATE TABLE `didi_personalc` (
+  `userID` varchar(20) NOT NULL,
+  `userTel` varchar(11) DEFAULT NULL,
+  `pk_personalc` int(20) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`pk_personalc`)
+);
+
+CREATE TABLE DIDI_TICKET (
+   ID int NOT NULL AUTO_INCREMENT,
+   ORDER_ID varchar(100) ,
+   TICKET varchar(100) ,
+   USERID varchar(100) ,
+   USERNAME varchar(100) ,
+   USERTEL varchar(11) ,
+   DEPT varchar(100) ,
+   FINANCEDEPT varchar(100) ,
+   COMPANY varchar(100) ,
+   REMARK varchar(100) ,
+   REMARKINFO varchar(500) ,
+   FLAG int ,
+   DEF1 varchar(100) ,
+   DEF2 varchar(100) ,
+   DEF3 varchar(100) ,
+   DEF4 varchar(100) ,
+   DEF5 varchar(100) ,
+   PRIMARY KEY (ID)
+);
+
+CREATE TABLE DIDI_CITY (
+   ID int NOT NULL AUTO_INCREMENT,
+   NAME varchar(100) ,
+   CITYID int ,
+   OPEN_ZHUANCHE int ,
+   OPEN_KUAICHE int ,
+   TS char(19) ,
+   PRIMARY KEY (ID)
+);
+COMMENT ON COLUMN "DIDI_CITY"."ID" IS '主键' ;
+COMMENT ON COLUMN "DIDI_CITY"."NAME" IS '城市名称' ;
+COMMENT ON COLUMN "DIDI_CITY"."CITYID" IS '城市ID' ;
+COMMENT ON COLUMN "DIDI_CITY"."OPEN_ZHUANCHE" IS '是否开通专车' ;
+COMMENT ON COLUMN "DIDI_CITY"."OPEN_KUAICHE" IS '是否开通快车' ;
+COMMENT ON COLUMN "DIDI_CITY"."TS" IS '时间' ;
+
+ALTER TABLE DIDI_ORDER ADD ESTIMATEPRICE  varchar(100);
+
+CREATE TABLE `didi_record` (
+  `userId` varchar(20) DEFAULT NULL,
+  `userName` varchar(20) DEFAULT NULL,
+  `dept` varchar(500) DEFAULT NULL,
+  `recordtime` varchar(20) DEFAULT NULL,
+  `recordtype` varchar(20) DEFAULT NULL,
+  `taxidate` varchar(20) DEFAULT NULL,
+  `fromName` varchar(500) DEFAULT NULL,
+  `toName` varchar(500) DEFAULT NULL,
+  `amount` varchar(100) DEFAULT NULL,
+  `recordpic` varchar(2000) DEFAULT NULL,
+  `recordstate` varchar(20) DEFAULT NULL,
+  `comment` varchar(500) DEFAULT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `didi_corpdept` (
+  `corpname` varchar(500) DEFAULT NULL 所属子公司,
+  `orgname` varchar(500) DEFAULT NULL 成本中心,
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24667 DEFAULT CHARSET=utf8;
+
+

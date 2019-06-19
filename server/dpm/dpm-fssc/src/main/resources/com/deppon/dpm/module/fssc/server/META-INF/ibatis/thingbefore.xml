@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.fssc.server.dao.stocktask" >
+	<!-- 根据申请人工号查询出所有工作流的信息 -->
+	<select id="queryAllInfo" parameterType="String"
+	    resultType="com.deppon.dpm.module.fssc.shared.domain.TheoneObjEntity">
+		SELECT   
+
+x.claimNo,x.auditState,x.applyDate,c.orderState,c.bizOccurStartDate,c.bizOccurEndDate,c.destination 
+   FROM
+
+(select  
+  			 b.claimNo,b.auditState,b.applyDate,a.claimLineId
+  			 from travel_apply_detail a, travel_advance_apply b     
+		where a.claimNo = b.claimNo AND a.scNo = '104002003' AND b.applyEmpNo= #{applyEmpNo}) x  , 
+
+travel_flight_order c 
+WHERE x.claimLineId= c.claimLineId
+union
+	select 
+		   x.claimNo,x.auditState,x.applyDate,h.orderState,h.bizOccurStartDate,h.bizOccurEndDate,h.stayCity 
+FROM
+(select  
+  			 b.claimNo,b.auditState,b.applyDate,a.claimLineId
+  			 from travel_apply_detail a, travel_advance_apply b     
+		where a.claimNo = b.claimNo AND a.scNo = '104002002' AND b.applyEmpNo=#{applyEmpNo}) 
+
+x,travel_hotel_order h
+WHERE x.claimLineId = h.claimLineId
+	   
+	</select>
+	
+	
+	<!-- 根据工作流id查询出所有的明细信息 -->
+	<select id="queryTravelApplyDetail" parameterType="String"
+	    resultType="com.deppon.dpm.module.fssc.shared.domain.DetailInfoEntity">
+			select * from travel_apply_detail where claimNo=#{claimNo}
+		</select>
+	
+	<!--根据工作流id查询出所有的航班订单信息  -->
+	<select id="queryFlightOrderInfo" parameterType="String"
+	    resultType="com.deppon.dpm.module.fssc.shared.domain.FlightOrderInfoEntity">
+	    select * from travel_flight_order where claimLineId=#{claimLineId}
+		</select>
+	
+	<!--根据工作流id查询出所有的酒店订单信息  -->
+	<select id="queryHotelOrderInfo" parameterType="String"
+	    resultType="com.deppon.dpm.module.fssc.shared.domain.HotelOrderInfoEntity">
+		select * from travel_hotel_order where claimLineId=#{claimLineId}
+		</select>
+		<!--根据事前申请单单号查询出详情  -->
+	<select id="queryTravelAdvanceApply" parameterType="String"
+	    resultType="com.deppon.dpm.module.fssc.shared.domain.PriorApplicationEntity">
+		select * from travel_advance_apply where claimNo=#{claimNo}
+		</select>
+</mapper>

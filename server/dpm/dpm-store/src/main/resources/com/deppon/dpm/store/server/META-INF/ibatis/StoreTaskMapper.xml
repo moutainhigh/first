@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.store.server.dao.IStoreTaskDao">
+	<resultMap id="BaseResultMap" type="com.deppon.dpm.store.server.entity.StoreTask">
+		<id column="taskid" jdbcType="INTEGER" property="taskid" />
+		<result column="taskname" jdbcType="VARCHAR" property="taskname" />
+		<result column="taskinfo" jdbcType="VARCHAR" property="taskinfo" />
+		<result column="creatorcode" jdbcType="VARCHAR" property="creatorcode" />
+		<result column="creatorname" jdbcType="VARCHAR" property="creatorname" />
+		<result column="tasktype" jdbcType="VARCHAR" property="tasktype" />
+		<result column="starttime"  property="starttime" />
+		<result column="endtime"  property="endtime" />
+		<result column="tasktime"  property="tasktime" />
+		<result column="taskstatus" jdbcType="VARCHAR" property="taskstatus" />
+		<result column="attachment" jdbcType="VARCHAR" property="attachment" />
+		<result column="dr" jdbcType="INTEGER" property="dr" />
+		<result column="ts" property="ts" />
+		<result column="taskcreator" jdbcType="VARCHAR" property="taskcreator" />
+	</resultMap>
+	<select id="finecreatorcode" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select creatorcode from store_task WHERE taskid=#{taskid,jdbcType=INTEGER}
+	</select>
+	
+	<select id="taskExist"  resultType="java.lang.Integer" parameterType="java.lang.Integer">
+		select count(1) from store_task WHERE taskid=#{taskid,jdbcType=INTEGER} and dr=0
+	</select>
+	
+	<!-- 查询子任务是否继续考评之后的操作 start -->
+	<select id="SublistCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+			SELECT count(1) count from store_task_sublist WHERE taskid in (#{taskid,jdbcType=INTEGER}) and taskstatus not in (#{taskstatus,jdbcType=VARCHAR})
+	</select>
+	
+	<!-- 循环删除子任务 -->
+	<delete id="DeteleSublist" parameterType="java.lang.String">
+		DELETE FROM store_task_sublist WHERE taskid in (#{taskid,jdbcType=INTEGER})
+	</delete>
+	
+	<!-- 循环删除子任务模块 -->
+	<delete id="DeteleMark" parameterType="java.util.List">
+		DELETE FROM store_mark where exeid in
+		<foreach collection="list" item="exeid" open="(" close=")" separator=",">
+			#{exeid}
+		</foreach>
+	</delete>
+	
+	<!-- 查询所有子任务id -->
+	<select id="SelectExeid" parameterType="java.lang.String" resultType="java.lang.String">
+			SELECT exeid from store_task_sublist WHERE taskid in (#{taskid,jdbcType=INTEGER})
+	</select>
+	
+	<!-- 条件 -->
+	<sql id="conditions">
+		<if test="startTime!=null and startTime!=''  ">and starttime &gt;=#{startTime} </if>
+		<if test="endTime!=null and endTime!=''  ">and endtime &lt;=#{endTime} </if>
+		<if test="taskName!=null and taskName!=''  ">and taskname like CONCAT(CONCAT('%',#{taskName}),'%') </if>
+	</sql>
+	
+
+	<!-- 根据任务id查询任务主表中 任务名称，任务截止日期，创建人，任务开始时间 start -->
+	<select id="selecttaskinfo" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		SELECT taskname,starttime,endtime,creatorname
+		FROM store_task
+		WHERE taskid=#{taskid,jdbcType=INTEGER}
+	</select>
+	<!-- 根据任务id查询任务主表中 任务名称，任务截止日期，创建人，任务开始时间 end -->
+
+	<!-- 根据任务id查询任务子表中 总条数 ，已完成任务数量 start -->
+	<select id="selectsublistinfo" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		SELECT COUNT(1) taskname,t.con taskinfo
+		from store_task_sublist,
+		(SELECT COUNT(*) con from store_task_sublist
+		WHERE taskid=#{taskid,jdbcType=INTEGER} and taskstatus='已反馈') t
+		WHERE taskid=#{taskid,jdbcType=INTEGER}
+	</select>
+	<!-- 根据任务id查询任务子表中 总条数 ，已完成任务数量 end -->
+	<!-- 根据任务id查询动态表 总条数 start -->
+	<select id="selectdynamicssum" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		SELECT COUNT(1) tasktype from store_dynamics
+		WHERE taskid=#{taskid,jdbcType=INTEGER}
+	</select>
+	<!-- 根据任务id查询动态表 总条数 end -->
+	<!-- 根据任务id查询提交时间 start -->
+	<select id="selectsublistvdef1" parameterType="java.lang.Integer"
+		resultType="java.lang.String">
+		SELECT submittime FROM store_task_sublist WHERE
+		taskid=#{taskid,jdbcType=INTEGER}
+	</select>
+	<!-- 根据任务id查询提交时间 end -->
+	<!-- 添加任务 start -->
+	<insert id="insertSelective" parameterType="com.deppon.dpm.store.server.entity.StoreTask" useGeneratedKeys="true" keyProperty="taskid">
+		insert into store_task
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="taskid != null">taskid,</if>
+			<if test="taskname != null">taskname,</if>
+			<if test="taskinfo != null">taskinfo,</if>
+			<if test="creatorcode != null">creatorcode,</if>
+			<if test="creatorname != null">creatorname,</if>
+			<if test="tasktype != null">tasktype,</if>
+			<if test="starttime != null">starttime,</if>
+			<if test="endtime != null">endtime,</if>
+			<if test="tasktime != null">tasktime,</if>
+			<if test="taskstatus != null">taskstatus,</if>
+			<if test="attachment != null">attachment,</if>
+			<if test="dr != null">dr,</if>
+			<if test="ts != null">ts,</if>
+			<if test="taskcreator != null">taskcreator,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="taskid != null">#{taskid,jdbcType=INTEGER},</if>
+			<if test="taskname != null">#{taskname,jdbcType=VARCHAR},</if>
+			<if test="taskinfo != null">#{taskinfo,jdbcType=VARCHAR},</if>
+			<if test="creatorcode != null">#{creatorcode,jdbcType=VARCHAR},</if>
+			<if test="creatorname != null">#{creatorname,jdbcType=VARCHAR},</if>
+			<if test="tasktype != null">#{tasktype,jdbcType=VARCHAR},</if>
+			<if test="starttime != null">#{starttime},</if>
+			<if test="endtime != null">#{endtime},</if>
+			<if test="tasktime != null">#{tasktime,jdbcType=VARCHAR},</if>
+			<if test="taskstatus != null">#{taskstatus,jdbcType=VARCHAR},</if>
+			<if test="attachment != null">#{attachment,jdbcType=VARCHAR},</if>
+			<if test="dr != null">#{dr,jdbcType=INTEGER},</if>
+			<if test="ts != null">#{ts},</if>
+			<if test="taskcreator != null">#{taskcreator,jdbcType=VARCHAR},</if>
+		</trim>
+	</insert>
+	<!-- 添加任务 end -->
+	
+	<!-- 修改任务start -->
+	<update id="taskUpdate" parameterType="com.deppon.dpm.store.server.entity.StoreTask">
+			update store_task
+		    <set>
+		      <if test="taskname != null">taskname = #{taskname,jdbcType=VARCHAR},</if>
+		      <if test="taskinfo != null">taskinfo = #{taskinfo,jdbcType=VARCHAR},</if>
+		      <if test="creatorcode != null">creatorcode = #{creatorcode,jdbcType=VARCHAR},</if>
+		      <if test="creatorname != null">creatorname = #{creatorname,jdbcType=VARCHAR},</if>
+		      <if test="tasktype != null">tasktype = #{tasktype,jdbcType=VARCHAR},</if>
+		      <if test="starttime != null">starttime = #{starttime,jdbcType=TIMESTAMP},</if>
+		      <if test="endtime != null">endtime = #{endtime,jdbcType=TIMESTAMP},</if>
+		      <if test="tasktime != null">tasktime = #{tasktime,jdbcType=TIMESTAMP},</if>
+		      <if test="taskstatus != null">taskstatus = #{taskstatus,jdbcType=VARCHAR},</if>
+		      <if test="attachment != null">attachment = #{attachment,jdbcType=VARCHAR},</if>
+		      <if test="finishtime != null">finishtime = #{finishtime,jdbcType=TIMESTAMP},</if>
+		    </set>
+		    where taskid = #{taskid,jdbcType=INTEGER}
+	</update>
+	<!-- 修改任务end -->
+	<!-- 根据工号查询主任务 lvdf-->
+	<select id="queryTaskByUserId" parameterType="String" resultMap="BaseResultMap">
+		select taskid,taskname,taskinfo,creatorcode,creatorname,tasktype,starttime,endtime,tasktime,taskstatus,attachment,dr,ts,taskcreator
+		 from store_task where creatorcode=#{userId,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据主任务ID查询主任务 lvdf-->
+	<select id="queryTaskByTaskid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		 select taskid,taskname,taskinfo,creatorcode,creatorname,tasktype,starttime,endtime,tasktime,taskstatus,attachment,dr,ts,taskcreator
+		 from store_task where taskid=#{taskid,jdbcType=INTEGER}
+	</select>
+	
+	<!-- 根据主任务ID修改主任务dr状态 -->
+	<update id="deleteTaskByTaskId" parameterType="java.lang.Integer">
+		update store_task set dr='1' where taskid=#{taskId}
+	</update>
+</mapper>

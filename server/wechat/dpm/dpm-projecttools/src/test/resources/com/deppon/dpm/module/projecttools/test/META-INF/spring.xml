@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+        <!-- 项目管理工具 -->
+        <bean id="dpmDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+            <property name="url" value="jdbc:mysql://192.168.67.47:3306/app?allowMultiQueries=true" />
+            <property name="username" value="mysql1" />
+            <property name="password" value="mysql1" />
+        </bean>
+	    <bean id="dppmDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+	        <property name="url" value="jdbc:mysql://192.168.20.208:3306/dppm?useUnicode=true&amp;characterEncoding=UTF-8" />
+	        <property name="username" value="dppm" />
+	        <property name="password" value="dppm" />
+	    </bean>
+    
+	   <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	        <property name="mapperLocations"
+	            value="classpath*:com/deppon/dpm/module/projecttools/test/META-INF/ibatis/*.xml" />
+	        <property name="dataSource" ref="dpmDataSource" />
+       </bean>
+       
+        <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+            <property name="dataSource">
+                <ref bean="dpmDataSource" />
+            </property>
+        </bean>
+        <bean id="dppmJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+            <property name="dataSource">
+                <ref bean="dppmDataSource" />
+            </property>
+        </bean>
+	 <bean id="dppmCollectDao" class="com.deppon.dpm.module.projecttools.server.dao.impl.DppmCollectDao"> 
+		<property name="template" ref="dppmJdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="dppmCollectService"
+		class="com.deppon.dpm.module.projecttools.server.service.impl.DppmCollectService">
+		<property name="dao" ref="dppmCollectDao" />
+	</bean>
+	<bean id="dppmCollectAction"
+		class="com.deppon.dpm.module.projecttools.server.action.DppmCollectAction">
+		<property name="service" ref="dppmCollectService" />
+	</bean>
+	 <bean id="dppmQueryDao"
+        class="com.deppon.dpm.module.projecttools.server.dao.impl.DppmQueryDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+        <property name="template" ref="dppmJdbcTemplate" />
+        <property name="proJobNumber" value="${pro_power_msgcenter}"></property>
+    </bean>
+	<!-- 项目列表、详情配置 -->
+	<bean id="dppmQueryService"
+		class="com.deppon.dpm.module.projecttools.server.service.impl.DppmQueryService">
+		<property name="dppmQueryDao" ref="dppmQueryDao"></property>
+		<property name="dppmTaskDao" ref="dppmTaskDao" />
+		</bean>
+	<!-- 数据监控 -->
+	<bean id="dppmMonitorService" class="com.deppon.dpm.module.projecttools.server.service.impl.DppmMonitorService">
+	<property name="monitorDaoimp" ref="monitorDaoimp"></property> 
+	</bean>
+	
+	<bean id="monitorDaoimp" class="com.deppon.dpm.module.projecttools.server.dao.impl.DppmMonitorDao">
+	<property name="template" ref="dppmJdbcTemplate"/> 
+	<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<!-- 任务管理 任务跟踪日志 任务详情 -->
+	<bean id="tasklogDao"
+		class="com.deppon.dpm.module.projecttools.server.dao.impl.TaskLogDao">
+		<property name="template" ref="dppmJdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="tasklogService"
+		class="com.deppon.dpm.module.projecttools.server.service.impl.TaskLogService">
+		<property name="dao" ref="tasklogDao" />
+		<property name="emailFrom" value="${tasklog_warn_from}" />
+		<property name="emailHost" value="${wfs_warning_host}" />
+		<property name="emailUsername" value="${tasklog_warn_username}" />
+		<property name="emailPassword" value="${tasklog_warn_password}" />
+	</bean>
+	<bean id="dppmTaskDao"
+		class="com.deppon.dpm.module.projecttools.server.dao.impl.DppmTaskDao">
+		<property name="dppmTemplate" ref="dppmJdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="dppmTaskService"
+		class="com.deppon.dpm.module.projecttools.server.service.impl.DppmTaskService">
+		<property name="dppmTaskDao" ref="dppmTaskDao" />
+	</bean>
+	
+	<!-- 报表管理   -->
+	<bean id="dppmReportDao"
+		class="com.deppon.dpm.module.projecttools.server.dao.impl.DppmReportDao">
+		<property name="template" ref="dppmJdbcTemplate" />
+		<property name="funcCode" value="${dppm_reportfunc_code}" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="dppmReportService"
+		class="com.deppon.dpm.module.projecttools.server.service.impl.DppmReportService">
+		<property name="timeuri" value="${dppm_tasktimereport_url}" />
+		<property name="weekuri" value="${dppm_taskweekreport_url}" />
+		<property name="onlineuri" value="${dppm_onlineAging_url}" />
+		<property name="pointuri" value="${dppm_demandPoint_url}" />
+		<property name="yearuri" value="${dppm_demandAging_url}" />
+		<property name="rateuri" value="${dppm_completeRate_url}" />
+		<property name="costuri" value="${dppm_projectCost_url}" />
+		<property name="powerUser" value="${pro_power_msgcenter}"></property>
+		<property name="dao" ref="dppmReportDao" />
+	</bean>
+	<!-- 项目评级 -->
+	<bean id="projGradeDao"
+		class="com.deppon.dpm.module.projecttools.server.dao.impl.ProjectGradeDao">
+		<property name="template" ref="dppmJdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="projGradeSrv"
+		class="com.deppon.dpm.module.projecttools.server.service.impl.ProjectGradeService">
+		<property name="dao" ref="projGradeDao" />
+	</bean>
+	<!-- 公共类 -->
+	<bean id="commonDao"
+		class="com.deppon.dpm.module.projecttools.server.dao.impl.CommonDao">
+		<property name="template" ref="dppmJdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="commonSrv"
+		class="com.deppon.dpm.module.projecttools.server.service.impl.CommonService">
+		<property name="dao" ref="commonDao" />
+	</bean>
+	<!-- 年度规划 -->
+	<bean id="yearPlanDao"
+		class="com.deppon.dpm.module.projecttools.server.dao.impl.YearPlanDao">
+		<property name="oaTemp" ref="jdbcTemplate" />
+		<property name="dppmTemp" ref="dppmJdbcTemplate" />
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="yearPlanSrv"
+		class="com.deppon.dpm.module.projecttools.server.service.impl.YearPlanService">
+		<property name="dao" ref="yearPlanDao" />
+	</bean>
+	<!-- 资源计划 -->
+    <bean id="dppmResourcesPlanDao" class="com.deppon.dpm.module.projecttools.server.dao.impl.DppmResourcesPlanDao">
+        <property name="dppmTemp" ref="dppmJdbcTemplate" />
+        <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+    </bean>
+    <bean id="depponCalendarService" class="com.deppon.dpm.module.projecttools.server.service.impl.DepponCalendarService">
+        <property name="calendarPlanPath" value="${calendar_plan_path}" />
+        <property name="calendarEsbCode" value="${calendar_plan_esb_code}" />
+    </bean>
+    <bean id="dppmResourcesPlanService" class="com.deppon.dpm.module.projecttools.server.service.impl.DppmResourcesPlanService">
+        <property name="dppmResourcesPlanDao" ref="dppmResourcesPlanDao" />
+        <property name="depponCalendarService" ref="depponCalendarService" />
+    </bean>
+</beans>

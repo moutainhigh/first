@@ -1,0 +1,39 @@
+<ion-view title="文章" hide-back-button="false">
+    <ion-nav-buttons side="left">
+        <button class="depponback button-icon icon ion-ios7-arrow-left button back-button first-page" ng-click="back()"></button>
+    </ion-nav-buttons>
+    <ion-nav-buttons side="right" >
+    	<a href="#/layout/{{pid}}" ><button class="button button-icon icon ion-navicon"></button></a>
+	</ion-nav-buttons>
+    <ion-content>
+        <!-- <ion-slide-box >
+           <ion-slide ng-repeat="newspic in newspics">
+              <div class="box">
+               <a href="#/newsDetail/{{newspic.articleId}}" >
+               		<img src="{{newspic.picture}}"  
+                   		style="width: 100%;height:200px;">
+               </a> 
+             </div>
+           </ion-slide>
+    	</ion-slide-box> -->
+        <ion-list>
+            <a class="item item-thumbnail-left" ng-repeat="item in news" href="#/newsDetail/{{item.articleId}}">
+                <img src="{{item.picture}}" class="news-image">
+                <h2></h2>
+                <p ng-bind-html="item.articleName | rawHtml" class="unread item-text-wrap"></p>
+                <span class="item-note">
+                 <div class="row">
+                     <div class="col"><span class="date">浏览量：{{item.viewsAmount}}</span></div>
+                 </div>
+             </span>
+            </a>
+        </ion-list>
+        <ion-infinite-scroll
+                ng-if="moreDataCanBeLoaded"
+                on-infinite="loadMore()"
+                icon="ion-loading-c"
+                distance="1%">
+        </ion-infinite-scroll>
+        <div class="center">{{nullNews==true?"没有更多内容":""}}</div>
+    </ion-content>
+</ion-view>

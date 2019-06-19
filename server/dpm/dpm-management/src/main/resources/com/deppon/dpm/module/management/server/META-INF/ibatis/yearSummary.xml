@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.dpm.module.management.server.dao.impl.YearSummaryDao">
+
+    <resultMap id="yearsummary" type="com.deppon.dpm.module.management.shared.domain.YearSummaryEntity">
+		<result property="id" column="id" />
+		<result property="empCode" column="empCode" />
+		<result property="empName" column="empName" />
+		<result property="hiredate" column="hiredate" />
+		<result property="comCompanyDay" column="comCompanyDay" />
+		<result property="loginNum" column="loginNum" />
+		<result property="punchClockTime" column="punchClockTime" />
+		<result property="firstPunchClockDate" column="firstPunchClockDate" />
+		<result property="lastPunchClockDate" column="lastPunchClockDate" />
+		<result property="firstApp" column="firstApp" />
+		<result property="appVisitedNum" column="appVisitedNum" />
+		<result property="taxiNumber" column="taxiNumber" />
+		<result property="taxiRankingPercent" column="taxiRankingPercent" />
+		<result property="workflowNum" column="workflowNum" />
+		<result property="workflowRanking" column="workflowRanking" />
+	</resultMap>
+
+    <!-- 18年年度总结 -->
+    <select id="getYearSummary" parameterType="String" resultMap="yearsummary">
+       select 
+       t.empCode,
+       t.empName,
+       t.hiredate,
+       t.comCompanyDay,
+       t.loginNum,
+       t.punchClockTime,
+       t.firstPunchClockDate,
+       t.lastPunchClockDate,
+       t.firstApp,
+       t.appVisitedNum,
+       t.taxiNumber,
+       t.taxiRankingPercent,
+       t.workflowNum,
+       t.workflowRanking,
+       t1.pictPath picPath  
+       from dpm_statis_tab_2018 t
+       LEFT JOIN emp_pic t1 ON
+	   t.empcode = t1.empCode
+       where t.empCode = #{empCode}
+       LIMIT 1
+    </select>
+    
+	<!-- 查询任务列表 -->
+	<select id="getSummaryByEmpcode" parameterType="String"
+		resultType="com.deppon.dpm.module.management.shared.domain.YearSummaryEntity">
+		<!-- SELECT * from dpm_statis_tab where empcode=#{_parameter} -->
+		<!-- SELECT t.*, t1.pictPath picPath from dpm_statis_tab t LEFT JOIN emp_pic 
+			t1 ON t.empcode = t1.empCode where t.empcode=#{_parameter} -->
+		<!-- SELECT
+		t.empcode,
+		t.empname,
+		t.firstlogintime,
+		t.loginnum,
+		t.loginorder,
+		t.visitortime,
+		t.visitornum,
+		t.visitorpersonnum,
+		t.firstapp,
+		t.firstappusertime,
+		t.secondapp,
+		t.secondappusertime,
+		t.thirdapp,
+		t.thirdappusertime,
+		t.fouthapp,
+		t.fouthappusertime,
+		t.fifthapp,
+		t.fifthappusertime,
+		t.userorder,
+		t.personnum,
+		ome.INDATE as comeCompanyTime,
+		t.comCompanyDepartment,
+		t.comCompanyJob,
+		t.comCompanyDay,
+		t1.pictPath picPath from dpm_statis_tab t
+		INNER JOIN om_employee ome
+		on t.empcode=ome.empcode
+		LEFT JOIN emp_pic t1
+		ON
+		t.empcode = t1.empCode -->
+		SELECT t.INDATE as comeCompanyTime from om_employee t
+		where
+		t.EMPSTATUS='on'
+		and t.empcode=#{_parameter}
+	</select>
+	
+	
+	
+	<!-- 查询任务列表 -->
+	<select id="getLeaveByEmpcode" parameterType="String"
+		resultType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		
+		SELECT t.INDATE , t.LEAVEDATE ,t.empname from OM_LEAVE_EMPLOYEE t
+		where
+		 t.empcode=#{_parameter}
+
+	</select>
+
+
+</mapper>

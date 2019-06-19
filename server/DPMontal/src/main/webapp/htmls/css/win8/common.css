@@ -1,0 +1,10 @@
+@charset "utf-8";
+/* win8 comment style */
+
+body { color:#373c64;}
+.gray, a.gray { color:#b5b4b4 !important;}
+.yellow, a.yellow { color:#faaf19 !important;}
+.white a.white { color:#fff !important;}
+.bgGray { background-color:#b5b4b4;}
+.bgYellow { background-color:#faaf19;}
+.button { display:inline-block; *display:inline; *zoom:1; vertical-align:middle;}

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.store.server.dao.IStoreMarkDao">
+  <resultMap id="BaseResultMap" type="com.deppon.dpm.store.server.entity.StoreMark">
+    <id column="markid" jdbcType="INTEGER" property="markid" />
+    <result column="grade"  property="grade" />
+    <result column="markinfo" jdbcType="VARCHAR" property="markinfo" />
+    <result column="photo" jdbcType="VARCHAR" property="photo" />
+    <result column="label" jdbcType="VARCHAR" property="label" />
+    <result column="exeid" jdbcType="BIGINT" property="exeid" />
+    <result column="modid" jdbcType="VARCHAR" property="modid" />
+    <result column="modinfo" jdbcType="VARCHAR" property="modinfo" />
+    <result column="dr" jdbcType="INTEGER" property="dr" />
+    <result column="ts" jdbcType="DATE" property="ts" />
+    <result column="checkgrade" jdbcType="INTEGER" property="checkGarde" />
+  </resultMap>
+  
+  <resultMap type="com.deppon.dpm.store.server.entity.QueryModInfo" id="BaseResultMapFirstmod">
+  	<result column="firstmodid" jdbcType="INTEGER" property="firstmodid" />
+  	<result column="checkallgrade" jdbcType="INTEGER" property="checkallgrade" />
+  </resultMap>
+  
+  <select id="selectFirstmod" resultMap="BaseResultMapFirstmod">
+  		select firstmodid,checkallgrade from store_firstmod
+  </select>
+  	
+  <sql id="columns">
+  		markid,grade,markinfo,photo,label,exeid,modid,dr,ts,checkgrade
+  </sql>
+  
+  
+  <!-- 循环添加 -->
+  <insert id="insertSelective" parameterType="java.util.List" >
+  	insert into store_mark(exeid,modid,dr,ts)
+  	VALUES	
+	 <foreach collection ="list" item="storeMark" index="index" separator =",">
+	 (
+	 	#{storeMark.exeid,jdbcType=BIGINT},
+	 	#{storeMark.modid,jdbcType=BIGINT},
+	 	#{storeMark.dr,jdbcType=INTEGER},
+	 	#{storeMark.ts}
+	  )
+	 </foreach> 
+  </insert>
+  <!-- 查询所有模块是否已有考评 -->
+  <select id="selectList" resultType="java.lang.Integer" parameterType="java.util.List">
+ 	SELECT count(1) from store_mark WHERE markid in
+ 	<foreach collection ="list" item="storeMark"  open="(" close=")" separator =",">
+ 		#{storeMark.markid,jdbcType=BIGINT}
+ 	</foreach>
+ 	and grade not in (0)
+  </select>
+  
+  <!-- 循环更新 -->
+  <update id="updateSelective" parameterType="java.util.List">
+ 
+  		UPDATE store_mark
+  			<trim prefix="SET" suffixOverrides=",">
+  				 <trim prefix="grade = CASE markid" suffix="END,">
+		   		 	<foreach collection="list" item="item">
+		   		 		<if test="item.grade !=null">
+		   		 			WHEN #{item.markid,jdbcType=INTEGER} THEN #{item.grade,jdbcType=DOUBLE}
+		   		 		</if>
+		   		 	</foreach>
+		   		 </trim>
+		   		 
+	  			 <trim prefix="markinfo = CASE markid" suffix="END,">
+		   		 	<foreach collection="list" item="item">
+		   		 		<if test="item.markinfo !=null">
+		   		 		WHEN #{item.markid,jdbcType=INTEGER} THEN #{item.markinfo,jdbcType=VARCHAR}
+		   		 		</if>
+		   		 	</foreach>
+		   		 </trim>
+		   		 
+		   		 <trim prefix="photo = CASE markid" suffix="END,">
+		            <foreach collection="list" item="item">
+		           		<if test="item.photo !=null">
+		                  WHEN #{item.markid,jdbcType=INTEGER} THEN #{item.photo,jdbcType=VARCHAR}
+		                </if>
+		            </foreach>
+		        </trim>
+		        
+		        <trim prefix="label = CASE markid" suffix="END,">
+		            <foreach collection="list" item="item">
+		              <if test="item.label !=null">
+		                WHEN #{item.markid,jdbcType=INTEGER} THEN #{item.label,jdbcType=VARCHAR}
+		              </if>
+		            </foreach>
+		        </trim>
+  			</trim>
+			WHERE markid IN  
+			<foreach collection="list" item="item" separator="," open="(" close=")">  
+	          	 #{item.markid,jdbcType=INTEGER}  
+	       	</foreach> 
+
+  </update>
+  
+  <!-- 查询巡检模块 -->
+  <select id="queryModule" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  		select sm.markid,sm.grade,sm.markinfo,sm.photo,sm.label,sm.exeid,sm.modid,sf.firstmodname,ss.secondmodname,sm.dr,sm.ts,ss.checkgrade checkGrade,ss.firstmodid,ss.modinfo 
+		from store_mark sm  LEFT JOIN store_secondmode ss on sm.modid=ss.secondmodid  
+		LEFT JOIN store_firstmod sf on ss.firstmodid=sf.firstmodid
+  		where exeid=#{exeid}
+  </select>
+  
+</mapper>

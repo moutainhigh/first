@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procMaintenanceInfoList" >
+    
+	<!-- 获取工程维修信息并且分页 -->
+	<select id="getList" parameterType="java.util.Map" resultType="com.deppon.dpm.module.management.shared.domain.ProcMaintainEntity">
+	     <![CDATA[
+	    select id,userNo,userName,proCode,proName,approvalMark,updateDate,self,fisNOtMonitor 
+		from proc_maintain_info where approvalMark<>2 and userNo = #{userNo}
+		ORDER BY approvalMark,updateDate DESC LIMIT #{pageStart},#{pageSize}
+		]]>
+	</select>
+	
+	<!-- 获取工程维修信息共有多少条-->
+	<select id="getCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+	    <![CDATA[
+	    select count(*) from proc_maintain_info where userNo = #{userNo} and approvalMark<>2
+	    ]]>
+	</select>
+	
+	<!-- 根据单号查询工号-->
+	<select id="getUserNo" resultType="java.lang.String" parameterType="java.lang.String">
+	    select userNo from proc_maintain_info where bill=#{bill}
+	</select>
+</mapper>

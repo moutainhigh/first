@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs" 
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+
+	xsi:schemaLocation="
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context 
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd
+      http://www.springframework.org/schema/jee 
+      http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+      http://www.springframework.org/schema/tx 
+      http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+      http://www.springframework.org/schema/aop 
+      http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+
+      http://cxf.apache.org/core
+        http://cxf.apache.org/schemas/core.xsd
+        http://cxf.apache.org/jaxws
+        http://cxf.apache.org/schemas/jaxws.xsd
+        http://cxf.apache.org/jaxrs
+        http://cxf.apache.org/schemas/jaxrs.xsd
+        
+        http://code.alibabatech.com/schema/dubbo 
+		http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <!-- <context:property-placeholder location="classpath*:spring-config.properties" /> -->
+    
+    <!-- 事务注解支持 -->
+	<!-- <tx:annotation-driven transaction-manager="oaTransactionManager" /> -->
+	
+<!-- 	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxActive" value="${redis.pool.maxActive}"></property>
+		<property name="maxIdle" value="${redis.pool.maxIdle}"></property>
+		<property name="maxWait" value="${redis.pool.maxWait}"></property>
+		<property name="testOnBorrow" value="${redis.pool.testOnBorrow}"></property>
+		<property name="testOnReturn" value="${redis.pool.testOnReturn}"></property>
+	</bean> -->
+	<!-- 数据缓存 -->
+<!-- 	 <bean id="client" class="com.deppon.foss.framework.cache.redis.RedisClient">
+		<property name="host1" value="${redis.ip}"></property>
+		<property name="port1" value="${redis.port}"></property>
+		<property name="poolConfig" ref="poolConfig"></property>
+	</bean>  -->
+	
+	<!--工作流数据监控-->
+	<bean id="monitorDao" class="com.deppon.dpm.module.wfs.server.dao.impl.MonitorDao"/>
+  	<bean id="monitorService" class="com.deppon.dpm.module.wfs.server.service.impl.MonitorService">
+  		<property name="dao" ref="monitorDao"/>
+  		<property name="tpushNewsService" ref="tpushNewsService"/>
+  		<property name="workItemsListDao" ref="workItemsListDao"/>
+  		<property name="loginRedisService" ref="loginRedisService"/>
+  		<property name="toEmail" value="${wfs_warning_email}"/>
+  		<property name="toMsgCenter" value="${wfs_warning_msgcenter}"/>
+  		<property name="band" value="${wfs_warning_band}"/>
+  		<property name="emailFrom" value="${wfs_warning_from}"/>
+  		<property name="emailHost" value="${wfs_warning_host}"/>
+  		<property name="emailUsername" value="${wfs_warning_username}"/>
+  		<property name="emailPassword" value="${wfs_warning_password}"/>
+  	</bean>
+	<bean id="workItemsListDao" class="com.deppon.dpm.module.wfs.server.dao.impl.WorkItemsListDao">
+  	     <property name="template" ref="oaJdbcTemplate" />
+  	</bean>
+  	<!--工作流列表-->
+  	<bean id="workItemsListService" class="com.deppon.dpm.module.wfs.server.service.impl.WorkItemsListService">
+    	<property name="workItemsListDao" ref="workItemsListDao"/>
+  	</bean>
+  	<bean id="toWorkItemsListAction" class="com.deppon.dpm.module.wfs.server.action.ToWorkItemsListAction" scope="prototype">
+    	<property name="workItemsListService" ref="workItemsListService"/>
+    	<property name="weaverService" ref="weaverWfsService"></property>
+  	</bean>
+  	
+  	<!--固定资产盘点工作流-->
+  	<bean id="dlspWfsSrv" class="com.deppon.dpm.module.wfs.server.service.impl.DLspWorkInfoService">
+    	<property name="uri" value="${lsp_esb_ws_rest_link}"/>
+    	<property name="approvuri" value="${lsp_esb_ws_restApprov_link}"/>
+    	<property name="qeuryuri" value="${lsp_esb_qeuryuri}"/>
+  	 	<property name="departurl" value="${lsp_esb_qeuryDepart_url}"></property>
+  	 	<property name="departmentDao" ref="departmentDao"></property> 
+  	  	</bean>
+  	<bean id="dLspWorkInfoAction" class="com.deppon.dpm.module.wfs.server.action.DLspWorkInfoAction">
+    	<property name="dlspWfsSrv" ref="dlspWfsSrv"/>
+    	<property name="monitorService" ref="monitorService"/>
+    	<property name="approvePeopleQueryService" ref="approvePeopleQueryService"/>
+    	<property name="taxInfoService" ref="taxInfoService"></property>
+  	</bean>
+	<!--报账工作流-->
+  	<bean id="fsscWfsSrv" class="com.deppon.dpm.module.wfs.server.service.impl.FSSCWorkInfoService">
+    	<property name="uri" value="${fssc_ws_mobile_link}"/>
+    	<property name="approveUrl" value="${fssc_rest_approve_url}"/>
+    	<property name="fssUri" value="${fssc_rest_query_url}"/>
+  	</bean>
+  	<bean id="fsscWorkInfoAction" class="com.deppon.dpm.module.wfs.server.action.FSSCWorkInfoAction">
+    	<property name="fsscWfsSrv" ref="fsscWfsSrv"/>
+    	<property name="monitorService" ref="monitorService"/>
+  	</bean>
+
+  	<!--hr人力资源工作流-->
+  	<bean id="nhrWfsSrv" class="com.deppon.dpm.module.wfs.server.service.impl.NHrWorkInfoService">
+    	<property name="uri" value="${hr_esb_link_url}"/>
+    	<property name="uriA" value="${hr_esb_linkApprov_url}"/>
+    	<property name="esbCodeQ" value="${hr_esbCode_busi}"/>
+    	<property name="esbCodeA" value="${hr_esbCode_appr}"/>
+    	<property name="nhrWorkInfoDao" ref="nhrWorkInfoDao"></property>
+  	</bean>
+  	<bean id="nhrWorkInfoAction" class="com.deppon.dpm.module.wfs.server.action.NHrWorkInfoAction">
+    	<property name="nhrWfsSrv" ref="nhrWfsSrv"/>
+    	<property name="monitorService" ref="monitorService"/>
+  	</bean>
+  	<bean id="nhrWorkInfoDao" class="com.deppon.dpm.module.wfs.server.dao.impl.NhrWorkInfoDao" />
+  	<!--crm 客户关系管理工作流-->
+  	<bean id="crmWfsSrv" class="com.deppon.dpm.module.wfs.server.service.impl.CrmWorkInfoService">
+        <property name="uri" value="${crm_esb_link_url}"/>
+        <property name="uriA" value="${crm_esb_linkApprov_url}"/>
+    </bean>
+  	<bean id="crmWorkInfoAction" class="com.deppon.dpm.module.wfs.server.action.CrmWorkInfoAction">
+    	<property name="crmWfsSrv" ref="crmWfsSrv"/>
+    	<property name="monitorService" ref="monitorService"/>
+  	</bean>
+  <!-- 	acms 证照工作流 -->
+  	<bean id="acmsWfsSrv" class="com.deppon.dpm.module.wfs.server.service.impl.AcmsWorkInfoService">
+        <property name="query" value="${acms_wfs_info_link}"/>
+        <property name="approve" value="${acms_wfs_appro_link}"/>
+    </bean>
+  	<bean id="acmsWorkInfoAction" class="com.deppon.dpm.module.wfs.server.action.AcmsWorkInfoAction">
+    	<property name="acmsWfsSrv" ref="acmsWfsSrv"/>
+    	<property name="monitorService" ref="monitorService"/>
+  	</bean> 
+  	<!-- DPMontal 中工作流 数据监控 -->
+	<bean id="dpmontalAction" class="com.deppon.dpm.module.wfs.server.action.DPMontalAction">
+    	<property name="monitorService" ref="monitorService"/>
+  	</bean>
+  	
+  	<!-- 商铺租贷和场地租贷/转租工作流 -->
+  	<bean id="netWorkPlanService" class="com.deppon.dpm.module.wfs.server.service.impl.NetWorkPlanService">
+  	      <property name="queryUrl" value="${wdgh_esb_queryWorkFlow_url}"/>
+  	      <property name="approveUrl" value="${wdgh_esb_approval_url}"/>
+  	      <property name="departurl" value="${wdgh_esb_qeuryDepart_url}"></property>
+   	</bean>
+   	
+   	<!-- dppm 工作流 -->
+   	<bean id="dppmWorkInfoDao" class="com.deppon.dpm.module.wfs.server.dao.impl.DppmWorkInfoDao">
+  	     <property name="dppmTemp" ref="dppmJdbcTemplate" />
+  	</bean>
+  	<bean id="dppmChangeCheckDao" class="com.deppon.dpm.module.wfs.server.dao.impl.DppmChangeCheckDao">
+  	     <property name="dppmTemp" ref="dppmJdbcTemplate" />
+  	</bean>
+  	<bean id="dppmWfsSrv" class="com.deppon.dpm.module.wfs.server.service.impl.DppmWorkInfoService">
+    	<property name="dao" ref="dppmWorkInfoDao"/>
+    	<property name="changeDao" ref="dppmChangeCheckDao"/>
+    	<property name="dppmHost" value="${dppm_wfs_info_host}" />
+  	</bean>
+  	<!-- 分支 -->
+	<bean id="branchRuleManagerService" class="com.deppon.pm.module.end.branch.service.impl.BranchRuleManagerServiceImpl">
+		<property name="dao" ref="dppmWorkInfoDao"></property>
+	</bean>
+	<!-- 注册数分支规则调用层操作接口实现 -->	
+	<bean id="branchRuleManager" class="com.deppon.pm.module.end.branch.EndBranchCommon" scope="prototype">
+	    <property name="branchRuleManagerService" ref="branchRuleManagerService"></property>
+	</bean>
+  	<!-- 参与者 -->
+	<bean id="participantManagerService" class="com.deppon.pm.module.end.participant.service.impl.ParticipantManagerServiceImpl">
+		<property name="dao" ref="dppmWorkInfoDao"></property>
+	</bean>
+	<!-- 注册数分支规则调用层操作接口实现 -->	
+	<bean id="participantRuleManager" class="com.deppon.pm.module.end.participant.EndParticipantCommon" scope="prototype">
+	    <property name="participantManagerService" ref="participantManagerService"></property>
+	</bean>
+	<!-- 数据变更 -->
+	<bean id="changeBranchService" class="com.deppon.pm.module.change.bpms.branch.service.impl.ChangeBranchServiceImpl">
+		<property name="commonChangeService" ref="dppmChangeCheckDao" />
+	</bean>
+   	<!-- dppm 工作流  end-->
+   	<bean id="departmentDao" class="com.deppon.dpm.module.wfs.server.dao.impl.DepartmentDao"></bean>
+  	<bean id="dwfsWorkInfoService" class="com.deppon.dpm.module.wfs.server.service.impl.DWFSWorkInfoService">
+  	        <property name="qureyUrl" value="${dppm_wfs_mobileWorkApprovalQuery_url}"></property>
+            <property name="approveUrl" value="${dppm_wfs_mobileWorkdisposeQuery_url}"></property>
+  			<property name="departUrl" value="${dwfs_esb_qeuryDepart_url}"></property>
+  			<property name="noaSystemUrl" value="${dwfs_wfs_noaSystemQuery_url}"></property> 
+  			<property name="departmentDao" ref="departmentDao"></property> 
+  	</bean>
+    <bean id="dwfsWorkInfoAction" class="com.deppon.dpm.module.wfs.server.action.DWFSWorkInfoAction">
+ 		<property name="dwfsWorkInfoService" ref="dwfsWorkInfoService"></property>
+ 		<property name="approvePeopleQueryService" ref="approvePeopleQueryService"/>
+ 		<property name="taxInfoService" ref="taxInfoService"></property>
+ 		<property name="monitorService" ref="monitorService"></property>
+    </bean>
+  	<bean id="approvePeopleQueryDao" class="com.deppon.dpm.module.wfs.server.dao.impl.ApprovePeopleQueryDao">
+  			<property name="template" ref="oaJdbcTemplate" />
+  	</bean>
+  	<bean id="approvePeopleQueryService" class="com.deppon.dpm.module.wfs.server.service.impl.ApprovePeopleQueryService">
+  	         <property name="queryDao" ref="approvePeopleQueryDao"></property>
+  	</bean> 
+  	<bean id="taxInfoDao" class="com.deppon.dpm.module.wfs.server.dao.impl.TaxInfoDao" />
+  	<bean id="taxInfoService" class="com.deppon.dpm.module.wfs.server.service.impl.TaxInfoService">
+  	    <property name="taxInfoDao" ref="taxInfoDao"></property>
+  	</bean>
+
+	<bean id="weaveWfs" class="com.deppon.dpm.module.wfs.server.action.WeaverWfsAction"
+		scope="prototype">
+		<property name="weaverService" ref="weaverWfsService"></property>
+		<property name="workItemsListService" ref="workItemsListService"></property>
+	</bean> 
+	<bean id="workflowPageService" class="com.deppon.dpm.module.wfs.server.service.impl.WorkflowPageService">
+		<property name="workflowDao" ref="workflowPageDao"></property>
+	</bean> 
+	<bean id="workflowPageDao" class="com.deppon.dpm.module.wfs.server.dao.impl.workflowPageDao"></bean>
+	<bean id="weaverWfsService" class="com.deppon.dpm.module.wfs.server.service.impl.WeaverWfsService">
+		<property name="appInterfaceUrl" value="${appInterfaceUrl}" />
+		<property name="pageService" ref="workflowPageService"></property>
+		<property name="picService" ref="pictureService"></property>
+		<property name="employeeService" ref="empService"></property>
+	</bean>  
+	
+	<bean id="picPaths" class="com.deppon.dpm.module.wfs.server.action.NwfsPicturePathAction" scope="prototype">
+		<property name="picService" ref="pictureService"></property>
+	</bean>
+	<bean id="pictureService" class="com.deppon.dpm.module.wfs.server.service.impl.NwfsPicpathService">
+		<property name="picDao" ref="pictureDao"></property>
+	</bean>
+	<bean id="pictureDao" class="com.deppon.dpm.module.wfs.server.dao.impl.NwfsPicpathDao"></bean>
+
+	<bean id="allWroflowList" class="com.deppon.dpm.module.wfs.server.action.NwfsAllWorkflowListAction">
+		<property name="pageService" ref="workflowPageService"></property>
+	</bean>
+	<bean id="empService" class="com.deppon.dpm.module.wfs.server.service.impl.QueryEmployeeInfoService">
+		<property name="employeeDao" ref="empInfoDao"></property>
+	</bean>
+	<bean id="empInfoDao" class="com.deppon.dpm.module.wfs.server.dao.impl.EmployeeInfoDao"></bean>
+	
+	<!-- dubbox start -->
+	<!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+	<dubbo:application name="dpm_dubbox" />
+	<dubbo:reference id="workflowService"
+		interface="weaver.workflow.webservices.WorkflowService" group="${dpm.cops.group1}"
+		version="${dpm.version}" registry="weaver-dubbo" />
+	<dubbo:reference id="workflowSearch"
+		interface="weaver.workflow.webservices.IWorkflowServiceDeppon" group="${dpm.cops.group1}"
+		version="${dpm.version}" registry="weaver-dubbo" />
+	<dubbo:reference id="workflowAttachment"
+		interface="weaver.docs.webservices.DocService" group="${dpm.cops.group1}"
+		version="${dpm.version}" registry="weaver-dubbo" />
+		
+	<dubbo:registry id="weaver-dubbo"
+		protocol="${dubbo.registry.weaver-dubbo.protocol}" address="${dubbo.registry.weaver-dubbo.address}"
+		client="zkclient" default="false" />
+
+	<!-- dubbox end -->
+</beans>

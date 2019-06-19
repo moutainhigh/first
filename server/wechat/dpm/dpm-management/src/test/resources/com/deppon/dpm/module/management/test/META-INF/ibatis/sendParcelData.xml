@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.sendParcelData" >
+   
+    <resultMap type="com.deppon.dpm.module.management.shared.domain.ParcelEntity"
+		id="baseMap">
+		<result property="id" column="id" />
+		<result property="packageTypeCode" column="packageTypeCode" />
+		<result property="packageType" column="packageType" />
+		<result property="userNo" column="userNo" />
+		<result property="userName" column="userName" />
+		<result property="addressCode" column="addressCode" />
+		<result property="addressName" column="addressName" />
+		<result property="arriveDate" column="arriveDate" />
+		<result property="parcelMark" column="parcelMark" />
+		<result property="companyCode" column="companyCode" />
+		<result property="companyName" column="companyName" />
+		<result property="tellPhone" column="tellPhone" />
+		<result property="toReceiveDate" column="toReceiveDate" />
+		<result property="parcelState" column="parcelState" />
+		<result property="packageId" column="packageId" />
+		<result property="postStatus" column="postStatus" />
+		<result property="updateTime" column="updateTime" />
+		<result property="createTime" column="createTime" />
+		<result property="forUserName" column="forUserName" />
+		<result property="forUserNo" column="forUserNo" />
+	</resultMap>
+	
+	
+	<select id="selectAllPackageId" resultType="java.lang.Long">
+		select packageId from send_parcel_massage WHERE parcelState=0
+	</select>
+	
+	<select id="selectParcelPageData" parameterType="java.util.Map" resultType="com.deppon.dpm.module.management.shared.domain.ParcelEntity">
+		<!-- select * from (
+				select b.userNo forUserNo,b.name forUserName,a.* from send_parcel_massage a  LEFT JOIN (
+				select * from send_parcel_acting where userNo=#{userNo} ) b on a.packageId = b.packageid where a.parcelState=0 or a.parcelState=4 
+				 ) c 
+				where c.userNo=#{userNo} or c.forUserNo=#{userNo} 
+			order by c.arriveDate desc  -->
+			SELECT * from send_parcel_massage where userNo=#{userNo} and createTime >date_add(SYSDATE() ,interval -5 DAY) order by arriveDate DESC
+	</select>
+	
+	<select id="selectParcelPageCount" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(packageId) from (
+				select a.userNo,b.userNo forUserNo,a.packageId from send_parcel_massage a  LEFT JOIN (
+				select * from send_parcel_acting where userNo=#{_parameter} ) b on a.packageId = b.packageid where a.parcelState=0 
+				 ) c 
+		where c.userNo=#{_parameter} or c.forUserNo=#{_parameter} 
+	</select>
+	
+	<!-- <select id="selectOneByPackagesId"  parameterType="java.lang.Long" resultType="com.deppon.dpm.module.management.shared.domain.ParcelEntity">
+		select * from send_parcel_massage where packageId=#{packageId}
+	</select> -->
+	
+	<select id="selectOneByPackagesId"  parameterType="java.lang.Long" resultType="com.deppon.dpm.module.management.shared.domain.ParcelEntity">
+		select b.userNo forUserNo,b.name forUserName,a.* from send_parcel_massage a LEFT JOIN (
+			select * from send_parcel_acting ) b on a.packageId = b.packageid where a.packageId=#{packageId}
+	</select>
+	
+	<insert id="insertSendData" parameterType="java.util.List">
+		insert into send_parcel_massage(packageTypeCode,packageType,userNo,userName,addressCode,addressName,
+		arriveDate,parcelMark,companyCode,companyName,tellPhone,parcelState,
+			packageId,postStatus,createTime) values 
+			<foreach collection="list"  item="item" index="index" separator="," >
+			(
+				#{item.packagesType.typeId},#{item.packagesType.name},#{item.personCode},#{item.personName},#{item.packagesReceiveplace.typeId},#{item.packagesReceiveplace.name},
+				#{item.enterTime},#{item.packageNum},#{item.packagesCompany.typeId},#{item.packagesCompany.name},#{item.tellphone},0,
+				#{item.packagesId},0,now()
+			)
+			</foreach>
+	</insert>
+	<!--保存消息通知-->
+	<insert id="saveMesssageToDB" 
+		parameterType="com.deppon.dpm.module.management.shared.domain.MailReceiveSendFunctionEntity">
+		
+		insert into send_parcel_news(userNo,content,statusTime,updateTime,createTime,status,mark) 
+              values(#{userNo},
+                     #{message},
+                     #{enterTime},
+                     NOW(),NOW(),
+                     #{parcelState},
+                     0 );
+	</insert>
+	<!--催领单独查询  -->
+	<select id="queryMesssageToDBCorporal"  parameterType="java.lang.Long" resultType="java.lang.String">
+		select userNo from send_parcel_massage where packageId=#{packageId}
+	</select>
+</mapper>

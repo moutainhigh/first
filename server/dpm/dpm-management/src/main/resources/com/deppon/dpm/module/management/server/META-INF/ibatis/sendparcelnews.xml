@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.sendparcelnews">
+
+	<!-- 得到收发室未发送消息的数据 -->
+	<select id="getNews"
+		resultType="com.deppon.dpm.module.management.shared.domain.SendParcelNewsEntity">
+	SELECT id as pushId,userNo,content,statusTime FROM send_parcel_news WHERE mark = 0 and userNo=#{userNo}
+	and createTime> date_add(SYSDATE() ,interval -5 DAY)
+	 GROUP BY status;
+	</select>
+
+<!-- 
+	<update id="updateNews" parameterType="java.util.List">
+	     update send_parcel_news set updateTime=NOW(),mark=1  
+			 where id in(
+	     <foreach collection="list"  item="item" index="index" separator="," >
+			#{item.pushId} 
+		</foreach>
+		)
+	</update> -->
+	
+	<update id="updateNews" >
+	     update send_parcel_news set updateTime=NOW(),mark=1  
+			 where mark = 0  and userNo= #{userNo};
+	    
+		
+	</update>
+</mapper>

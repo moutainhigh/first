@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.dpm.uums.server.dao.versionEntityMapper">
+
+	<!-- 查询所有的数据列表 -->
+	<select id="selectVersion" resultType="com.deppon.dpm.uums.server.domain.VersionEntity">
+		select 
+			r.id as vid,
+			r.version as version,
+			r.url as url,
+			r.app_name as appName,
+			r.content as content,
+			r.force as rforce,
+			r.os_type as osType,
+			r.update_time as updateTime
+		from app.app_version_config r
+	</select>
+	
+	
+			<!-- 根据id修改 MODIFY_USER_CODE,MODIFY_USER_CODE,ACTIVE 三个字段其他字段不做修改 -->
+	<update id="updateVersion" 
+		parameterType="com.deppon.dpm.uums.server.domain.VersionEntity">
+		UPDATE/** UUMS:根据CODE 更新数据：由于更新是先删除再插入，所以这个映射用不上  **/ app.app_version_config A
+		<set>
+			<if test="version !=null and version != ''">
+				A.version = #{version, jdbcType=VARCHAR},
+		    </if>
+			<if test="url !=null and url != ''">
+				A.url = #{url, jdbcType=VARCHAR},
+		    </if>
+			<if test="appName !=null and appName != ''">
+				A.app_name = #{appName, jdbcType=VARCHAR},
+		    </if>
+		    <if test="content !=null and content != ''">
+				A.content = #{content, jdbcType=VARCHAR},
+		    </if>
+		    <if test="rforce !=null and rforce != ''">
+				A.force = #{rforce, jdbcType=VARCHAR},
+		    </if>
+		    <if test="osType !=null and osType != ''">
+				A.os_type = #{osType, jdbcType=VARCHAR},
+		    </if>
+		    <if test="updateTime !=null and updateTime != ''">
+				A.update_time = #{updateTime, jdbcType=VARCHAR},
+		    </if>
+	    </set>
+		<where>
+			A.id = #{vid,jdbcType=INTEGER}	
+		</where>
+	</update>
+ 
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.deppon.dpm.uums.server.dao.roleEntityMapper">
+
+	<!-- 查询所有的数据列表 -->
+	<select id="selectlimit" parameterType="Map" resultType="com.deppon.dpm.uums.server.domain.RoleEntity">
+		select 
+			r.id as id,
+			r.name as name,
+			r.code as code,
+			r.notes as notes,
+			r.create_time as createTime,
+			r.modify_time as modifyTime,
+			r.create_user_code as createUserCode,
+			r.modify_user_code as modifyUserCode,
+			r.version_no as versionNo,
+			r.UUID	as UUID
+		from app.t_app_role r
+		<where>
+				r.active = #{active,jdbcType=VARCHAR}	
+			<if test="id !=null and id != ''">
+				and r.id = #{id,jdbcType=VARCHAR}	
+		    </if>
+		</where>
+		<if test="start !=null and start != ''">
+		 	limit  #{start}, #{limit}
+		</if>
+	</select>
+	<!-- 查询所有的数据列表 -->
+	<select id="selectlimitCount" parameterType="Map" resultType="Long">
+		select 
+			count(1)
+		from app.t_app_role r
+		<where>
+				r.active = #{active,jdbcType=VARCHAR}	
+			<if test="id !=null and id != ''">
+				and r.id = #{id,jdbcType=VARCHAR}	
+		    </if>
+		</where>
+	</select>
+	
+	<!-- 插入数据 ： -->
+	<insert id="addRole"
+		parameterType="com.deppon.dpm.uums.server.domain.RoleEntity">
+		INSERT/** 权限:插入数据  **/ INTO app.t_app_role(
+		ID,
+		CODE,
+		NAME,
+		NOTES,
+		VERSION_NO,
+		ACTIVE,
+		CREATE_TIME,
+		MODIFY_TIME,
+		CREATE_USER_CODE,
+		MODIFY_USER_CODE,
+		UUID) VALUES	
+	(
+		#{id, jdbcType=VARCHAR},
+		#{code, jdbcType=VARCHAR},
+		#{name, jdbcType=VARCHAR},
+		#{notes, jdbcType=VARCHAR},
+		#{versionNo, jdbcType=NUMERIC},
+		#{active, jdbcType=CHAR},
+		#{createDate, jdbcType=TIMESTAMP},
+		#{modifyDate, jdbcType=TIMESTAMP},
+		#{createUser, jdbcType=VARCHAR},
+		#{modifyUser, jdbcType=VARCHAR},
+		#{UUID, jdbcType=VARCHAR}
+	)
+	</insert>
+	<!-- 查询UUID和版本号 -->
+	<select id="selectRoleActiveWithNo" parameterType="com.deppon.dpm.uums.server.domain.RoleEntity" resultType="com.deppon.dpm.uums.server.domain.RoleEntity">
+		SELECT 
+			a.UUID	AS UUID,
+			a.VERSION_NO AS versionNo,
+			a.code as code,
+			a.code as name
+		FROM app.t_app_role a
+		WHERE 
+			a.id=#{id,jdbcType=VARCHAR}
+	</select>
+	
+			<!-- 根据id修改 MODIFY_USER_CODE,MODIFY_USER_CODE,ACTIVE 三个字段其他字段不做修改 -->
+	<update id="updateRole" 
+		parameterType="com.deppon.dpm.uums.server.domain.RoleEntity">
+		UPDATE/** UUMS:根据CODE 更新数据：由于更新是先删除再插入，所以这个映射用不上  **/ app.t_app_role A
+		<set>
+			<if test="modifyUser !=null and modifyUser != ''">
+				A.MODIFY_USER_CODE = #{modifyUser, jdbcType=VARCHAR},
+		    </if>
+			<if test="active !=null and active != ''">
+				A.ACTIVE = #{active, jdbcType=CHAR},
+		    </if>
+			<if test="modifyUser !=null and modifyUser != ''">
+				A.MODIFY_USER_CODE = #{modifyUser, jdbcType=VARCHAR},
+		    </if>
+	    </set>
+		<where>
+			A.id = #{id,jdbcType=VARCHAR}	
+		</where>
+	</update>
+ 
+</mapper>

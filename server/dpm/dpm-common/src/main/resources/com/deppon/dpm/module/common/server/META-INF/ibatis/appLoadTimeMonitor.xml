@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.AppLoadTimeMonitorDao">
+	
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.AppLoadTimeMonitorEntity">
+		INSERT INTO app_loadtime_monitor  (
+			 id ,
+			 user_id ,
+			 app_id ,
+			 load_time ,
+			 device_token ,
+			 os_type ,
+			 app_version ,
+			 os_version ,
+			 phone_model ,
+			 create_time 
+		)
+		VALUES
+			(
+				NULL,
+				#{userId},
+				#{appId},
+				#{loadTime},
+				#{deviceToken},
+				#{osType},
+				#{appVersion},
+				#{osVersion},
+				#{phoneModel},
+				NOW()
+			)
+	</insert>
+</mapper>

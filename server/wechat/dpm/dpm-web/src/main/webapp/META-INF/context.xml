@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+    <!-- dpm数据源  jdbc:mysql:thin:@192.168.67.47:3306:app-->
+	<Resource name="jdbc/dpmmsds" auth="Container" type="javax.sql.DataSource"
+		username="root" password="111111" driverClassName="com.mysql.jdbc.Driver"
+		url="jdbc:mysql://192.168.68.118:3306/app?allowMultiQueries=true" maxActive="2"
+		maxIdle="2" />
+	<!-- oa数据源    218.37:1521/dipdb  dipoa  deppondip  -->
+	<Resource name="jdbc/oaorlds" auth="Container" type="javax.sql.DataSource"
+		username="search" password="search" driverClassName="oracle.jdbc.driver.OracleDriver"
+		url="jdbc:oracle:thin:@192.168.20.67:1521/dipdb" maxActive="2"
+		maxIdle="2" />
+	<!-- dppm数据源 -->
+	<Resource name="jdbc/dppmsys" auth="Container" type="javax.sql.DataSource" 
+	    username="dppm" password="dppm" driverClassName="com.mysql.jdbc.Driver" 
+	    url="jdbc:mysql://192.168.20.208:3306/dppm?useUnicode=true&amp;characterEncoding=UTF-8" maxActive="2" 
+	    maxIdle="2" />
+	<!-- JMS connectionFactory配置 -->
+	<Resource name="jms/dpm/UUMS_APP" 
+		auth="Container" 
+		type="com.ibm.mq.jms.MQQueueConnectionFactory"
+		factory="com.ibm.mq.jms.MQQueueConnectionFactoryFactory"
+		description="JMS Queue Connection Factory for sending messages"
+		HOST="10.224.173.184"
+		PORT="1428"
+		CHAN="DPM.CLIENT"
+		TRAN="1"
+		QMGR="MQM2"
+		CCSID="1208" />
+		<!-- 
+		<Resource name="jms/dpm/UUMS_APP" 
+			auth="Container" 
+			type="com.ibm.mq.jms.MQQueueConnectionFactory"
+			factory="com.ibm.mq.jms.MQQueueConnectionFactoryFactory"
+			description="JMS Queue Connection Factory for sending messages"
+			HOST="192.168.67.12"
+			PORT="4428"
+			CHAN="DPM.CLIENT"
+			TRAN="1"
+			QMGR="QM_APPT"
+			CCSID="1208" />
+		 -->
+	<!-- 服务端接收请求队列 -->
+	<Resource name="jms/dpm/INNTFPB"
+		auth="Container"
+		type="com.ibm.mq.jms.MQQueue"
+		factory="com.ibm.mq.jms.MQQueueFactory"
+		description="JMS Queue for receiving messages from Dialog"
+		QU="QU_DPM_REQUEST_COM_IN"
+		CCSID="1208"  />
+		
+	
+	<!-- MQC连接信息 -->	
+	<!-- 网关1 -->
+	<!-- 根据系统名称调整，规则为：系统名（大写）.CLIENT -->
+    <Resource name="jms/dpm/MQ1"
+        auth="Container"
+        type="com.ibm.mq.jms.MQQueueConnectionFactory"
+        factory="com.ibm.mq.jms.MQQueueConnectionFactoryFactory"
+        HOST="192.168.218.136"
+        PORT="1418"
+        CHAN="DPM.CLIENT"
+        QMGR="MQ2_01"
+        TRAN="1"
+        description="JMS Queue Connection Factory for sending messages"
+        maxActive="10"
+        maxIdle="5"
+    />   
+	<!-- 网关2 -->
+	<!-- 根据系统名称调整，规则为：系统名（大写）.CLIENT -->
+    <Resource name="jms/dpm/MQ2"
+        auth="Container"
+        type="com.ibm.mq.jms.MQQueueConnectionFactory"
+        factory="com.ibm.mq.jms.MQQueueConnectionFactoryFactory"
+        HOST="192.168.218.137"
+        PORT="1428"
+        CHAN="DPM.CLIENT"
+        QMGR="MQ2_02"
+        TRAN="1"
+        description="JMS Queue Connection Factory for sending messages"
+        maxActive="10"
+        maxIdle="5"
+    /> 
+</Context>

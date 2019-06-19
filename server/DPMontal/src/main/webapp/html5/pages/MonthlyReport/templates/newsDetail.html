@@ -1,0 +1,12 @@
+<ion-view title="文章详情" hide-back-button="false">
+    <ion-nav-buttons side="left">
+        <button class="depponback button-icon icon ion-ios7-arrow-left button back-button first-page" ng-click="back()"></button>
+    </ion-nav-buttons>
+    <ion-content>
+        <div class="item item-body">
+           <div align="center"><h2 ng-bind-html="news.articleName | rawHtml"></h2></div>
+          
+           <p ng-bind-html="news.content | rawHtml"> </p>
+        </div>
+    </ion-content>
+</ion-view>

@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale = 0.5" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>德邦物流-审批工作流</title>
+<link rel="stylesheet" href="../css/reset.css" />
+<link rel="stylesheet" href="../css/win8/common.css" />
+<link rel="stylesheet" href="../css/win8/list.css" />
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/win8_auto_resize.js"></script>
+</head>
+
+<body>
+<div id="list">
+    <div id="div1">
+    	<a class="return"></a>
+        <div class="logo"></div>
+    </div>
+    <!--div2 S-->
+    <div id="div2">
+    	<h3 class="yellow">审批工作流</h3>
+    	<div class="tableBox">
+    	<table width="100%">
+            <tr>
+            	<th width="40%">工作流号：</th>
+            	<td>6772127</td>
+            </tr>
+           <tr>
+            	<th>工作流：</th>
+            	<td>增补员申请(新)</td>
+            </tr>
+            <tr>
+            	<th>申请人姓名：</th>
+            	<td>廖建雄</td>
+            </tr>
+            <tr>
+            	<th>申请人工号：</th>
+            	<td>030090</td>
+            </tr>
+            <tr>
+            	<th>部门性质：</th>
+            	<td>营运职能增补员</td>
+            </tr>
+            <tr>
+            	<th>当地人事部：</th>
+            	<td>上海人事部</td>
+            </tr>
+            <tr>
+            	<th>增补员原因：</th>
+            	<td>新部门成立</td>
+            </tr>
+            <tr>
+            	<th>增补员总人数：</th>
+            	<td>1</td>
+            </tr>
+            <tr>
+            	<th>用人部门：</th>
+            	<td>OA系统测试小组</td>
+            </tr>
+            <tr class="yellow">
+            	<th colspan="2">增补员详细信息</th>
+            </tr>
+            <tr class="topLine">
+            	<th>安排职位:</th>
+            	<td>统计员</td>
+            </tr>
+            <tr>
+            	<th>增补员人数:</th>
+            	<td>1</td>
+            </tr>
+            <tr>
+            	<th>人数（男）:</th>
+            	<td>1</td>
+            </tr>
+            <tr>
+            	<th>人数（女）:</th>
+            	<td>0</td>
+            </tr>
+            <tr>
+            	<th>安排人员:</th>
+            	<td></td>
+            </tr>
+            <tr class="topLine">
+            	<th>申请事由：</th>
+            	<td>双方都</td>
+            </tr>
+            <tr>
+            	<th><a class="yellow" id="sliderDown">查看审批记录</a></th>
+            </tr>
+            <tr id="qytr" style="display:none;">
+            	<td colspan="2">查询中,请稍等...</td>
+            </tr>
+            <tr class="topLine sh">
+            	<th>处理时间：</th>
+				<td>2013-03-01 08:34</td>
+            </tr>
+            <tr class="sh">
+            	<th>处理人：</th>
+				<td>谢勇</td>
+            </tr>
+            <tr class="sh">
+            	<th>处理结果：</th>
+				<td>起草流程</td>
+            </tr>
+            <tr class="sh">
+            	<th>处理意见：</th>
+				<td>起草流程</td>
+            </tr>
+            <tr class="topLine sh">
+            	<th>处理时间：</th>
+				<td>2013-03-01 08:34</td>
+            </tr>
+            <tr class="sh">
+            	<th>处理人：</th>
+				<td>谢志华</td>
+            </tr>
+            <tr class="sh">
+            	<th>处理结果</th>
+				<td>同意</td>
+            </tr>
+            <tr class="sh">
+            	<th>处理意见：</th>
+				<td></td>
+            </tr>
+            <tr class="sh">
+            	<th><a class="yellow" id="sliderUp">关闭审批记录</a></th>
+            </tr>
+            <tr>
+            	<td colspan="2">
+            		<textarea></textarea>
+            	</td>
+            </tr>
+        </table>
+        </div>
+    </div>
+    <!--div2 E-->
+    <div id="div3">
+    	<span class="btn">不同意</span>
+    	<span class="btn">同意</span>
+    </div>
+</div>
+<script>
+$(function(){
+	$("#sliderDown").click(function(){
+		$("table").find(".sh").show();
+	});
+	$("#sliderUp").click(function(){
+		$("table").find(".sh").hide();
+	});
+	$("#div3").find(".btn").mousedown(function(){
+		$(this).addClass("on");
+	});
+	$("#div3").find(".btn").mouseover(function(){
+		$(this).addClass("on");
+	});
+	$("#div3").find(".btn").mouseleave(function(){
+		$(this).removeClass("on");
+	});
+});
+</script>
+</body>
+</html>

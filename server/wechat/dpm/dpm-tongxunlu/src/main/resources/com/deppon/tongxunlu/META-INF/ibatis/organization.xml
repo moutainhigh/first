@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.organization">
+	<resultMap id="orgVo"
+		type="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgCode" column="orgCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgLevel" column="orgLevel" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgAddr" column="orgAddr" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="zipCode" column="zipCode" javaType="String"
+			jdbcType="DATE" />
+		<result property="managerId" column="managerId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="linkTel" column="linkTel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="email" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="area" column="area" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="remark" column="remark" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="appSysCode" column="appSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="parentId" column="PARENTORGID" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="finaSysCode" column="finaSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deptSeq" column="DEPTSEQ" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createTime" column="createTime" javaType="Date"
+			jdbcType="DATE" />
+	</resultMap>
+
+
+
+	<resultMap id="orgEntity"
+		type="com.deppon.dpm.tongxunlu.shared.domain.OrganizationEntity">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgCode" column="orgCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgLevel" column="orgLevel" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgAddr" column="orgAddr" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="zipCode" column="zipCode" javaType="String"
+			jdbcType="DATE" />
+		<result property="managerId" column="managerId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="linkTel" column="linkTel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="email" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="area" column="area" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="remark" column="remark" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="appSysCode" column="appSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="parentCompCode" column="parentCompCode"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="orgProperty" column="orgProperty" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="parentOrgId" column="PARENTORGID" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="finaSysCode" column="finaSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deptSeq" column="DEPTSEQ" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createTime" column="createTime" javaType="Date"
+			jdbcType="DATE" />
+		<result property="lastUpdate" column="lastUpdate" javaType="Date"
+			jdbcType="DATE" />
+	</resultMap>
+
+	<resultMap id="architectureMap"
+		type="com.deppon.dpm.tongxunlu.shared.domain.OrganizationEntity">
+		<result property="orgId" column="orgid" />
+		<result property="orgCode" column="orgcode" />
+		<result property="orgName" column="orgname" />
+		<result property="parentOrgId" column="parentorgid" />
+		<result property="finaSysCode" column="finasyscode" />
+	</resultMap>
+
+	<sql id="org_param">
+		orgId,orgName,orgCode,orgLevel,managerId,area,appSysCode,PARENTORGID,DEPTSEQ
+
+	</sql>
+	<delete id="delete" parameterType="int">
+          <![CDATA[
+             delete from om_organization where orgId = #{id}
+          ]]>
+	</delete>
+	<update id="update" parameterType="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+		update om_organization set
+		orgName= #{orgName}, orgCode = #{orgCode}, orgLevel = #{orgLevel} ,
+		orgAddr =
+		#{orgAddr} , zipCode = #{zipCode} , managerId = #{managerId}
+		,
+		linkTel =
+		#{linkTel} , email = #{email} , area = #{area} , remark
+		=
+		#{remark} , appSysCode = #{appSysCode} , PARENTORGID = #{parentId},
+		finaSysCode
+		=
+		#{finaSysCode},LASTUPDATE=now() where
+		orgId
+		= #{orgId}
+	</update>
+
+	<update id="updateByEntity"
+		parameterType="com.deppon.dpm.tongxunlu.shared.domain.OrganizationEntity">
+		update om_organization
+		<set>
+			<if test="orgName != null">
+				orgName = #{orgName},
+			</if>
+			<if test="orgCode != null">
+				orgCode = #{orgCode},
+			</if>
+			<if test="orgLevel != 0">
+				orgLevel = #{orgLevel},
+			</if>
+			<if test="orgAddr != null">
+				orgAddr = #{orgAddr},
+			</if>
+			<if test="zipCode != null">
+				zipCode = #{zipCode},
+			</if>
+			<if test="managerId != null">
+				managerId = #{managerId},
+			</if>
+			<if test="linkTel != null">
+				linkTel = #{linkTel},
+			</if>
+			<if test="email != null">
+				email = #{email},
+			</if>
+			<if test="area != null">
+				area = #{area},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="appSysCode != null">
+				appSysCode = #{appSysCode},
+			</if>
+			<if test="parentOrgId != 0">
+				parentOrgId = #{parentOrgId},
+			</if>
+			<if test="orgProperty != null">
+				orgProperty = #{orgProperty},
+			</if>
+			<if test="parentCompCode != null">
+				parentCompCode = #{parentCompCode},
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime},
+			</if>
+			<if test="finaSysCode != null">
+				finaSysCode = #{finaSysCode},
+			</if>
+			<if test="deptSeq != null">
+				DEPTSEQ = #{deptSeq},
+			</if>
+				LASTUPDATE=now()
+		</set>
+		where orgId = #{orgId}
+	</update>
+	
+	<select id="getOrgs" resultMap="orgVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+		select * from (
+		SELECT
+		<include refid="org_param" />,ORGORDER
+		FROM om_organization org
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1 = 1 and orgName not like '%撤销%' and orgName not like '%合并%'
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="parentId>0">
+				AND PARENTORGID = #{parentId}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+		union
+		SELECT
+		<include refid="org_param" />,ORGORDER
+		FROM om_organization org
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1 = 1 and orgName like '%待撤销%'
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="parentId>0">
+				AND PARENTORGID = #{parentId}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+		) t order by t.ORGORDER,t.PARENTORGID,t.orgid
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+	</select>
+
+	<select id="getOrgsForPartner" resultMap="orgVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+		select * from (
+		SELECT
+		<include refid="org_param" />,ORGORDER
+		FROM om_organization org
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1 = 1 and orgName not like '%撤销%' and orgName not like '%合并%'
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="parentId>0 and parentId != 104">
+				AND PARENTORGID = #{parentId}
+				AND (DEPTSEQ like '.103.104.491696.%' 
+						or DEPTSEQ like '.103.104.482229.477595.%' 
+						or DEPTSEQ like '.103.104.491697.486682.%')
+			</if>
+			<if test="parentId==0">
+				AND (DEPTSEQ like '.103.104.491696.%' 
+						or DEPTSEQ like '.103.104.482229.477595.%' 
+						or DEPTSEQ like '.103.104.491697.486682.%')
+			</if>
+			<if test="parentId == 104">
+				AND ORGID in (491696,477595,486682,-1)
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+		union
+		SELECT
+		<include refid="org_param" />,ORGORDER
+		FROM om_organization org
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1 = 1 and orgName like '%待撤销%'
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="parentId>0 and parentId != 104">
+				AND PARENTORGID = #{parentId}
+				AND (DEPTSEQ like '.103.104.491696.%' 
+						or DEPTSEQ like '.103.104.482229.477595.%' 
+						or DEPTSEQ like '.103.104.491697.486682.%')
+			</if>
+			<if test="parentId==0">
+				AND (DEPTSEQ like '.103.104.491696.%' 
+						or DEPTSEQ like '.103.104.482229.477595.%' 
+						or DEPTSEQ like '.103.104.491697.486682.%')
+			</if>
+			<if test="parentId == 104">
+				AND ORGID in (491696,477595,486682,-1)
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+		) t order by t.ORGORDER,t.PARENTORGID,t.orgid
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+	</select>
+	<select id="getOrgsSize" resultType="java.lang.Integer"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+		SELECT count(1) from (
+		SELECT
+		<include refid="org_param" />
+		FROM om_organization org
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1 = 1 and orgName not like '%撤销%' and orgName not like '%合并%'
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="parentId>0">
+				AND PARENTORGID = #{parentId}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+		union
+		SELECT
+		<include refid="org_param" />
+		FROM om_organization org
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1 = 1 and orgName like '%待撤销%'
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="parentId>0">
+				AND PARENTORGID = #{parentId}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+		)t
+	</select>
+	<insert id="insert"
+		parameterType="com.deppon.dpm.tongxunlu.shared.domain.OrganizationEntity">
+		insert into om_organization
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="orgId != 0">
+				ORGID,
+			</if>
+			<if test="orgCode != null">
+				ORGCODE,
+			</if>
+			<if test="orgName != null">
+				ORGNAME,
+			</if>
+			<if test="orgLevel != 0">
+				ORGLEVEL,
+			</if>
+			<if test="parentOrgId != 0">
+				PARENTORGID,
+			</if>
+			<if test="orgAddr != null">
+				ORGADDR,
+			</if>
+			<if test="zipCode != null">
+				ZIPCODE,
+			</if>
+			<if test="managerId != null">
+				MANAGERID,
+			</if>
+			<if test="linkTel != null">
+				LINKTEL,
+			</if>
+			<if test="email != null">
+				EMAIL,
+			</if>
+			<if test="area != null">
+				AREA,
+			</if>
+			<if test="remark != null">
+				REMARK,
+			</if>
+			<if test="appSysCode != null">
+				APPSYSCODE,
+			</if>
+			<if test="parentCompCode != null">
+				PARENTCOMPCODE,
+			</if>
+			<if test="orgProperty != null">
+				ORGPROPERTY,
+			</if>
+			<if test="finaSysCode != null">
+				FINASYSCODE,
+			</if>
+			<if test="deptSeq != null">
+				DEPTSEQ,
+			</if>
+			<if test="createTime != null">
+				CREATETIME,
+			</if>
+				LASTUPDATE
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="orgId != 0">
+				#{orgId},
+			</if>
+			<if test="orgCode != null">
+				#{orgCode},
+			</if>
+			<if test="orgName != null">
+				#{orgName},
+			</if>
+			<if test="orgLevel != 0">
+				#{orgLevel},
+			</if>
+			<if test="parentOrgId != 0">
+				#{parentOrgId},
+			</if>
+			<if test="orgAddr != null">
+				#{orgAddr},
+			</if>
+			<if test="zipCode != null">
+				#{zipCode},
+			</if>
+			<if test="managerId != null">
+				#{managerId},
+			</if>
+			<if test="linkTel != null">
+				#{linkTel},
+			</if>
+			<if test="email != null">
+				#{email},
+			</if>
+			<if test="area != null">
+				#{area},
+			</if>
+			<if test="remark != null">
+				#{remark},
+			</if>
+			<if test="appSysCode != null">
+				#{appSysCode},
+			</if>
+			<if test="parentCompCode != null">
+				#{parentCompCode},
+			</if>
+			<if test="orgProperty != null">
+				#{orgProperty},
+			</if>
+			<if test="finaSysCode != null">
+				#{finaSysCode},
+			</if>
+			<if test="deptSeq != null">
+				#{deptSeq},
+			</if>
+			<if test="createTime != null">
+				#{createTime},
+			</if>
+				now()
+		</trim>
+	</insert>
+
+	<select id="queryOrganizationByOrgEntity" resultMap="orgEntity"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="org_param" />
+        <![CDATA[
+            FROM om_organization org 
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			1=1
+			<if test="orgId>0">
+				and orgId=#{orgId}
+			</if>
+			<if test="orgCode != null and orgCode != ''">
+				and orgCode=#{orgCode}
+			</if>
+			<if test="parentId>0">
+				AND PARENTORGID = #{parentId}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND orgName like #{orgName}
+			</if>
+		</where>
+	  <![CDATA[
+            order by PARENTORGID,orgid  ]]>
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+	</select>
+
+	<select id="hotLine" resultMap="hotLineMap">
+		select * from om_hot_line order
+		by id
+	</select>
+
+	<select id="searchOrgArchitecture" resultMap="architectureMap"
+		parameterType="map">
+		select orgid,orgname,orgcode,parentorgid,finasyscode
+		from
+		<!-- om_organization where appsyscode='DIP' and orgname like -->
+		om_organization where FINASYSCODE IS not null and FINASYSCODE != '' and orgname like
+		'%${orgName}%' limit 20
+	</select>
+
+	<resultMap type="com.deppon.dpm.tongxunlu.shared.domain.HotLine"
+		id="hotLineMap">
+		<result property="hotLineId" column="id" />
+		<result property="name" column="name" />
+		<result property="phone" column="phone" />
+	</resultMap>
+	
+	
+	<select id="getOrgByUserId" parameterType="string" resultMap="orgEntity">
+		SELECT
+			B.ORGID,
+			B.ORGNAME,
+			B.PARENTORGID
+		FROM
+			OM_EMPLOYEE A
+		INNER JOIN OM_ORGANIZATION B ON A.ORGID = B.ORGID
+		WHERE
+			A.EMPCODE = #{userId} AND A.EMPSTATUS = 'on';
+	</select>
+	
+	<select id="getOrgById" parameterType="string" resultMap="orgEntity">
+		SELECT ORGID, PARENTORGID, ORGNAME FROM OM_ORGANIZATION WHERE ORGID = #{id}
+	</select>
+</mapper>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="dpm-doc" namespace="/dpm-doc" extends="foss-default">
+		<interceptors>
+			<interceptor name="checkUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor" />
+			<interceptor name="myinterceptor"
+				class="com.deppon.dpm.tongxunlu.server.action.MyInterceptor"></interceptor>
+		</interceptors>
+		<action name="didi_*" class="didiTicketAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<action name="order_*" class="orderStatusAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<action name="personal_*" class="personalcenteraction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>		
+		<action name="personidcheckaction" class="personidcheckaction"
+			method="checkID">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<action name="sendsmsaction" class="sendsmsaction"
+			method="sendSMS">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<action name="orderstatuscheckaction" class="orderstatuscheckaction"
+			method="statusCheck">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+
+		<action name="pagefunction_*" class="pageFunctionaction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+
+		<action name="message_*" class="MessageShowAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		
+		<action name="keeponrecord_*" class="KeepOnRecordAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <action name="didirecord_*" class="DiDiRecordAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action> 
+		
+		<!-- 拜访客户 -->
+		<action name="visitcustomer_*" class="VisitCustomerAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 公款存户 -->
+		<action name="depositor_*" class="DepositorAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 参加会议 -->
+		<action name="attendmeeting_*" class="AttendMeetingAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 选择人员 -->
+		<action name="chooseperson_*" class="ChoosePersonAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		 <!-- <action name="sendMessage_*" class="MessageTestAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>  -->
+		<!-- 预约订单查询按钮类 -->
+		<action name="OrderMessage_*" class="OrderMessageAction" method="{1}">
+			<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action> 
+
+	</package>
+</struts>

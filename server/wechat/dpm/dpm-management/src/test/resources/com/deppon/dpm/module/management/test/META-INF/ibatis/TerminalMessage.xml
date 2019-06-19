@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.terminalmessage">
+	<insert id="insert"
+		parameterType="com.deppon.dpm.module.management.shared.domain.TerminalMessageEntity">
+		INSERT INTO
+			TERMINAL_MESSAGE(ORDER_CODE,DEAL_USER_CODE)
+		values(#{orderCode,jdbcType=VARCHAR},#{dealUserCode,jdbcType=VARCHAR})
+	</insert>
+</mapper>

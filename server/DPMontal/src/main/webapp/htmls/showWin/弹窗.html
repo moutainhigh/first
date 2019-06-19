@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<script type="text/javascript" src="jquery.js"></script>
+<style>
+body, .shadowBg, .tipsWin, .tipsWin * { margin:0; padding:0; font-family:"微软雅黑", Arial, Helvetica, sans-serif;}
+.shadowBg { width:100%; height:100%; position:fixed; top:0; left:0; background:#000; opacity:0.5; z-index:999;}
+.tipsWin { width:500px; padding:20px 20px; margin:0 auto; position:fixed; top:30%; background:#faaf19; z-index:1000;}
+.tipsWin h4 { height:50px; line-height:50px; color:#373c64; font-weight:normal; font-size:44px;}
+.tipsWin .content { margin-top:20px; line-height:60px; color:#fff; font-size:32px;}
+.tipsWin .btnBox { margin-top:30px; width:100%; height:64px; line-height:64px; text-align:center;}
+.tipsWin .btnBox .btn { height:64px; text-align:center; border:none; font-size:32px; color:#faaf19; background:#fff;}
+.tipsWin .btnBox .btn.cancel { width:160px; line-height:64px; margin-right:80px;}
+.tipsWin .btnBox .btn.confirm { width:190px; line-height:64px;}
+.tipsWin .btnBox .btn:hover { background:#eee;}
+.tipsWin .btnBox .btn.down { background:#373c64; text-shadow:-1px -1px 1px #fff;}
+</style>
+<script>
+$(function(){
+	$("#tipsWindow").css("left",function(){
+		return $(window).width()*0.5-270;
+	});
+	$("#showTipsWindow").click(function(){
+		$("#shadowBg").show();
+		$("#tipsWindow").fadeIn(600);
+	});
+	$("#btnCancel").click(function(){
+		$("#shadowBg").hide();
+		$("#tipsWindow").hide();
+	});
+	$(".btnBox").find(".btn").mousedown(function(){
+		$(this).addClass('down');
+	});
+	$(".btnBox").find(".btn").mouseleave(function(){
+		$(this).removeClass('down');
+	});
+});
+</script>
+</head>
+
+<body>
+<div style="width:800px; font-size:24px; margin:100px auto;">
+	<p>我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容我是测试内容</p><br />
+    <input type="button" value="点我弹窗" id="showTipsWindow" />
+</div>
+<div class="tipsWin" id="tipsWindow" style="display:none;">
+	<h4>提示</h4>
+    <div class="content">
+    	您当前选择“同意”该工作流，是否确定提交？
+    </div>
+    <div class="btnBox">
+    	<input type="button" class="btn cancel" id="btnCancel" value="取消" />
+        <input type="button" class="btn confirm" id="btnConfirm" value="确定提交" />
+    </div>
+</div>
+<div class="shadowBg" id="shadowBg" style="display:none;"></div>
+</body>
+</html>

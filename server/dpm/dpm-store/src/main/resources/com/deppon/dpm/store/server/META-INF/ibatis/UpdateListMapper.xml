@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.store.server.dao.IUpdateListDao">
+	<resultMap type="com.deppon.dpm.store.server.entity.StoreList" id="BaseResultMap">
+		<id column="listid" jdbcType="VARCHAR" property="listid" />
+		<result column="deptname" jdbcType="VARCHAR" property="deptname" />
+		<result column="deptlerdername" jdbcType="VARCHAR" property="deptlerdername" />
+		<result column="deptnum" jdbcType="VARCHAR" property="deptnum" />
+		<result column="updatetime" jdbcType="VARCHAR" property="updatetime" />
+		<result column="ranking" jdbcType="VARCHAR" property="ranking" />
+		<result column="rankingnum" jdbcType="VARCHAR" property="rankingnum" />
+		<result column="depticon" jdbcType="VARCHAR" property="depticon" />
+		<result column="grade"  property="grade" />
+	    <result column="dr" jdbcType="INTEGER" property="dr" />
+	    <result column="ts" jdbcType="VARCHAR" property="ts" />
+	    <result column="exeid"  property="exeid" />
+	    <result column="taskstatus" jdbcType="VARCHAR" property="taskstatus" />
+	</resultMap>
+	
+	<sql id="columns">
+		deptname,deptlerdername,deptnum,updatetime,ranking,rankingnum,depticon,grade,dr,ts,exeid
+	</sql>
+	
+	<sql id="table_name">
+		store_list 
+	</sql>
+	
+	<!-- 根据最新更新时间查询榜单数据 -->
+	<select id="queryStoreListByTs" resultMap="BaseResultMap">
+		select <include refid="columns"></include>
+		from store_list where  ts =(select ts from store_list GROUP BY ts desc limit 1)		
+	</select>
+	
+	<!-- 根据执行id查询子任务 -->
+	<select id="querySubTaskByExeid" parameterType="java.lang.Integer" resultType="com.deppon.dpm.store.server.entity.StoreTaskSublist">
+		select exeid,taskid,exeer,deptname,testgrade,deptlerdername,likenum,warningnum,starttime,endtime,deptnum,checkgrade,taskstatus,
+  		submittime,appraisaltime,exeerid,deptapid,deptapname,dr,ts
+		from  store_task_sublist
+		where exeid=#{exeid}
+	</select>
+
+	<!-- 根据taskId查询主任务 -->
+	<select id="queryTask" parameterType="java.lang.Integer" resultType="com.deppon.dpm.store.server.entity.StoreTask">
+		select taskid,taskname,taskinfo,creatorcode,creatorname,tasktype,starttime,endtime,tasktime,taskstatus,attachment,dr,ts,taskcreator
+		from store_task where taskid=#{taskid}
+	</select>
+	
+	<!-- 批量插入榜单表 -->
+	<insert id="insertStoreListAll" parameterType="java.util.List" >
+		 insert into store_list ( <include refid="columns" /> )
+		 values
+		 <foreach item="storeList" index="index" collection="list"  separator =",">
+		 (
+		 	#{storeList.deptname},
+		 	#{storeList.deptlerdername},
+		 	#{storeList.deptnum},
+		 	#{storeList.updatetime},
+		 	#{storeList.ranking},
+		 	#{storeList.rankingnum},
+		 	#{storeList.depticon},
+		 	#{storeList.grade},
+		 	#{storeList.dr},
+		 	#{storeList.ts},
+		 	#{storeList.exeid}
+		 )
+		 </foreach>
+	</insert>
+	<!-- 批量插入点赞表 -->
+	<insert id="insertStoreLikeAll" parameterType="java.util.List" >
+		 insert into store_like (likenum,warningnum,deptnum)
+		 values
+		 <foreach item="StoreLike" index="index" collection="list"  separator =",">
+		 (
+		 	#{StoreLike.likenum},
+		 	#{StoreLike.warningnum},
+		 	#{StoreLike.deptnum}
+		 )
+		 </foreach>
+	</insert>
+	
+	<!-- 根据执行id,查询到所有子任务 -->
+	<select id="querySubTaskAllByExeid" resultType="com.deppon.dpm.store.server.entity.StoreTaskSublist" parameterType="java.lang.Integer">
+		 select exeid,taskid,exeer,deptname,testgrade,deptlerdername,likenum,warningnum,starttime,endtime,deptnum,checkgrade,taskstatus,submittime,exeerid,deptapid,deptapname,dr,ts
+		 from  store_task_sublist
+		 where taskid=(select taskid from store_task_sublist where exeid=#{exeid})
+	</select>
+	
+	<select id="querySubTaskDeptTaskid" parameterType="Map" resultType="com.deppon.dpm.store.server.entity.StoreTaskSublist">
+		select exeid,taskid,exeer,deptname,testgrade,deptlerdername,likenum,warningnum,starttime,endtime,deptnum,checkgrade,taskstatus,submittime,exeerid,deptapid,deptapname,dr,ts
+		from store_task_sublist WHERE deptnum =#{deptnum} and taskid=#{taskid}
+	</select>
+	
+	<!-- 根据营业部编号查询点赞表 -->
+	<select id="selectStoreLike" parameterType="String" resultType="com.deppon.dpm.store.server.entity.StoreLike">
+		select listid,likenum,warningnum,deptnum,dr,ts
+		from store_like where deptnum=#{deptnum}
+	</select>
+	
+	<!-- 根据营业部编号,查询最新一期榜单的排名 -->
+	<select id="queryRanking" parameterType="String" resultType="String">
+		select ranking from store_list where deptnum =#{deptnum} ORDER BY ts desc limit 1
+	</select>
+</mapper>

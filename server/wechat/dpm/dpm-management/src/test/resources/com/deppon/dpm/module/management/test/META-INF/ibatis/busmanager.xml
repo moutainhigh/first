@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.busmanager">
+	<!-- 得到路线调整数据sql -->
+	<select id="getWayMessage"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusManagerView">
+		select * from bus_one_message_view 
+	</select>
+
+
+	<!-- 得到一条线路的详细信息sql -->
+	<select id="getOneMessage"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusMessageView">
+		select * from bus_one_message_view where lineId = #{lineId}
+	</select>
+
+
+	<!-- 更新线路的站点，状态sql -->
+	<update id="updateStation"
+		parameterType="com.deppon.dpm.module.management.shared.domain.BusLineOfSite">
+		update BUS_LINE_OF_SITE set is_act =
+		#{isAct,jdbcType=INTEGER} where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+	<!-- 更新线路信息表时间，sql -->
+	<update id="updateLineInfo"
+		parameterType="com.deppon.dpm.module.management.shared.domain.BusLineInfo">
+		update bus_line_info set start_date =
+		#{startDate} where
+		id =
+		#{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 得到评价表和建议表 中间表sql 查询一个月数据 -->
+	<select id="getCentreData"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusCentreAdviceEntity">
+		 <![CDATA[
+		select a.id,a.centreId,a.centreMark,a.userNo,a.createDate
+		from bus_centre_advice a
+		where DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <=
+		date(a.createDate) order by a.createDate DESC
+		  ]]>
+	</select>
+	<!-- 得到建议内容和回复的内容sql -->
+	<select id="getOpenAdviceData"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusFormBeanEntity">
+		 <![CDATA[
+		select a.id as openId , a.siteId ,
+		b.siteName,a.userNo as openUserNo,
+		a.createDate as openDate,c.id as adviceId,
+		c.userNo as openReplyUserNo,
+		c.replyContent as openReplyContent,
+		c.delMark as openDelMark
+		from BUS_OPEN_LINE a 
+        LEFT JOIN
+        BUS_EVALUATION_ADVICE c
+        ON c.openId = a.id,
+        BUS_NEWS_SITE b
+		where a.siteId = b.id
+		
+		and a.id = #{id}
+		   ]]>
+	</select>
+	<!-- 得到用户反馈数据 sql -->
+	<select id="getEvaFormBeanData"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusFormBeanEntity">
+		 <![CDATA[
+		select a.id as retId, a.userNo as openUserNo,a.createDate as openDate,
+         a.userScore,
+         a.content as retrContent,a.photo,
+         a.siteName,
+         b.id as manageId,
+         b.userNo as openReplyUserNo,
+         a.photo1,
+         a.photo2,
+         a.photo3,
+         a.photo4,
+         b.replyContent as openReplyContent
+          from 
+      bus_user_retroaction a 
+          LEFT JOIN
+          bus_evaluation_manage b
+         on b.retId = a.id
+         
+         where 
+       
+         a.id = #{id}
+         
+		   ]]>
+	</select>
+	<!-- 根据用户工号查询评价表和建议表 中间表sql -->
+	<select id="getBusCentreData"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusCentreAdviceEntity">
+		 <![CDATA[
+		select a.id,a.centreId,a.centreMark,a.userNo,a.createDate
+		from bus_centre_advice a
+		where a.userNo = #{userNo}
+		order by a.createDate DESC
+		  ]]>
+	</select>
+	<!-- 根据工号查询用户名 -->
+	<select id="getUserData"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusUserEntity">
+		 <![CDATA[
+		 select EMPID ,empcode as userNo,EMPNAME from om_employee 
+		where empcode = #{userNo}
+		  ]]>
+	</select>
+	<!-- 根据主键id查询线路信息 sql -->
+	<select id="listLineInfo"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusLineInfo">
+		 <![CDATA[
+		 select id,line_name as lineName,
+		 apply_name as applyName,user_name as userName,
+		 tel,remark ,start_date as startDate
+		  from BUS_LINE_INFO
+		where id = #{id}
+		  ]]>
+	</select>
+	<!-- 插入线路信息数据 sql -->
+	<insert id="saveLineInfo" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.deppon.dpm.module.management.shared.domain.BusLineInfo">
+		insert into
+		BUS_LINE_INFO(line_name,apply_name,user_name,tel,remark,start_date)
+		values(#{lineName},#{applyName},#{userName},#{tel},#{remark},#{startDate})
+	</insert>
+	<!-- 插入线路站点表信息 sql -->
+	<insert id="saveLineSite" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.deppon.dpm.module.management.shared.domain.BusLineInfo">
+		insert into
+		BUS_LINE_OF_SITE(line_id,site_id,is_start,is_end,site_sort,is_act,remark)
+		values(#{lineId},
+		#{siteId},
+		#{isStart},
+		#{isEnd},
+		#{siteSort},
+		#{isAct},
+		#{remark}
+		)
+	</insert>
+	<!-- 得到线路详细表的最大id sql -->
+	<select id="getMaxLineId" resultType="java.lang.Integer">
+		  <![CDATA[ 
+		    select max(id) from BUS_LINE_INFO 
+			 
+		 ]]>
+
+	</select>
+	<!-- 得到线路站点表数据 sql -->
+	<select id="listSite"
+		resultType="com.deppon.dpm.module.management.shared.domain.BusLineOfSite">
+		 <![CDATA[
+		 select line_id as lineId ,site_id as siteId,
+		 is_start as isStart,is_end as isEnd,
+		 site_sort as siteSort,is_act as isAct,
+		 remark
+		
+		  from BUS_LINE_OF_SITE
+		where line_id = #{lineId}
+		  ]]>
+	</select>
+
+	<!-- 删除开线建议回复，状态sql -->
+	<delete id="delOpenLineReply">
+		delete from BUS_EVALUATION_ADVICE 
+		 where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<!-- 删除评价回复，状态sql -->
+	<delete id="delManageReply">
+		delete from  bus_evaluation_manage 
+		 where id = #{id,jdbcType=INTEGER}
+	</delete>
+	
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.ProcCheckFindScoreShowDao" >
+	<!--获取初次、最终验收明细查询-->
+	<select id="getHisScoreFind"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+			<![CDATA[
+			    
+			    SELECT a.navCode,a.navName,a.address,b.origItemCode,b.origItemName,b.score,a.submitNub  
+			    from proc_check_record a,proc_check_score b 
+			    where a.id=b.recordId  
+			    and a.submitNub=#{submitNub,jdbcType=INTEGER} 
+			    and b.score!=0 
+			    and a.addressCode=#{addressCode,jdbcType=VARCHAR} 
+			    and a.isSubmit='N'
+			]]>
+	</select>
+	
+	<!--状态1、3时统计扣分总数和扣分项-->
+	<select id="getCountScore"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+			<![CDATA[
+			    select sum(b.score)  totalScore,sum(if(b.score>0,1,0)) pointsItem 
+			    from proc_check_record a,proc_check_score b 
+			    where a.id=b.recordId and a.isSubmit='N' 
+			    and a.addressCode=#{addressCode,jdbcType=VARCHAR} 
+			    and a.submitNub=#{submitNub,jdbcType=INTEGER}
+			]]>
+	</select>
+	
+	<!--获取导航栏-->
+	<select id="getNaviInfo"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+			<![CDATA[
+			    select distinct a.navCode,a.navName from proc_check_standardinfo a
+			]]>
+	</select>
+	<!--状态0（待检查）待检查时进入明细界面-->
+	<select id="getNaviItem"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="java.lang.Integer"
+		>
+			<![CDATA[
+			    SELECT * from proc_check_standardinfo where isDel=0 
+			    and navCode=#{navCode,jdbcType=VARCHAR}
+			]]>
+	</select>
+	<!--状态1暂存时进入明细界面（初次按钮点击之前）-->
+	<select id="getNaviItemFirstBefore"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		
+			<![CDATA[
+			    SELECT *
+                from proc_check_standardinfo pcs left join(
+                SELECT b.origItemCode hisOrigItemCode,b.score fristScore,b.selectItem from proc_check_record a,proc_check_score b 
+			    where a.id=b.recordId  
+			    and a.isSubmit='N'
+                and a.submitNub=0
+			    and a.addressCode=#{addressCode,jdbcType=VARCHAR}
+                and a.navCode=#{navCode,jdbcType=VARCHAR}
+                ) pch on(pcs.origItemCode=pch.hisOrigItemCode) 
+                where pcs.navCode=#{navCode,jdbcType=VARCHAR} and pcs.isDel=0
+			]]>
+	</select> 
+	<!--状态2暂存时进入明细界面（初次按钮点击之后）-->
+    <select id="getNaviItemFirstAfter"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		    <![CDATA[
+			    select * 
+				from 
+				(
+				select a.navCode,a.navName,b.origItemCode,b.origItemName,
+								b.selectItem,b.unSelectItem,b.staticScore score,
+								b.score fristScore,b.checkMethod,b.isKeyPro,b.opinion
+								from proc_check_record a,proc_check_score b 
+								where a.id=b.recordId 
+								and a.addressCode=#{addressCode,jdbcType=VARCHAR} 
+								and a.navCode=#{navCode,jdbcType=VARCHAR} 
+								and a.submitNub=1 and a.isSubmit='N'
+				) pf 
+				left join  
+				(
+				select b.origItemCode endOrigItemCode,b.score endScore,a.submitNub from proc_check_record a,proc_check_score b 
+								where a.id=b.recordId 
+								and a.addressCode=#{addressCode,jdbcType=VARCHAR} 
+								and a.navCode=#{navCode,jdbcType=VARCHAR} 
+								and a.submitNub=2 and a.isSubmit='N'       
+				) ph
+				on pf.origItemCode = ph.endOrigItemCode
+
+			]]>
+	</select>
+	<!--状态3暂存时进入明细界面（最终按钮点击之后）-->
+    <select id="getNaviItemFinish"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		    <![CDATA[
+			    select * 
+				from 
+				(
+				select a.navCode,a.navName,b.origItemCode,b.origItemName,
+								b.selectItem,b.unSelectItem,b.staticScore score,
+								b.score fristScore,b.checkMethod,b.isKeyPro,b.opinion
+								from proc_check_record a,proc_check_score b 
+								where a.id=b.recordId 
+								and a.addressCode=#{addressCode,jdbcType=VARCHAR} 
+								and a.navCode=#{navCode,jdbcType=VARCHAR} 
+								and a.submitNub=1 and a.isSubmit='Y'
+				) pf 
+				left join  
+				(
+				select b.origItemCode endOrigItemCode,a.submitNub,b.score endScore from proc_check_record a,proc_check_score b 
+								where a.id=b.recordId 
+								and a.addressCode=#{addressCode,jdbcType=VARCHAR} 
+								and a.navCode=#{navCode,jdbcType=VARCHAR} 
+								and a.submitNub=2 and a.isSubmit='Y'       
+				) ph
+				on pf.origItemCode = ph.endOrigItemCode
+
+			]]>
+	</select>
+	<!--更新为暂存  -->
+	<update id="updateBranchIsCheck"
+		parameterType="java.lang.String">
+	        <![CDATA[
+			   update proc_check_task set branch_ischeck=1,update_date=NOW()  where 
+			   dept_code=#{addressCode,jdbcType=VARCHAR} 
+			   and issubmit_pc='N'
+               and branch_ischeck=0
+			]]>
+	</update>
+	<!--状态1,2 点击最终提交按钮之后统计扣分项和扣分数-->
+	<select id="getCountScoreEnd"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		    <![CDATA[
+			  select a.navCode,a.navName,b.origItemCode,b.origItemName,b.score,a.isSubmit
+			    from proc_check_record a,proc_check_score b 
+			    where a.id=b.recordId and a.isSubmit='N' 
+			]]>
+	</select>
+	<!--状态3点击最终提交按钮之后统计扣分项和扣分数-->
+	<select id="getCountScoreFinish"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		    <![CDATA[
+			  select sum(b.score)  totalScore,sum(if(b.score>0,1,0)) pointsItem 
+			    from proc_check_record a,proc_check_score b 
+			    where a.id=b.recordId and a.isSubmit='Y' 
+			    and a.addressCode=#{addressCode,jdbcType=VARCHAR} 
+			    and a.submitNub=#{submitNub,jdbcType=INTEGER}
+			]]>
+	</select>
+	<!--获取历史扣分记录-->
+	<select id="getHisPointsList"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		    <![CDATA[
+			  select * from proc_check_record pr join proc_check_score ps on(pr.id=ps.recordId) 
+			  where pr.navCode=#{navCode,jdbcType=VARCHAR}  
+			  and pr.addressCode=#{addressCode,jdbcType=VARCHAR}
+			  and pr.submitNub=#{submitNub,jdbcType=INTEGER}  
+			  and pr.isSubmit='N'
+			]]>
+	</select>
+	
+</mapper>

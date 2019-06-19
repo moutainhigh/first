@@ -1,0 +1,1482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.employee">
+	<resultMap id="empVo" type="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		<!--有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="empId" column="empId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="empCode" column="empCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="empName" column="empName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="mobileNo" column="mobileNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gender" column="gender" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="inDate" column="inDate" javaType="Date"
+			jdbcType="DATE" />
+		<result property="updateTime" column="updateTime" javaType="Date"
+			jdbcType="DATE" />
+		<result property="birthDate" column="birthDate" javaType="String"
+			jdbcType="DATE" />
+		<result property="empStatus" column="empStatus" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardNo" column="cardNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardType" column="cardType" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="pEmail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobGroups" column="jobGroups" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobName" column="jobName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobLevel" column="jobLevel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobDuty" column="jobDuty" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobSequence" column="jobSequence" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="tel" column="TEL" javaType="String" jdbcType="VARCHAR" />
+		<result property="emailUserName" column="oemail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="emailPassword" column="email_password"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="address" column="address" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="callFrequency" column="callFrequency"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="parentOrgId" column="parentOrgId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deptSeq" column="DEPTSEQ" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="headPhoto" column="pictPath" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="empEntity"
+		type="com.deppon.dpm.tongxunlu.shared.domain.EmployeeEntity">
+		<result property="empId" column="empId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="empCode" column="empCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="empName" column="empName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="mobileNo" column="mobileNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="hzipCode" column="hzipCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gender" column="gender" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="birthDate" column="birthDate" javaType="Date"
+			jdbcType="DATE" />
+		<result property="empStatus" column="empStatus" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardNo" column="cardNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardType" column="cardType" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="pEmail" column="pEmail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="inDate" column="inDate" javaType="Date"
+			jdbcType="DATE" />
+		<result property="oEmail" column="oEmail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobName" column="jobName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobGroups" column="jobGroups" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobLevel" column="jobLevel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createTime" column="createTime" javaType="Date"
+			jdbcType="DATE" />
+		<result property="lastUpdate" column="lastUpdate" javaType="Date"
+			jdbcType="DATE" />
+		<result property="jobDuty" column="jobDuty" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobSequence" column="jobSequence" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="tel" column="tel" javaType="String" jdbcType="VARCHAR" />
+		<result property="address" column="address" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="emailUserName" column="oemail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="emailPassword" column="email_password"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="callFrequency" column="callFrequency"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="isPartner" column="isPartner" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<resultMap id="selectAllDept" type="com.deppon.dpm.tongxunlu.shared.domain.SelectAllDeptEntity">
+			<result property="empcode" column="empcode" javaType="String"
+			jdbcType="VARCHAR" />
+			<result property="empname" column="empname" javaType="String"
+			jdbcType="VARCHAR" />
+			<result property="joblevel" column="joblevel" javaType="String"
+			jdbcType="VARCHAR" />
+			<result property="jobname" column="jobname" javaType="String"
+			jdbcType="VARCHAR" />
+			<result property="orgid" column="orgid" javaType="String"
+			jdbcType="VARCHAR" />
+			<result property="parentorgid" column="parentorgid" javaType="String"
+			jdbcType="VARCHAR" />
+			<result property="orgcode" column="orgcode" javaType="String"
+			jdbcType="VARCHAR" />
+			<result property="orgname" column="orgname" javaType="String"
+			jdbcType="VARCHAR" />
+			<result property="pictpath" column="pictpath" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<sql id="emp_param">
+		empid,emp.empCode ,empName,MOBILENO,inDate,
+		case when emp.OEMAIL is
+		null
+		then emp.PEMAIL else
+		emp.OEMAIL end email,
+		jobName,case when
+		jobLevel is null then "" else jobLevel end jobLevel,
+		case when
+		tel is null then "" else tel end tel,
+		case when
+		jobGroups is null then "" else jobGroups end jobGroups,
+		jobDuty,org.orgName,org.orgId,gender,tel,org.parentOrgId,org.orgName,org.DEPTSEQ,
+		pic.pictPath
+	</sql>
+	<!-- 条件 -->
+	<sql id="conditions_tail">
+		<if test="searchInfo!=null and searchInfo!='' and   searchInfo!='null'">
+		)v 
+		WHERE  v.empname like CONCAT(CONCAT('%',#{searchInfo}),'%')
+		OR v.jobname like CONCAT(CONCAT('%',#{searchInfo}),'%')
+		OR v.orgname like CONCAT(CONCAT('%',#{searchInfo}),'%')
+		</if>
+	</sql>
+	<sql id='conditions_head'>
+		<if test="searchInfo!=null and searchInfo!='' and   searchInfo!='null' ">
+			SELECT empcode,empname,jobname,orgcode,orgname FROM(
+		</if>
+	</sql>
+	<sql id='conditions_head_2'>
+		<if test="searchInfo!=null and searchInfo!='' and   searchInfo!='null' ">
+			SELECT psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname FROM(
+		</if>
+	</sql>
+	<resultMap type="hashMap" id="pushResultMap">
+		<result column="empcode" property="empcode" />
+		<result column="empname" property="empname" />
+		<result column="joblevel" property="joblevel" />
+		<result column="jobname" property="jobname" />
+		<result column="orgname" property="orgname" />
+	</resultMap>
+
+	<select id="queryPushUser" resultMap="pushResultMap"
+		parameterType="map">
+		select a.EMPCODE,a.EMPNAME,a.JOBLEVEL,a.jobname,b.ORGNAME from
+		om_employee a left JOIN om_organization b on a.ORGID =b.ORGID
+		where 1=1
+		AND empstatus = 'on'
+		<choose>
+			<when test="empcode!=null and empcode!=''">
+				and a.empcode =#{empcode}
+			</when>
+			<otherwise>
+				<if test="empname!=null and empname!=''">
+					and a.empname like '%${empname}%'
+				</if>
+				<if test="orgname!=null and orgname!=''">
+					and b.ORGNAME like '%${orgname}%'
+				</if>
+				<if test="joblevel!=null and joblevel!=''">
+					and a.joblevel =#{joblevel}
+				</if>
+				<if test="jobname!=null and jobname!=''">
+					and a.jobname like '%${jobname}%'
+				</if>
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="getEmps" resultMap="empVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+        <![CDATA[
+            SELECT distinct
+        ]]>
+		<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on'
+			<if test="emailUserName != null">
+				AND emp.oemail=#{emailUserName}
+			</if>
+			<if test="empId!=0">
+				and emp.empid=#{empId}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode = #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND emp.empName LIKE #{empName}
+			</if>
+			<if test="mobileNo!=null and mobileNo!=''">
+				AND emp.mobileNo = #{mobileNo}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				and emp.EMPID in (
+				select EMPID from om_employee emp
+				where
+				emp.orgName LIKE #{orgName}
+				)
+			</if>
+			<if test="jobDuty != null and jobDuty != ''">
+				AND emp.jobduty LIKE #{jobDuty}
+			</if>
+			<if test="orgId!=0">
+				AND org.orgId = #{orgId}
+			</if>
+		</where>
+	  <![CDATA[
+            ORDER BY LENGTH(emp.empname)  ]]>
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+	</select>
+
+	<select id="getInfoByEmpcode" parameterType="string" resultMap="empVo">
+        SELECT empCode,empName,jobLevel,orgId
+        FROM om_employee WHERE EMPCODE = #{empcode}
+        and empstatus='on' limit 1
+	</select>
+
+	<select id="queryEmpByUserIds" parameterType="list" resultMap="empVo">
+		SELECT
+		<include refid="emp_param" />
+		FROM om_employee emp
+		inner join om_organization org ON org.orgid =
+		emp.orgid
+		left join emp_pic pic on emp.empcode = pic.empCode
+		where
+		emp.empcode in
+		<foreach collection="array" item="userId" open="(" separator=","
+			close=")">
+			#{userId}
+		</foreach>
+		and emp.empStatus != "leave"
+	</select>
+
+	<select id="getEmpsForPartner" resultMap="empVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on'
+			<if test="emailUserName != null">
+				AND emp.oemail=#{emailUserName}
+			</if>
+			<if test="empId!=0">
+				and emp.empid=#{empId}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode = #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND emp.empName LIKE #{empName}
+			</if>
+			<if test="mobileNo!=null and mobileNo!=''">
+				AND emp.mobileNo = #{mobileNo}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND emp.orgName LIKE #{orgName}
+			</if>
+			<if test="jobDuty != null and jobDuty != ''">
+				AND emp.jobduty LIKE #{jobDuty}
+			</if>
+			<if test="orgId!=0">
+				AND org.orgId = #{orgId}
+			</if>
+			AND <!-- (org.DEPTSEQ like '.103.104.491696.%'
+			or org.DEPTSEQ like
+			'.103.104.482229.477595.%'
+			or org.DEPTSEQ like
+			'.103.104.491697.486682.%') -->
+			(
+		org.DEPTSEQ like '.103.104.503927.270.%'
+		or org.DEPTSEQ like '.103.104.503927.348.%'
+		or org.DEPTSEQ like '.103.104.503927.463.%'
+		or org.DEPTSEQ like '.103.104.503927.475.%'
+		or org.DEPTSEQ like '.103.104.503927.613.%'
+		or org.DEPTSEQ like '.103.104.503927.621.%'
+		or org.DEPTSEQ like '.103.104.503927.622.%'
+		or org.DEPTSEQ like '.103.104.503927.754.%'
+		or org.DEPTSEQ like '.103.104.503927.110775.%'
+		or org.DEPTSEQ like '.103.104.503927.192773.%'
+		or org.DEPTSEQ like '.103.104.503927.464255.%'
+		or org.DEPTSEQ like '.103.104.503927.464256.%'
+		or org.DEPTSEQ like '.103.104.503927.464257.%'
+		or org.DEPTSEQ like '.103.104.503927.452.%'
+		or org.DEPTSEQ like '.103.104.503927.95930.%'
+		or org.DEPTSEQ like '.103.104.503927.392227.%'
+		or org.DEPTSEQ like '.103.104.503927.464349.%'
+		or org.DEPTSEQ like '.103.104.503927.465300.%'
+		or org.DEPTSEQ like '.103.104.503927.491706.%'
+		or org.DEPTSEQ like '.103.104.503927.491707.%'		
+		or org.DEPTSEQ like '.103.104.503927.503928.486682.%'		
+		or org.DEPTSEQ like '.103.104.503927.503929.477595.%'		
+		or org.DEPTSEQ like '.103.104.503927.482231.464900.477603.%'	)
+		</where>
+	  <![CDATA[
+            order by emp.ORGID ,empid  ]]>
+		<if test="limit>0">
+			limit #{start} ,#{limit}
+		</if>
+	</select>
+
+
+	<sql id="emp_param2">
+		empid,empCode ,empName,MOBILENO,
+		case when emp.OEMAIL is
+		null
+		then emp.PEMAIL else
+		emp.OEMAIL end email,
+		case when
+		tel is null then "" else tel end tel,
+		jobName,case when
+		jobLevel is null then "" else jobLevel end jobLevel,case when
+		jobGroups is null then "" else jobGroups end jobGroups,tel,
+		jobDuty,org.orgName,org.orgId,org.isPartner,gender,oemail,oec.email_password
+	</sql>
+
+	<select id="queryEmployeeByCode" resultMap="empEntity"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="emp_param2" />
+        <![CDATA[
+            FROM om_employee emp
+            LEFT JOIN om_organization org
+            ON org.orgid = emp.orgid 
+            LEFT JOIN om_email_config oec
+            ON oec.user_id = emp.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on'
+			<if test="empId!=0">
+				and emp.empid=#{empId}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode = #{empCode}
+			</if>
+		</where>
+		limit 0,1
+	</select>
+
+
+	<delete id="delete" parameterType="int">
+          <![CDATA[
+             delete from om_employee where empid = #{id}
+          ]]>
+	</delete>
+	<delete id="deleteByEmpcode" parameterType="string">
+		<!-- UPDATE om_employee SET EMPSTATUS = "leave" WHERE empCode = #{empCode} -->
+		delete from om_employee where empCode = #{empCode}
+	</delete>
+
+	<update id="update" parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		update om_employee
+		<set>
+			<if test="empName != null">
+				empName = #{empName},
+			</if>
+			<if test="gender != null">
+				gender = #{gender},
+			</if>
+			<if test="birthDate != null">
+				birthDate = #{birthDate},
+			</if>
+			<if test="empStatus != null">
+				empStatus = #{empStatus},
+			</if>
+			<if test="cardType != null">
+				cardType = #{cardType},
+			</if>
+			<if test="cardNo != null">
+				cardNo = #{cardNo},
+			</if>
+			<if test="inDate != null">
+				inDate = #{inDate},
+			</if>
+			mobileNo = #{mobileNo},
+			oEmail = #{emailUserName},
+			pEmail = #{email},
+			<if test="orgId != null and orgId != 0">
+				orgId = #{orgId},
+			</if>
+			<if test="jobName != null">
+				jobName = #{jobName},
+			</if>
+			<if test="jobLevel != null">
+				jobLevel = #{jobLevel},
+			</if>
+			<if test="jobGroups != null">
+				jobGroups = #{jobGroups},
+			</if>
+			<if test="jobSequence != null">
+				jobSequence = #{jobSequence},
+			</if>
+			<if test="jobDuty != null">
+				jobDuty = #{jobDuty},
+			</if>
+			<if test="address != null">
+				address = #{address},
+			</if>
+			TEL = #{tel},
+			LASTUPDATE = now()
+		</set>
+		<where>
+			<!-- empStatus = 'on' -->
+			empCode = #{empCode}
+		</where>
+	</update>
+
+	<select id="getEmpsSize" resultType="java.lang.Integer"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+        <![CDATA[
+            SELECT count(1)
+        ]]> 
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org
+            ON org.orgid = emp.orgid
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on'
+			<if test="empId!=0">
+				and emp.empid=#{empId}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode = #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND emp.empName LIKE #{empName}
+			</if>
+			<if test="mobileNo!=null and mobileNo!=''">
+				AND emp.mobileNo = #{mobileNo}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				AND emp.orgName LIKE #{orgName}
+			</if>
+			<if test="orgId!=0">
+				AND org.orgId = #{orgId}
+			</if>
+		</where>
+	</select>
+
+	<select id="getEmpByOrgIdCount" resultType="java.lang.Integer"
+		parameterType="java.lang.Integer">
+        <![CDATA[
+            SELECT count(1)
+        ]]> 
+        <![CDATA[
+            FROM om_employee emp 
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on'
+			AND emp.orgId = #{pid}
+		</where>
+	</select>
+
+	<insert id="insert"
+		parameterType="com.deppon.dpm.tongxunlu.shared.domain.EmployeeEntity">
+		INSERT INTO
+		OM_EMPLOYEE(EMPID,EMPCODE,EMPNAME,GENDER,BIRTHDATE,EMPSTATUS,CARDTYPE,CARDNO
+		,INDATE,OEMAIL,MOBILENO,HZIPCODE,PEMAIL,ORGID,JOBNAME,JOBGROUPS,JOBLEVEL
+		,CREATETIME,LASTUPDATE,JOBSEQUENCE,JOBDUTY,TEL,ADDRESS)
+		values(#{empId,jdbcType=INTEGER},#{empCode,jdbcType=VARCHAR},#{empName,jdbcType=VARCHAR}
+		,#{gender,jdbcType=VARCHAR},#{birthDate,jdbcType=DATE},#{empStatus,jdbcType=VARCHAR}
+		,#{cardType,jdbcType=VARCHAR},#{cardNo,jdbcType=VARCHAR},#{inDate,jdbcType=DATE}
+		,#{oEmail,jdbcType=VARCHAR},#{mobileNo,jdbcType=VARCHAR},#{hzipCode,jdbcType=VARCHAR}
+		,#{pEmail,jdbcType=VARCHAR},#{orgId,jdbcType=INTEGER},#{jobName,jdbcType=VARCHAR}
+		,#{jobGroups,jdbcType=VARCHAR},#{jobLevel,jdbcType=VARCHAR},now()
+		,now(),#{jobSequence,jdbcType=VARCHAR},#{jobDuty,jdbcType=VARCHAR}
+		,#{tel,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR})
+	</insert>
+
+	<insert id="insertByVo" parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		INSERT INTO OM_EMPLOYEE
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="empId != 0 and empId != null">
+				empId,
+			</if>
+			<if test="empCode != null">
+				empCode,
+			</if>
+			<if test="mobileNo != null">
+				mobileNo,
+			</if>
+			<if test="empName != null">
+				empName,
+			</if>
+			<if test="gender != null">
+				gender,
+			</if>
+			<if test="birthDate != null">
+				birthDate,
+			</if>
+			<if test="empStatus != null">
+				empStatus,
+			</if>
+			<if test="cardNo != null">
+				cardNo,
+			</if>
+			<if test="cardType != null">
+				cardType,
+			</if>
+			<if test="email != null">
+				pEmail,
+			</if>
+			<if test="jobGroups != null">
+				jobGroups,
+			</if>
+			<if test="jobName != null">
+				jobName,
+			</if>
+			<if test="jobLevel != null">
+				jobLevel,
+			</if>
+			<if test="jobDuty != null">
+				jobDuty,
+			</if>
+			<if test="orgName != null">
+				orgName,
+			</if>
+			<if test="jobSequence != null">
+				jobSequence,
+			</if>
+			<if test="orgId != null">
+				orgId,
+			</if>
+			<if test="tel != null">
+				tel,
+			</if>
+			<if test="emailUserName != null">
+				oemail,
+			</if>
+			<if test="address != null">
+				address,
+			</if>
+			<if test="inDate != null">
+				inDate,
+			</if>
+			<if test="updateTime == null">
+				LASTUPDATE,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="empId != null and empId != 0">
+				#{empId},
+			</if>
+			<if test="empCode != null">
+				#{empCode},
+			</if>
+			<if test="mobileNo != null">
+				#{mobileNo},
+			</if>
+			<if test="empName != null">
+				#{empName},
+			</if>
+			<if test="gender != null">
+				#{gender},
+			</if>
+			<if test="birthDate != null">
+				#{birthDate},
+			</if>
+			<if test="empStatus != null">
+				#{empStatus},
+			</if>
+			<if test="cardNo != null">
+				#{cardNo},
+			</if>
+			<if test="cardType != null">
+				#{cardType},
+			</if>
+			<if test="email != null">
+				#{email},
+			</if>
+			<if test="jobGroups != null">
+				#{jobGroups},
+			</if>
+			<if test="jobName != null">
+				#{jobName},
+			</if>
+			<if test="jobLevel != null">
+				#{jobLevel},
+			</if>
+			<if test="jobDuty != null">
+				#{jobDuty},
+			</if>
+			<if test="orgName != null">
+				#{orgName},
+			</if>
+			<if test="jobSequence != null">
+				#{jobSequence},
+			</if>
+			<if test="orgId != null">
+				#{orgId},
+			</if>
+			<if test="tel != null">
+				#{tel},
+			</if>
+			<if test="emailUserName != null">
+				#{emailUserName},
+			</if>
+			<if test="address != null">
+				#{address},
+			</if>
+			<if test="inDate != null">
+				#{inDate},
+			</if>
+			<if test="updateTime == null">
+				now(),
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 常用联系人操作 -->
+	<insert id="collectOne" parameterType="map">
+		insert into
+		om_myFavorites(empCode,collectEmpCode,createTime) values
+		(#{userId},#{collectEmpCode},now())
+	</insert>
+
+	<select id="getFavorites" parameterType="string" resultType="string">
+		select collectEmpCode from om_myFavorites where empCode = #{userId}
+		limit 0,1
+	</select>
+	<!-- 常用联系人操作结束 -->
+
+	<!-- 个人头像设置 -->
+	<insert id="addPersonlyImage"
+		parameterType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity">
+		insert into emp_pic (empCode,pictPath,lastUpdateTime)
+		values
+		(#{empCode,jdbcType=VARCHAR},#{pictPath,jdbcType=VARCHAR},now())
+	</insert>
+	<update id="updateImageAddress"
+		parameterType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity">
+		update emp_pic set pictPath =
+		#{pictPath,jdbcType=VARCHAR} where empCode=#{empCode,jdbcType=VARCHAR}
+	</update>
+	<select id="queryImageByEmpCode" parameterType="string"
+		resultType="string">
+		select pictPath from emp_pic where empCode=
+		#{empCode,jdbcType=VARCHAR} limit 0,1
+	</select>
+
+	<update id="updateCallQuntityByEmpId" parameterType="int">
+		update
+		om_employee set CALLFREQUENCY=CALLFREQUENCY+1
+		where
+		EMPID=#{empId,jdbcType=INTEGER}
+	</update>
+	<!-- 个人头像设置 -->
+
+	<!-- 手势密码 -->
+	<select id="getGustureStatus" parameterType="string" resultType="string">
+		select gusture_status from om_gesture_password where user_id =
+		#{empCode,jdbcType=VARCHAR}
+	</select>
+
+	<update id="updateGustureStatus" parameterType="string">
+		update
+		om_gesture_password set gusture_status =
+		#{gusture_status,jdbcType=VARCHAR}
+		where user_id =
+		#{user_id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="saveGustureStatus" parameterType="string">
+		insert into om_gesture_password
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="user_id != null">
+				user_id,
+			</if>
+			<if test="update_time == null">
+				update_time,
+			</if>
+			<if test="gusture_status != null">
+				gusture_status
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="user_id != null">
+				#{user_id,jdbcType=VARCHAR},
+			</if>
+			<if test="update_time == null">
+				now(),
+			</if>
+			<if test="gusture_status != null">
+				#{gusture_status,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+
+	<update id="updateGesturePassword" parameterType="string">
+		update
+		om_gesture_password set g_password =
+		#{g_password,jdbcType=VARCHAR},update_time = now()
+		where user_id =
+		#{user_id,jdbcType=VARCHAR}
+	</update>
+
+	<insert id="saveGesturePassword" parameterType="string">
+		insert into om_gesture_password
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="user_id != null">
+				user_id,
+			</if>
+			<if test="g_password != null">
+				g_password,
+			</if>
+			<if test="update_time == null">
+				update_time,
+			</if>
+			<!-- <if test="gusture_status == null"> gusture_status </if> -->
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="user_id != null">
+				#{user_id,jdbcType=VARCHAR},
+			</if>
+			<if test="g_password != null">
+				#{g_password,jdbcType=VARCHAR},
+			</if>
+			<if test="update_time == null">
+				now(),
+			</if>
+			<!-- <if test="gusture_status == null"> "off" </if> -->
+		</trim>
+	</insert>
+
+	<select id="queryGesturePassword" parameterType="string"
+		resultType="string">
+		select g_password from om_gesture_password where user_id =
+		#{user_id,jdbcType=VARCHAR}
+	</select>
+	<!-- 手势密码 -->
+
+	<!-- 点赞、鸡蛋 -->
+	<insert id="operate" parameterType="string">
+		INSERT INTO om_praise
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="null != userId and userId != ''">
+				praiseEmp,
+			</if>
+			<if test="null != desEmpcode and desEmpcode != ''">
+				bepraisedEmp,
+			</if>
+			<if test="null != operateType and operateType != ''">
+				operateType,
+			</if>
+			<if test="null != configType and configType != ''">
+				configType,
+			</if>
+			<if test="null == create_time or create_time ==''">
+				create_time
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="null != userId and userId != ''">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="null != desEmpcode and desEmpcode != ''">
+				#{desEmpcode,jdbcType=VARCHAR},
+			</if>
+			<if test="null != operateType and operateType != ''">
+				#{operateType,jdbcType=VARCHAR},
+			</if>
+			<if test="null != configType and configType != ''">
+				#{configType,jdbcType=VARCHAR},
+			</if>
+			<if test="null == create_time or create_time ==''">
+				now()
+			</if>
+		</trim>
+	</insert>
+
+	<select id="getPersonPics" parameterType="map" resultType="map">
+		SELECT
+		O.EMPCODE,E.PICTPATH,E.PRAISENUM,E.DEBASENUM,O.EMPNAME,O.JOBNAME
+		FROM
+		EMP_PIC E JOIN OM_EMPLOYEE O ON E.EMPCODE = O.EMPCODE
+		<where>
+			O.EMPSTATUS = 'on'
+			<if test="null != chooseGender and chooseGender != ''">
+				AND O.GENDER = #{chooseGender,jdbcType=VARCHAR}
+			</if>
+		</where>
+		ORDER BY E.LASTUPDATETIME DESC
+		LIMIT #{start},#{pageSize}
+	</select>
+
+	<select id="checkExist" parameterType="string" resultType="string">
+		SELECT OPERATETYPE FROM OM_PRAISE WHERE PRAISEEMP = #{PRAISEEMP} AND
+		BEPRAISEDEMP = #{BEPRAISEDEMP}
+		AND STR_TO_DATE(CREATE_TIME,'%Y-%m-%d
+		%H:%i:%s') > #{TIME} ORDER BY
+		CREATE_TIME
+	</select>
+	<!-- 点赞、鸡蛋 -->
+
+	<!-- 最美微笑 -->
+	<insert id="operateSmile" parameterType="string">
+		insert into beautiful_smile_detail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="null != userId and userId != ''">
+				praiseEmp,
+			</if>
+			<if test="null != desEmpcode and desEmpcode != ''">
+				bePraisedEmp,
+			</if>
+			<if test="null != operateType and operateType != ''">
+				operateType,
+			</if>
+			<if test="null != configType and configType != ''">
+				configType,
+			</if>
+			<if test="null == create_time or create_time ==''">
+				create_time
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="null != userId and userId != ''">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="null != desEmpcode and desEmpcode != ''">
+				#{desEmpcode,jdbcType=VARCHAR},
+			</if>
+			<if test="null != operateType and operateType != ''">
+				#{operateType,jdbcType=VARCHAR},
+			</if>
+			<if test="null != configType and configType != ''">
+				#{configType,jdbcType=VARCHAR},
+			</if>
+			<if test="null == create_time or create_time ==''">
+				now()
+			</if>
+		</trim>
+	</insert>
+
+	<select id="getSmilePersonPics" parameterType="map" resultType="map">
+		select
+		o.empCode,e.pictPath,e.praiseNum_of_smile,e.debaseNum_of_smile,o.empName,o.jobName,o.GENDER,e.lastUpdateTime
+		from emp_pic e join om_employee o on e.empCode = o.empCode
+		where
+		o.empStatus = 'on'
+		and o.gender = 'f'
+		and o.jobName in
+		('营业部经理','营业部副经理','营业员','统计分析员',
+		'中级统计分析员','点部经理','快递仓管员兼收银员','快递仓管员')
+		UNION ALL
+		select
+		o.empCode,e.pictPath,e.praiseNum_of_smile,e.debaseNum_of_smile,o.empName,o.jobName,o.GENDER,e.lastUpdateTime
+		from emp_pic e join om_employee o on e.empCode = o.empCode
+		where
+		o.empStatus = 'on'
+		and o.gender = 'f'
+		and o.jobName like '%收银员%'
+		UNION
+		ALL
+		select
+		o.empCode,e.pictPath,e.praiseNum_of_smile,e.debaseNum_of_smile,o.empName,o.jobName,o.GENDER,e.lastUpdateTime
+		from emp_pic e join om_employee o on e.empCode = o.empCode
+		where
+		o.empStatus = 'on'
+		and o.gender = 'f'
+		and o.jobName like '%电叉司机%'
+		UNION
+		ALL
+		select
+		o.empCode,e.pictPath,e.praiseNum_of_smile,e.debaseNum_of_smile,o.empName,o.jobName,o.GENDER,e.lastUpdateTime
+		from emp_pic e join om_employee o on e.empCode = o.empCode
+		where
+		o.empStatus = 'on'
+		and o.gender = 'f'
+		and o.jobName like '%营销专员%'
+		UNION
+		ALL
+		select
+		o.empCode,e.pictPath,e.praiseNum_of_smile,e.debaseNum_of_smile,o.empName,o.jobName,o.GENDER,e.lastUpdateTime
+		from emp_pic e join om_employee o on e.empCode = o.empCode
+		where
+		o.empStatus = 'on'
+		and o.gender = 'f'
+		and o.jobName like '%客服%'
+		UNION ALL
+		select
+		o.empCode,e.pictPath,e.praiseNum_of_smile,e.debaseNum_of_smile,o.empName,o.jobName,o.GENDER,e.lastUpdateTime
+		from emp_pic e join om_employee o on e.empCode = o.empCode
+		where
+		o.empStatus = 'on'
+		and o.gender = 'f'
+		and o.jobName like '话务'
+		ORDER BY
+		lastUpdateTime desc
+	</select>
+
+	<select id="checkSmileExist" parameterType="string" resultType="string">
+		select operateType from beautiful_smile_detail where praiseEmp =
+		#{praiseEmp} and bePraisedEmp = #{bePraisedEmp}
+		and
+		str_to_date(create_time,'%Y-%m-%d %H:%i:%s') > #{time} order by
+		create_time
+	</select>
+
+	<select id="getEmpleaderConfig" parameterType="string"
+		resultType="string">
+		select empcode from om_empleader_config where status = 'on'
+	</select>
+
+	<delete id="deleteEmpleaderConfig" parameterType="String">
+		DELETE FROM
+		om_empleader_config
+		WHERE id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<update id="updateEmpleaderConfig" parameterType="string">
+		UPDATE om_empleader_config
+		<set>
+			<if test="empcode != null">
+				empcode = #{empcode,jdbcType=VARCHAR},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=VARCHAR}
+			</if>
+		</set>
+		WHERE id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<insert id="insertEmpleaderConfig" parameterType="String">
+		insert into om_empleader_config
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="empcode != null and empcode != ''">
+				empcode,
+			</if>
+			status
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="empcode != null and empcode != ''">
+				#{empcode,jdbcType=VARCHAR},
+			</if>
+			'on'
+		</trim>
+	</insert>
+
+	<!-- 最美微笑 -->
+
+	<!-- 同步来电显示通讯录查询所有人员信息 -->
+	<select id="queryAllForCID" resultMap="empVo">
+		SELECT
+		emp.empname,emp.mobileno,org.orgname
+		FROM om_employee emp
+		inner JOIN
+		om_organization org ON org.orgid = emp.orgid
+		WHERE emp.empstatus = 'on'
+	</select>
+
+	<!-- 通讯录被搜索的vp用户List -->
+	<select id="queryMonitorEmpCodeList" parameterType="string"
+		resultType="string">
+		select empcode from om_empleader_config
+	</select>
+
+	<!-- 保存通讯录搜索vp日志 -->
+	<insert id="insertmonitorVpSearch" parameterType="String">
+		insert into data_monitor_vp_search
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="searchUserId != null and searchUserId != ''">
+				search_user_id,
+			</if>
+			<if test="vpUserId != null and vpUserId != ''">
+				vp_user_id,
+			</if>
+			<if test="remark != null and remark != ''">
+				remark,
+			</if>
+			create_time
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="searchUserId != null and searchUserId != ''">
+				#{searchUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="vpUserId != null and vpUserId != ''">
+				#{vpUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="remark != null and remark != ''">
+				#{remark,jdbcType=VARCHAR},
+			</if>
+			now()
+		</trim>
+	</insert>
+
+	<select id="selectAllDept" parameterType="string"
+		resultMap="selectAllDept">
+		select a.EMPCODE empcode,a.EMPNAME empname,a.JOBLEVEL joblevel,a.jobname jobname,b.ORGID orgid,b.PARENTORGID parentorgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath pictpath
+		from om_employee a
+		left JOIN  emp_pic  ep on a.EMPCODE =ep.empCode
+		left JOIN om_organization b on a.ORGID =b.ORGID where a.EMPSTATUS = 'on'
+		and a.JOBNAME in ('营业区区域经理','事业部总裁','营业部经理','大区总经理')
+		<if test="JOBNAME != null and JOBNAME != ''">
+		and a.JOBNAME = #{JOBNAME,jdbcType=VARCHAR}
+		</if>
+		<if test="PARENTORGID !=null and PARENTORGID != ''">
+		 and b.PARENTORGID=#{PARENTORGID,jdbcType=VARCHAR}
+		</if>
+	</select>
+	<select id="selectAllDeptByempcode" parameterType="string"
+		resultMap="selectAllDept">
+		select a.EMPCODE empcode,a.EMPNAME empname,a.JOBLEVEL joblevel,a.jobname jobname,b.ORGID orgid,b.PARENTORGID parentorgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath pictPath
+		from om_employee a
+		left JOIN  emp_pic  ep on a.EMPCODE =ep.empCode
+		left JOIN om_organization b on a.ORGID =b.ORGID 
+		where a.EMPSTATUS = 'on'
+		and a.JOBNAME in ('营业区区域经理','事业部总裁','营业部经理','大区总经理')
+		and a.empCode=#{empCode,jdbcType=INTEGER}
+	</select>
+	<select id="selectUserByEmpcode" parameterType="string"
+		resultMap="selectAllDept">  
+	select a.EMPCODE empcode,a.EMPNAME empname,a.JOBLEVEL joblevel,a.jobname jobname,b.ORGID orgid,b.PARENTORGID parentorgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath pictPath
+		from om_employee a
+		left JOIN  emp_pic  ep on a.EMPCODE =ep.empCode
+		left JOIN om_organization b on a.ORGID =b.ORGID 
+		where a.EMPSTATUS = 'on'
+		and a.empCode=#{empCode,jdbcType=INTEGER}
+	</select>
+	<select id="selectAllDeptpic" parameterType="Map" resultMap="selectAllDept">
+	select a.EMPCODE,ep.pictPath pictPath
+		from om_employee a
+		left JOIN  emp_pic  ep on a.EMPCODE =ep.empCode
+		left JOIN om_organization b on a.ORGID =b.ORGID 
+		where 
+		a.EMPCODE in 
+	  	<foreach item="empcodelist" index="index" collection="empcodelist" open="(" separator="," close=")">
+			#{empcodelist}
+		</foreach>
+		and a.EMPSTATUS = 'on'
+		and a.JOBNAME ='营业部经理'	
+	</select>
+	
+	
+	<!-- 查询(专业部门人员信息) 传入参数 orgname == 门店服务部 -->
+	<select id="findStoreServiceDepartment" parameterType="string"
+		resultMap="selectAllDept">
+		select a.EMPCODE empcode,a.EMPNAME empname,a.JOBLEVEL joblevel,a.jobname jobname,b.ORGID orgid,b.PARENTORGID parentorgid,b.orgcode orgcode,b.ORGNAME orgname from om_employee a 
+		left JOIN om_organization b on a.ORGID =b.ORGID where a.EMPSTATUS = 'on'
+		and b.ORGID IN(
+		select orgid from om_organization where DEPTSEQ like 
+		(select concat('%',orgid,'%') from om_organization  where orgname ='门店服务部' and empcode = #{empcode,jdbcType=VARCHAR})
+		)
+	</select>
+	<!--根据工号查询智慧门店相关人员级别  -->
+	<select id="selectPsnLevelByEmpCode" parameterType="string"
+		resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		SELECT psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname FROM(
+			select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+			from v_psnlevel_01 WHERE EMPCODE=#{empcode,jdbcType=VARCHAR}
+			union all
+			select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+			from v_psnlevel_02 WHERE EMPCODE=#{empcode,jdbcType=VARCHAR}
+			union all
+			select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+			from v_psnlevel_03 WHERE EMPCODE=#{empcode,jdbcType=VARCHAR}
+			union all
+			select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+			from v_psnlevel_04 WHERE EMPCODE=#{empcode,jdbcType=VARCHAR}
+			union all
+			select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+			from v_psnlevel_05 WHERE EMPCODE=#{empcode,jdbcType=VARCHAR}) v
+			WHERE v.EMPCODE=#{empcode,jdbcType=VARCHAR}
+	</select>
+	<!--  根据deptseq和jobname查询02人员领导-->
+	 <select id="selectUpInfo02" parameterType="Map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+		FROM v_psnlevel_02  
+		WHERE orgid IN 
+		<foreach item="orgidlist" index="index" collection="orgidlist" open="(" separator="," close=")">
+			#{orgidlist}
+		</foreach>
+		AND jobname LIKE #{jobname,jdbcType=VARCHAR}
+	</select> 
+	<!--  根据deptseq和jobname查询03人员领导-->
+	<select id="selectUpInfo03" parameterType="Map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+		FROM v_psnlevel_03  
+		WHERE orgid IN 
+		<foreach item="orgidlist" index="index" collection="orgidlist" open="(" separator="," close=")">
+			#{orgidlist}
+		</foreach>
+		AND jobname LIKE #{jobname,jdbcType=VARCHAR}
+	</select> 
+	<!-- 登陆者为01级别则查询除02表所有角色 -->
+	<select id="selectInfo02" parameterType="Map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head_2" />
+		select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+		FROM v_psnlevel_02
+		<include refid="conditions_tail" />
+		LIMIT #{rowBegin},#{pageSize}
+	</select>
+	<!-- 02角色查询03角色信息 -->
+	<select id="selectInfo03" parameterType="Map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head_2" />
+		select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+		FROM v_psnlevel_03
+		where deptseq LIKE #{deptseq,jdbcType=VARCHAR}
+		<include refid="conditions_tail" />
+		LIMIT #{rowBegin},#{pageSize}
+	</select>
+	<!-- 03角色查询04角色信息 -->
+	<select id="selectInfo04" parameterType="Map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head_2" />
+		select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+		FROM v_psnlevel_04
+		where deptseq LIKE #{deptseq,jdbcType=VARCHAR}
+		<include refid="conditions_tail" />
+		LIMIT #{rowBegin},#{pageSize}
+	</select>
+	<!--04查询05角色和05查询05角色  -->
+	<select id="selectInfo05" parameterType="Map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head_2" />
+		select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+		FROM v_psnlevel_05
+		where deptseq LIKE #{deptseq,jdbcType=VARCHAR}
+		<include refid="conditions_tail" />
+		LIMIT #{rowBegin},#{pageSize}
+	</select>
+	<!-- 管理员查询05级视图 -->
+	<select id="selectSelfTest" parameterType="map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head_2" />
+		select psnlevel,empcode,empname,jobname,deptseq,parentorgid,orgid,orgcode,orgname
+		FROM v_psnlevel_05
+		<include refid="conditions_tail" />
+		<if test='rowBegin != null and pageSize!=null '>
+             LIMIT #{rowBegin},#{pageSize}
+        </if>
+	</select>
+	<!-- 查询角色信息 -->
+	<select id="selectdpmAdmin" parameterType="string" resultMap="selectAllDept">
+		select a.EMPCODE empcode,a.EMPNAME empname,a.JOBLEVEL joblevel,a.jobname jobname,b.ORGID orgid,b.PARENTORGID parentorgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath pictPath
+		from om_employee a
+		left JOIN  emp_pic  ep on a.EMPCODE =ep.empCode
+		left JOIN om_organization b on a.ORGID =b.ORGID 
+		where a.EMPSTATUS = 'on'
+		and a.empCode=#{empCode,jdbcType=VARCHAR}
+	</select>
+	<!--02级别员工查询所有下属营业部  -->
+	<select  id="selectDeptBy02" parameterType="map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head" />
+		SELECT empcode,empname,jobname,orgcode,orgname FROM v_psnlevel_05 WHERE parentorgid in
+ 		(SELECT orgid FROM v_psnlevel_04 WHERE parentorgid in 
+ 		(SELECT orgid FROM v_psnlevel_03 WHERE parentorgid in 
+ 		(SELECT orgid FROM v_psnlevel_02 WHERE empcode =#{empCode,jdbcType=VARCHAR} )))
+		<include refid="conditions_tail" />
+ 		<if test='rowBegin != null and pageSize!=null '>
+             LIMIT #{rowBegin},#{pageSize}
+        </if>
+	</select>
+	<!--03级别员工查询所有下属营业部  -->
+	<select  id="selectDeptBy03" parameterType="map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head" />
+ 		SELECT empcode,empname,jobname,orgcode,orgname FROM v_psnlevel_05 WHERE parentorgid in
+ 		(SELECT orgid FROM v_psnlevel_04 WHERE parentorgid in 
+ 		(SELECT orgid  FROM v_psnlevel_03 WHERE empcode =#{empCode,jdbcType=VARCHAR} ))
+		<include refid="conditions_tail" />
+ 		<if test='rowBegin != null and pageSize!=null '>
+             LIMIT #{rowBegin},#{pageSize}
+        </if>
+	</select>
+	<!--04级别员工查询所有下属营业部  -->
+	<select  id="selectDeptBy04" parameterType="map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head" />
+ 		SELECT empcode,empname,jobname,orgcode,orgname FROM v_psnlevel_05 WHERE parentorgid in
+ 		(SELECT orgid FROM v_psnlevel_04 WHERE empcode =#{empCode,jdbcType=VARCHAR} )
+		<include refid="conditions_tail" />
+ 		<if test='rowBegin != null and pageSize!=null '>
+             LIMIT #{rowBegin},#{pageSize}
+        </if>
+	</select>
+	<!--05级别员工查询自己营业部  -->
+	<select  id="selectDeptBy05" parameterType="map" resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		<include refid="conditions_head" />
+ 		SELECT empcode,empname,jobname,orgcode,orgname FROM v_psnlevel_05 WHERE empcode =#{empCode,jdbcType=VARCHAR}
+		<include refid="conditions_tail" />
+	</select>
+	<!-- 根据工号查询员工seq -->
+	<select id="selectSeqByEmpCode" parameterType="string"
+		resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectAllDeptVO">
+		select b.DEPTSEQ deptseq
+		from om_employee a
+		left JOIN om_organization b on a.ORGID =b.ORGID 
+		where a.EMPSTATUS = 'on'
+		and a.empCode=#{empcode,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据工号循环查询orgname和jobname和 empcode-->
+	<select id="foreachInfoByEmpCode" parameterType="java.util.List" resultMap="selectAllDept">
+		select a.EMPCODE empcode,a.jobname jobname,b.ORGNAME orgname
+		from om_employee a
+		left JOIN  emp_pic  ep on a.EMPCODE =ep.empCode
+		left JOIN om_organization b on a.ORGID =b.ORGID 
+		where a.EMPSTATUS = 'on'
+		and a.empCode in
+		<foreach collection="list" item="list" index="index" open="(" close=")" separator=",">
+			#{list}
+		</foreach>
+	</select>
+	<!-- 组织映射 -->
+	<select id="orgMapping"  resultType="com.deppon.dpm.tongxunlu.shared.vo.OrgMappingVO">
+		select e.ORGNAME sybname,d.ORGNAME dqname,c.ORGNAME yyqname,v.orgname,v.orgid,v.orgcode from 
+		(select DISTINCT
+		b.PARENTORGID bparid,b.ORGID orgid,b.orgcode orgcode,b.ORGNAME orgname
+		 from om_organization b  
+		where b.ORGNAME not like '%快递营业点%' and b.ORGNAME not like '%电商一体化分部%'
+		and b.ORGNAME not like '%远郊快递营业部%' and b.ORGNAME not like '%大客户销售营业部%'
+		and b.ORGNAME not like '%【%' and b.ORGNAME not like '%】%' and (b.isPartner='N' or ISNULL(b.isPartner)='N')
+		and (b.ORGNAME like '%营业部' or b.ORGNAME like '%营业点' or b.ORGNAME like '%分部%')
+		) v
+		LEFT JOIN om_organization c ON c.ORGID = v.bparid
+		LEFT JOIN om_organization d ON d.ORGID = c.PARENTORGID
+		LEFT JOIN om_organization e ON e.ORGID = d.PARENTORGID 
+	</select>
+	<!-- 根据工号查询人员名称和头像 -->
+	<select id="selectNameAndPic" parameterType="java.util.List"  resultType="com.deppon.dpm.tongxunlu.shared.vo.SelectNameAndPicVO">
+	SELECT om.EMPNAME taskcreator,ep.pictPath pictpath,om.empCode empCode from om_employee om LEFT JOIN  emp_pic ep ON ep.empcode = om.empcode WHERE om.EMPSTATUS = 'on' and om.empCode IN
+	<foreach collection="list" item="list" index="index" open="(" close=")" separator=",">
+			#{list}
+		</foreach>
+	</select>
+	<!-- 查询智能门店所有人员信息  映射-->
+	<select id="deptMapping" resultType="com.deppon.dpm.tongxunlu.shared.vo.DeptMappingVO">
+		select '01' as psnlevel,a.EMPCODE empcode,a.empname empname,a.GENDER sex,a.JOBNAME jobname,b.DEPTSEQ deptseq,
+		b.PARENTORGID parentorgid,b.ORGID orgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath picpath,a.EMPID id
+		from om_employee a 
+		left JOIN om_organization b on a.ORGID =b.ORGID
+		LEFT JOIN emp_pic ep ON ep.empCode=a.EMPCODE
+		where a.EMPSTATUS = 'on'
+		and
+		b.ORGID IN(
+		select orgid from om_organization where DEPTSEQ like 
+		(select concat('%',orgid,'%') from om_organization  where orgname ='门店服务部'))
+		or a.JOBNAME='末端本部总裁' OR a.EMPCODE in ('090360','098701','225746','507142','668127',
+		'031132','057051','2655564','041338','038896',
+		'237986','177683','059927','131152','042979','068359','128120','179451','707955')
+	
+	union all
+	
+	    select '02' as psnlevel,a.EMPCODE empcode,a.empname empname,a.GENDER sex,a.JOBNAME jobname,b.DEPTSEQ deptseq,
+	  	b.PARENTORGID parentorgid,b.ORGID orgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath picpath,a.EMPID id
+	   	from om_employee a 
+		LEFT JOIN om_organization b on a.ORGID =b.ORGID
+		LEFT JOIN emp_pic ep ON ep.empCode=a.EMPCODE
+		where a.EMPSTATUS = 'on'
+		and ((a.JOBNAME LIKE '%事业部总裁%' and b.ORGNAME like '%事业部%')
+		or (a.JOBNAME LIKE '%营运品质管理组高级经理%' and b.ORGNAME like '%事业部%')
+		or (a.JOBNAME LIKE '%营运业务支持组高级经理%' and b.ORGNAME like '%事业部%')
+		or (a.JOBNAME LIKE '%营运效率管理组高级经理%' and b.ORGNAME like '%事业部%')
+		or (a.JOBNAME LIKE '%规划与解决方案支持组高级经理%' and b.ORGNAME like '%事业部%')
+		or (a.JOBNAME LIKE '%审计组高级经理%' and b.ORGNAME like '%事业部%')
+		or (a.JOBNAME LIKE '%标准推进组高级经理%' and b.ORGNAME like '%综合管理%')
+		or (a.JOBNAME LIKE '%事业部办公室主任%' and b.ORGNAME like '%事业部运营管理部%')
+		or (a.JOBNAME LIKE '%运营管理部总监%' and b.ORGNAME like '%事业部运营管理部%')
+		or (a.JOBNAME LIKE '%快递业务管理组总监%' and b.ORGNAME like '%事业部运营管理部%')
+		or (a.JOBNAME LIKE '%市场规划组总监%' and b.ORGNAME like '%事业部运营管理部%')
+		or (a.JOBNAME LIKE '%标准推进专员%' and b.ORGNAME like '%综合管理%')
+		or (a.JOBNAME LIKE '%高级经理%' and b.ORGNAME like '%销售业务推进组%'))
+		and a.JOBNAME not in( '供应链事业部总裁')
+		or a.EMPCODE in('378927','019343','019984','000003','199981')
+	
+	union all
+	
+		select '03' as psnlevel,a.EMPCODE empcode,a.empname empname,a.GENDER sex,a.JOBNAME jobname,b.DEPTSEQ deptseq,
+		b.PARENTORGID parentorgid,b.ORGID orgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath picpath,a.EMPID id
+		 from om_employee a 
+		left JOIN om_organization b on a.ORGID =b.ORGID
+		LEFT JOIN emp_pic ep ON ep.empCode=a.EMPCODE
+		where a.EMPSTATUS = 'on' and (a.JOBNAME LIKE '%大区总经理%' 
+		or a.JOBNAME LIKE '%大区办公室主任%' or a.JOBNAME LIKE '%快递业务管理组经理%')
+	
+	union all
+	
+		select '04' as psnlevel,a.EMPCODE empcode,a.empname empname,a.GENDER sex,a.JOBNAME jobname,b.DEPTSEQ deptseq,
+		b.PARENTORGID parentorgid,b.ORGID orgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath picpath,a.EMPID id
+		 from om_employee a 
+		left JOIN om_organization b on a.ORGID =b.ORGID
+		LEFT JOIN emp_pic ep ON ep.empCode=a.EMPCODE
+		where a.EMPSTATUS = 'on' and (a.JOBNAME LIKE '%营业区区域经理%' or a.JOBNAME LIKE '%业务经理%')
+	
+	union all
+	
+		select '05' as psnlevel,a.EMPCODE empcode,a.empname empname,a.GENDER sex,a.JOBNAME jobname,b.DEPTSEQ deptseq,
+		b.PARENTORGID parentorgid,b.ORGID orgid,b.orgcode orgcode,b.ORGNAME orgname,ep.pictPath picpath,a.EMPID id
+		 from om_employee a 
+		left JOIN om_organization b on a.ORGID =b.ORGID
+		LEFT JOIN emp_pic ep ON ep.empCode=a.EMPCODE
+		where a.EMPSTATUS = 'on' 
+		and ((a.JOBNAME LIKE '%营业部经理%'  and a.JOBNAME not LIKE '%合伙人%')
+		or (a.JOBNAME LIKE '%分部经理%' )
+		or (a.JOBNAME LIKE '%营业点经理%'  and a.JOBNAME not LIKE '%合伙人%' )
+		)
+		and a.EMPCODE not like 'T%'
+		and b.ORGNAME not like '%快递营业点%' and b.ORGNAME not like '%电商一体化分部%'
+		and b.ORGNAME not like '%远郊快递营业部%' and b.ORGNAME not like '%大客户销售营业部%'
+		and b.ORGNAME not like '%【%' and b.ORGNAME not like '%】%'
+	</select>
+	<select id="getUserIdsByLowVersion" resultType="string">
+    <![CDATA[
+   	  	SELECT DISTINCT EMPCODE FROM push_empcode
+    ]]>
+	</select>
+	
+	
+	<!-- 获取离职人员信息 -->
+	  <select id="getLeaveEmp" resultMap="empVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+        <![CDATA[
+            SELECT
+        ]]>
+		empid,emp.empCode ,empName,MOBILENO,
+		case when emp.OEMAIL is
+		null
+		then emp.PEMAIL else
+		emp.OEMAIL end email,
+		jobName,case when
+		jobLevel is null then "" else jobLevel end jobLevel,
+		case when
+		tel is null then "" else tel end tel,
+		case when
+		jobGroups is null then "" else jobGroups end jobGroups,inDate,
+		jobDuty,org.orgName,org.orgId,gender,tel,org.parentOrgId,org.orgName,org.DEPTSEQ,
+		pic.pictPath
+        <![CDATA[
+            FROM om_employee emp
+            JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>			
+			<if test="emailUserName != null">
+				AND emp.oemail=#{emailUserName}
+			</if>
+			<if test="empId!=0">
+				and emp.empid=#{empId}
+			</if>
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode = #{empCode}
+			</if>
+			<if test="empName!=null and empName!=''">
+				AND emp.empName LIKE #{empName}
+			</if>
+			<if test="mobileNo!=null and mobileNo!=''">
+				AND emp.mobileNo = #{mobileNo}
+			</if>
+			<if test="orgName!=null and orgName!=''">
+				and emp.EMPID in (
+				select EMPID from om_employee emp
+				where
+				emp.orgName LIKE #{orgName}
+				)
+			</if>
+			<if test="jobDuty != null and jobDuty != ''">
+				AND emp.jobduty LIKE #{jobDuty}
+			</if>
+			<if test="orgId!=0">
+				AND org.orgId = #{orgId}
+			</if>
+		</where>
+		LIMIT 1
+	
+	</select>
+	
+	<insert id="insertLeaveEmp" parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		INSERT INTO OM_LEAVE_EMPLOYEE
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="empId != 0 and empId != null">
+				empId,
+			</if>
+			<if test="empCode != null">
+				empCode,
+			</if>
+			<if test="empName != null">
+				empName,
+			</if>
+			
+			<if test="inDate != null">
+				inDate,
+			</if>
+			  LEAVEDATE
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="empId != null and empId != 0">
+				#{empId},
+			</if>
+			<if test="empCode != null">
+				#{empCode},
+			</if>
+			<if test="empName != null">
+				#{empName},
+			</if>
+			
+			<if test="inDate != null">
+				#{inDate},
+			</if>
+			   now()
+		</trim>
+	</insert>
+	
+	<!-- 获取离职人员信息 -->
+	  <select id="getLeaveEmpMessage" resultMap="empVo"
+		parameterType="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+        <![CDATA[
+            SELECT emp.empcode,emp.INDATE,emp.LEAVEdate
+        ]]>
+		
+        <![CDATA[
+            FROM om_leave_employee emp
+            
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>			
+			
+			<if test="empCode!=null and empCode!=''">
+				AND emp.empCode = #{empCode}
+			</if>
+			
+		</where>
+		LIMIT 1	
+	</select>
+	
+</mapper>

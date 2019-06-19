@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.wechat.server.dao.impl.WechatTongxunluDao" >
+
+<resultMap id="orgVo"
+		type="com.deppon.dpm.module.wechat.shared.domain.WechatOrgInfoEntity">
+		<!-- 有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="orgid" column="finasyscode" javaType="INTEGER"
+			jdbcType="VARCHAR" />
+		<result property="parentOrgid" column="parentsyscode" javaType="INTEGER"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgname" javaType="String"
+			jdbcType="VARCHAR" />
+	
+	</resultMap>
+	
+
+	<select id="selectOrgInfoAll" resultMap="orgVo">
+	SELECT
+	CASE b.ORGNAME
+	WHEN '总裁' then '德邦微办公'
+	ELSE b.ORGNAME END orgname,
+	CAST(SUBSTRING(b.FINASYSCODE FROM 3) AS SIGNED)
+	- 2 finasyscode,
+	CAST(SUBSTRING(b1.FINASYSCODE FROM 3) AS SIGNED) - 2
+	parentsyscode
+	FROM
+	om_organization b
+	INNER JOIN om_organization b1 ON b.PARENTORGID = b1.ORGID
+	WHERE b.orgname NOT IN ('常用联系人','临时机构')
+	AND b1.ORGNAME NOT IN ('常用联系人','临时机构')
+	</select>
+	
+	<!--  增量更新员工 此处的orgid  要与 部门里的对应  部门id是经过处理的  因为企业微信根部门id只能为1 -->
+	<select id="selectUserInfoAll" resultType="com.deppon.dpm.module.wechat.shared.domain.WechatUserInfoEntity">
+
+		SELECT
+			CONCAT('DP-', t.empcode) userid,
+			CONCAT(t.empname, '-', t2.ORGNAME) NAME,
+			t.gender gender,
+			(
+				CAST(
+					SUBSTRING(t2.FINASYSCODE FROM 3) AS SIGNED
+				) - 2
+			) department,
+			t.jobname position,
+			t.mobileno mobile,
+			t.oemail email,
+			t.tel telephone
+		FROM
+			om_employee t
+		INNER JOIN om_organization t2 ON t.orgid = t2.orgid
+		WHERE
+			t2.orgname NOT IN (
+				'常用联系人',
+				'临时机构'
+			)
+		AND t.empstatus = 'on'
+		AND (
+			DATE_FORMAT(t.lastupdate, '%Y-%m-%d') >= DATE_ADD(
+				DATE_FORMAT(NOW(), '%Y-%m-%d'),
+				INTERVAL - 1 DAY
+			)
+			OR (
+				DATE_FORMAT(t2.lastupdate, '%Y-%m-%d') >= DATE_ADD(
+					DATE_FORMAT(NOW(), '%Y-%m-%d'),
+					INTERVAL - 1 DAY
+				)
+			)
+		)
+		ORDER BY
+			t2.orgid;
+	
+	</select>
+	
+	<!-- 全量更新所有员工 -->
+	<select id="selectUserInfoAllForOnce" resultType="com.deppon.dpm.module.wechat.shared.domain.WechatUserInfoEntity">
+
+	SELECT
+	CONCAT('DP-', t.empcode) userid,
+	CONCAT(t.empname, '-',t2.ORGNAME) NAME,
+	t.gender gender,
+	(CAST(SUBSTRING(t2.FINASYSCODE FROM 3) AS SIGNED) - 2) department,
+	t.jobname position,
+	t.mobileno mobile,
+	t.oemail email,
+	t.tel telephone
+	FROM
+	om_employee t
+	INNER
+	JOIN
+	om_organization t2
+	ON
+	t.orgid = t2.orgid
+	WHERE t2.orgname NOT IN ('常用联系人','临时机构')
+	AND
+	t.empstatus = 'on'
+	ORDER BY
+	t2.orgid;
+	
+	</select>
+	
+	
+	 <!-- 批量插入数据 -->
+	<insert id="insertDepartment" parameterType="java.util.List">
+		INSERT INTO `wechat_department` 
+		(`orgId`, `orgName`, `parentOrgid`, `order`, `createTime`)
+		VALUES 
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.orgId},
+			#{item.orgName},
+			#{item.parentOrgid},
+			#{item.order},
+			NOW()
+			)
+		</foreach>
+	</insert>
+	
+	<insert id="insertUserInfo" parameterType="java.util.List">
+		INSERT INTO `wechat_user` 
+		(`userId`, `name`, `department`, `createTime`)
+		VALUES 
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.userId},
+			#{item.name},
+			#{item.department},
+			NOW()
+			)
+		</foreach>
+		
+	</insert>
+		<insert id="insertJobidInfo" parameterType="com.deppon.dpm.module.wechat.shared.dto.JobDto">
+		INSERT INTO `wechat_job` 
+		(`media_id`, `jobid`, `type`, `errcode`, `createTime`)
+		VALUES 
+		(#{media_id},
+		#{jobid},
+		#{type},
+		#{errcode},
+		NOW()
+		)
+	</insert>
+	
+	
+	<!-- 查询最近三天离职的人员工号 -->
+	<select id="userDel" resultType="com.deppon.dpm.module.wechat.shared.domain.WechatDelleteUserInfoEntity">
+	SELECT
+	CONCAT('DP-', t.empcode) empCode
+	FROM
+	om_employee t
+	WHERE
+	t.empstatus = 'leave'
+	AND DATE_FORMAT(t.lastupdate, '%Y-%m-%d') >= DATE_ADD(
+	DATE_FORMAT(NOW(),
+	'%Y-%m-%d'),
+	INTERVAL - 3 DAY
+	)
+	</select>
+	
+	<!-- 查询异步伤务执行结果 -->
+	<select id="executeResult" parameterType="int" resultType="com.deppon.dpm.module.wechat.shared.domain.WechatExecuteResultEntity">
+	SELECT * FROM wechat_job WHERE type = #{_parameter} ORDER BY createTime DESC LIMIT 1
+	</select>
+	
+	<!-- 更新单个员工 -->
+	<select id="updateUserInfoSingle" parameterType="string" resultType="com.deppon.dpm.module.wechat.shared.domain.WechatUserInfoEntity">
+
+	SELECT
+	CONCAT('DP-', t.empcode) userid,
+	CONCAT(t.empname, '-',t2.ORGNAME) NAME,
+	t.gender gender,
+	(CAST(SUBSTRING(t2.FINASYSCODE FROM 3) AS SIGNED) - 2) department,
+	t.jobname position,
+	t.mobileno mobile,
+	t.oemail email,
+	t.tel telephone
+	FROM
+	om_employee t
+	INNER
+	JOIN
+	om_organization t2
+	ON
+	t.orgid = t2.orgid
+	WHERE t.empcode = #{_parameter}
+
+	</select>
+	
+	<!-- 根据级别查询人员信息 -->
+<!-- 	<select id="selectUserInfoByLevel" parameterType="string" resultType="com.deppon.dpm.module.wechat.shared.domain.WechatUserInfoEntity">
+
+	SELECT
+	CONCAT('DP-', t.empcode) userid,
+	CONCAT(t.empname, '-',t2.ORGNAME)
+	NAME,
+	t.gender gender,
+	(CAST(SUBSTRING(t2.FINASYSCODE FROM 3) AS SIGNED)
+	- 2) department,
+	t.jobname position,
+	t.mobileno mobile,
+	t.oemail email,
+	t.tel telephone
+	FROM
+	om_employee t
+	INNER
+	JOIN
+	om_organization t2
+	ON
+	t.orgid =
+	t2.orgid
+	WHERE t2.orgname NOT IN ('常用联系人','临时机构')
+	AND
+	t.empstatus = 'on'
+	AND
+	t.jobsequence = '管理序列'
+	AND
+	t.joblevel = #{_parameter}
+	ORDER BY
+	t2.orgid;
+
+	</select> -->
+	<select id="selectUserInfoByLevel" parameterType="string" resultType="String">
+
+	SELECT
+	CONCAT('"DP-', t.empcode, '"') userid
+	FROM
+	om_employee t
+	INNER
+	JOIN
+	om_organization t2
+	ON
+	t.orgid =
+	t2.orgid
+	WHERE t2.orgname NOT IN
+	('常用联系人','临时机构')
+	AND
+	t.empstatus = 'on'
+	AND
+	t.jobsequence = '管理序列'
+	AND
+	t.joblevel = #{_parameter}
+	ORDER BY
+	t2.orgid;
+
+	</select>
+	
+</mapper>

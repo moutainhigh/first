@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procCheckTask">
+	<!-- 保存验收任务 -->
+	<insert id="saveCheckTask" parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckTaskEntity">
+		INSERT into proc_check_task(dept_code,dept_name,provider_name,branch_ischeck,is_current_check,check_current_empno,update_date,check_empNo,check_empName,remark)
+		VALUES(
+			#{deptCode,jdbcType=VARCHAR},
+			#{deptName,jdbcType=VARCHAR},
+			#{providerName,jdbcType=VARCHAR},
+			#{branchIsCheck,jdbcType=INTEGER},
+			#{isCurrentCheck,jdbcType=INTEGER},
+			#{checkCurrentEmpNo,jdbcType=VARCHAR},
+			#{updateDate},
+			#{checkEmpNo,jdbcType=VARCHAR},
+			#{checkEmpName,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR}
+		)
+	</insert>
+	<!-- 查询验收任务数量 -->
+	<select id="selectTaskNumByEmpNo" parameterType="String" resultType="java.lang.Integer">
+		SELECT count(*) from proc_check_task pct WHERE pct.check_empNo LIKE 
+		concat('%',#{empNo,jdbcType=VARCHAR},'%') 
+		AND pct.branch_ischeck != 3
+	</select>
+	<!-- 检验项目编号是否重复 -->
+	<select id="checkDeptCode" parameterType="String" resultType="java.lang.Integer">
+		SELECT count(*) from proc_check_task pct WHERE pct.dept_code=#{deptCode,jdbcType=VARCHAR} and pct.branch_ischeck != 0
+	</select>
+	<!--状态为0 ， 检验项目编号是否重复 -->
+	<select id="checkDeptCodeZero" parameterType="String" resultType="java.lang.Integer">
+		SELECT count(*) from proc_check_task pct WHERE pct.dept_code=#{deptCode,jdbcType=VARCHAR} and pct.branch_ischeck = 0
+	</select>
+	<update id="updateCheckTask" parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckTaskEntity">
+		update proc_check_task b set 
+		b.dept_name=#{deptName,jdbcType=VARCHAR}, 
+		b.provider_name=#{providerName,jdbcType=VARCHAR}, 
+		b.branch_ischeck=#{branchIsCheck,jdbcType=INTEGER}, 
+		b.is_current_check=#{isCurrentCheck,jdbcType=INTEGER}, 
+		b.check_current_empno=#{checkCurrentEmpNo,jdbcType=VARCHAR}, 
+		b.update_date=#{updateDate}, 
+		b.check_empNo=#{checkEmpNo,jdbcType=VARCHAR}, 
+		b.check_empName=#{checkEmpName,jdbcType=VARCHAR}, 
+		b.remark=#{remark,jdbcType=VARCHAR} 
+		where b.dept_code=#{deptCode,jdbcType=VARCHAR}
+	</update>
+</mapper>

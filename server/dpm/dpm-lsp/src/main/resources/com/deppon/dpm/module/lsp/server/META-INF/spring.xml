@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:aop="http://www.springframework.org/schema/aop"  xmlns:cxf="http://cxf.apache.org/core"
+  xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+  xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+  
+  xsi:schemaLocation="
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/context 
+      http://www.springframework.org/schema/context/spring-context-3.0.xsd
+      http://www.springframework.org/schema/jee 
+      http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+      http://www.springframework.org/schema/tx 
+      http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+      http://www.springframework.org/schema/aop 
+      http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+      http://code.alibabatech.com/schema/dubbo 
+	  http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+		
+      http://cxf.apache.org/core
+        http://cxf.apache.org/schemas/core.xsd
+        http://cxf.apache.org/jaxws
+        http://cxf.apache.org/schemas/jaxws.xsd
+        http://cxf.apache.org/jaxrs
+        http://cxf.apache.org/schemas/jaxrs.xsd">
+        
+
+  <bean id="stockTaskService" class="com.deppon.dpm.module.lsp.server.service.impl.ReceiveStockTaskServiceImpl"/>
+  <jaxrs:server id="stockTaskServiceRs" address="/lsp"><!-- 这是配置的 -->
+    <jaxrs:serviceBeans>
+      <ref bean="stockTaskService" />
+    </jaxrs:serviceBeans>
+    <jaxrs:extensionMappings>
+      <entry key="json" value="application/json" />
+    </jaxrs:extensionMappings>
+    <jaxrs:languageMappings>
+      <entry key="en" value="en-gb" />
+    </jaxrs:languageMappings>
+  </jaxrs:server>
+  <!-- dao配置start -->
+  <bean id="receiveStockTaskDao" class="com.deppon.dpm.module.lsp.server.dao.impl.ReceiveStockTaskDaoImpl">
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  <!-- 资产盘点首页显示DAO -->
+   <bean id="assetStockDao" class="com.deppon.dpm.module.lsp.server.dao.impl.AssetStockDao">
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  <!-- end -->
+  <!-- dao配置start -->
+  <bean id="synStocktaskingService"
+    class="com.deppon.dpm.module.lsp.server.service.impl.SynStocktaskingService">
+    <property name="synUrl" value="${dpm.lsp.esb.url}"></property>
+  </bean>
+  
+  
+  <!-- 资产盘点首页显示service -->
+  <bean id="assetStockService" class="com.deppon.dpm.module.lsp.server.service.impl.AssetStockService">
+    <property name="assetStockDao" ref="assetStockDao"/>
+    <property name="synUrl" value="${dpm.lsp.esb.url}" />
+        <!-- <property name="assetsRenewUrl" value="http://10.224.64.57:8089/lsp/webservice/fixassetMobileRest/processRestRequest" /> -->
+  </bean>
+  <!-- end -->
+   <!-- action配置start -->
+  <bean id="synStocktasking" class="com.deppon.dpm.module.lsp.server.action.SynStocktaskingAction"
+    scope="prototype">
+    <property name="synStocktaskingService" ref="synStocktaskingService"/>
+    <property name="monitorCountInfoService" ref="monitorCountInfoService"></property>
+  </bean>
+<!-- 资产盘点首页显示action -->
+  <bean id="assetStockAction" class="com.deppon.dpm.module.lsp.server.action.AssetStockAction"
+    scope="prototype">
+    <property name="assetStockService" ref="assetStockService"/>
+    <property name="dpmAssetLiablityChangeServiceImpl" ref="dpmAssetLiablityChangeServiceImpl"/>
+    <property name="monitorCountInfoService" ref="monitorCountInfoService"></property>
+  </bean>
+    <!-- end -->
+	<bean id="fixedAssetsCheckService" class="com.deppon.dpm.module.lsp.server.service.impl.FixedAssetsCheckService">
+		<property name="uri" value="${dpm.lsp.esb.url}"></property>
+		<property name="assetStockDao" ref="assetStockDao"/>
+	</bean>
+	<bean id="fixedassets" class="com.deppon.dpm.module.lsp.server.action.FixedAssetsCheckAction"
+		scope="prototype">
+		<property name="fixedAssetsCheckService" ref= "fixedAssetsCheckService" /> 
+		<property name="monitorCountInfoService" ref="monitorCountInfoService"></property>
+	</bean>
+	
+	<!-- 物资异常反馈Action  -->
+	<bean id="appMaterialException" class="com.deppon.dpm.module.lsp.server.action.AppMaterialExceptionAction" scope="prototype"/>
+	
+	<dubbo:reference id="dpmAssetLiablityChangeServiceImpl"
+		interface="com.deppon.lsp.module.fixasset.assetliablitychange.server.service.IDpmAssetLiablityChangeService" group="${dpm.cops.group1}"  
+		version="${dpm.version}" registry="weaver-dubbo" timeout="30000" check="false"/>
+	
+	<!-- 物资异常反馈Service -->	
+	<dubbo:reference id="dpmMaterialExceptionService"
+		interface="com.deppon.lsp.module.materialexception.materialexceptionapply.server.service.IDPMMaterialExceptionService" group="${dpm.cops.group1}"  
+		version="${dpm.version}" registry="weaver-dubbo" timeout="80000" check="false"/>
+</beans>

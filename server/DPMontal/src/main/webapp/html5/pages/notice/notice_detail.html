@@ -1,0 +1,29 @@
+<ion-modal-view style="top:0;min-height:100%;left:0;right:0;width:100%;">
+<ion-view>
+    <!-- <ion-nav-buttons side="left">
+        <button class="depponback button-icon icon ion-ios7-arrow-left button back-button first-page" ng-click="noticeToBack()"></button>
+    </ion-nav-buttons> -->
+    <div class="bar bar-header bar-light" style="background:#F8F8F8">
+		<button class="depponback button-icon icon ion-ios7-arrow-left button back-button first-page" ng-click="noticeToBack()"></button>
+  		<h1 class="title">公告详情</h1>
+	</div>
+<ion-content style="margin-top:40px" delegate-handle="detailScroll">
+
+    <div class="item item-body">
+        <h2 style="font-size:19px;color:#444!important;font-weight:bold;">{{newsDetail.header}}</h2>
+
+        <p style="font-size:15.6px;color:#a2a2a2!important">{{newsDetail.fbr}}&nbsp;&nbsp;{{newsDetail.fbdate}}</p>
+        <!-- <a href="#/img/{{news.filename}}"> <img class="full-image" src="{{news.filename}}"></a> -->
+     
+       <p style="font-size:17px;color:#666666!important;" ng-bind-html="newsDetail.content | rawHtml"> </p>
+   
+        <p>
+            附件: <a href="{{newsDetail.attachment_url}}" class="subdued">{{newsDetail.attachment}}</a>
+        </p>
+    </div>
+
+
+</ion-content>
+
+</ion-view>
+</ion-modal-view>

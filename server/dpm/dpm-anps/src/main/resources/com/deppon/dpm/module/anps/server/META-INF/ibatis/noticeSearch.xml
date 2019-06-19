@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.anps.server.dao.impl.NoticeSearchDao" >
+
+<resultMap id="orgVo"
+		type="com.deppon.dpm.module.anps.shared.domain.OrganizationEntity">
+		<!-- 有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="empNum" column="empNum" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgCode" column="orgCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgLevel" column="orgLevel" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="orgAddr" column="orgAddr" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="zipCode" column="zipCode" javaType="String"
+			jdbcType="DATE" />
+		<result property="managerId" column="managerId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="linkTel" column="linkTel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="email" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="area" column="area" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="remark" column="remark" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="appSysCode" column="appSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="parentId" column="PARENTORGID" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="finaSysCode" column="finaSysCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deptSeq" column="DEPTSEQ" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="createTime" column="createTime" javaType="Date"
+			jdbcType="DATE" />
+	</resultMap>
+	
+	<resultMap id="empVo" type="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		<!-- 有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="empId" column="empId" jdbcType="NUMERIC" />
+		<result property="empCode" column="empCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="empName" column="empName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="mobileNo" column="mobileNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gender" column="gender" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="inDate" column="inDate" javaType="Date"
+			jdbcType="DATE"/>
+		<result property="updateTime" column="updateTime" javaType="Date"
+			jdbcType="DATE"/>
+		<result property="birthDate" column="birthDate" javaType="Date"
+			jdbcType="DATE" />
+		<result property="empStatus" column="empStatus" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardNo" column="cardNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardType" column="cardType" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="pEmail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobGroups" column="jobGroups" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobName" column="jobName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobLevel" column="jobLevel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobDuty" column="jobDuty" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobSequence" column="jobSequence" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="tel" column="TEL" javaType="String" jdbcType="VARCHAR" />
+		<result property="emailUserName" column="oemail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="emailPassword" column="email_password"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="address" column="address" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="callFrequency" column="callFrequency"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="parentOrgId" column="parentOrgId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deptSeq" column="DEPTSEQ" javaType="String"
+		jdbcType="VARCHAR" />
+		<result property="headPhoto" column="pictPath" javaType="String"
+		jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 根据组织id查询所有子组织信息 -->
+	<select id="selectOrgs" parameterType="Map" resultMap="orgVo">
+		<!-- SELECT * FROM om_organization t WHERE t.orgname LIKE '%${orgName}%' 
+		AND t.deptseq LIKE  '%${orgid}%' -->
+		SELECT * FROM om_organization t
+		<where>
+			<if test="orgName != null">
+         		AND t.orgname LIKE '%${orgName}%' 
+    		</if> 
+    		<if test="orgid != null">
+    			AND t.deptseq LIKE  '%${orgid}%'
+    		</if>
+		</where>
+		ORDER BY LENGTH(t.orgname)
+	</select>
+	
+	<!-- 根据工号或姓名搜索员工 -->
+	<select id="selectEmps" resultMap="empVo"
+		parameterType="Map">
+        <![CDATA[
+            SELECT
+        ]]>
+		<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' 
+			<if test="empName != null">
+         		AND emp.empname LIKE '%${empName}%'
+    		</if> 
+    		<if test="empCode != null">
+    			AND emp.empcode = #{empCode}
+    		</if>
+    		<if test="orgid != null">
+    			AND org.deptseq LIKE '%${orgid}%'
+    		</if>
+		</where>
+		 ORDER BY LENGTH(emp.empname)
+		 <if test="pageNo != null and pageNumber != null">
+			LIMIT #{pageNo} , #{pageNumber}
+		</if>
+	</select>
+	
+	<select id="getEmpByOrgId" resultMap="empVo">
+	  <![CDATA[
+            SELECT
+        ]]>
+		<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' 			 
+    		<if test="orgId != null">
+    			AND org.DEPTSEQ LIKE  '%${orgId}%'
+    		</if>
+		</where>
+		
+	</select>
+	
+	<select id="getEmpDetailByOrgId" resultMap="orgVo">
+	  <![CDATA[
+            SELECT
+        ]]>
+		org.*
+        <![CDATA[
+            FROM  om_organization org 
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+					 
+    		<if test="orgId != null">
+    			AND org.orgId= #{orgId}
+    		</if>
+		</where>
+		
+	</select>
+	
+	<select id="getEmpByJobName" resultMap="empVo">
+	  <![CDATA[
+            SELECT
+        ]]>
+		<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' 			 
+    		<if test="orgId != null">
+    			AND org.DEPTSEQ LIKE  '%${orgId}%'
+    		</if>
+    		<if test="jobName != null">
+    			AND emp.jobName = #{jobName}
+    		</if>
+		</where>
+		
+	</select>
+	
+	<select id="getOrgByEmpCode" resultMap="orgVo">
+	    <![CDATA[
+            SELECT
+        ]]>
+		    org.*
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' 			 
+    		<if test="userId != null">
+    			AND emp.empCode = #{userId}
+    		</if>
+    		
+		</where>
+	
+	
+	
+	</select>
+	
+	<select id="getEmpByEmpCode" resultMap="empVo">
+	     <![CDATA[
+            SELECT DISTINCT
+        ]]>
+		<include refid="emp_param" />
+        <![CDATA[
+            FROM om_employee emp
+             JOIN om_organization org ON org.orgid = emp.orgid
+            left join emp_pic pic on emp.empcode = pic.empCode
+        ]]>
+		<!--对于查询条件，可以通过where标签进行定义 -->
+		<where>
+			empstatus='on' 			 
+    		<if test="userId != null">
+    			AND emp.empCode = #{userId}
+    		</if>
+    		
+		</where>
+	
+	
+	</select>
+	
+	
+	
+	<sql id="emp_param">
+		empid,emp.empCode ,empName,MOBILENO,
+		case when emp.OEMAIL is
+		null
+		then emp.PEMAIL else
+		emp.OEMAIL end email,
+		jobName,case when jobLevel is null then "" else jobLevel end jobLevel,
+		case when jobGroups is null then "" else jobGroups end jobGroups,
+		jobDuty,org.orgName,org.orgId,gender,tel,org.parentOrgId,org.orgName,org.DEPTSEQ,
+		case when pic.pictPath is NULL THEN "" else pic.pictPath END pictPath
+	</sql>
+	
+</mapper>
+

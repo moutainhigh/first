@@ -1,0 +1,166 @@
+.ma-right-20{
+    margin-right: 20px;
+}
+
+div.container-fluid i{
+    margin-top: 10px;
+    margin-left: 10px;
+    color: white;
+}
+div.container-fluid span{
+    color: white;
+    font-size: 24px;
+    margin-left: 10px;
+}
+.container-fluid div:last-child{
+    float: right;
+    margin-right: 40px;
+}
+.dp-nav-list{
+    position: absolute;
+    margin-top: -20px;
+    padding-top: 50px;
+    width: 280px;
+    min-height: 400px;
+    height: calc(100% - 50px);
+    border-right: 1px solid darkgray;
+}
+
+.dp-nav-list ul{
+    padding: 0px;
+    margin-top: 0px;
+    font-size: 20px;
+}
+.dp-nav-list ul span{
+    font-size: 16px;
+    margin-left: 45px;
+}
+.dp-nav-list ul li{
+    list-style-type: none;
+    width: 100%;
+    margin-top: 20px;
+    padding-left: 20px;
+}
+.dp-nav-list ul li:hover{
+    background: lightgray;
+}
+.dp-nav-list .dateSel{
+    width: 100%;
+    margin-left: 10px;
+    margin-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px lightgray dotted;
+    padding-left: 20px;
+}
+
+.dateSel input{
+    margin-left: 10px;
+}
+
+.dp-panel{
+    position: absolute;
+    margin-left: 280px;
+    margin-top: 20px;
+    width: calc(100% - 280px);
+    /*height: calc(100% - 50px);*/
+    min-width: 1000px;
+}
+.dp-panel td{
+    font-size: 15px;
+}
+.dp-panel th{
+    font-size: 14px;
+}
+td span,button{
+	font-size:13px
+}
+.dp-item-content{
+    overflow: hidden;
+    display: block;
+    font-size: 12px;
+    margin-right: 0px;
+    width: 110px;
+    height: 30px;
+}
+.dp-reply-style{
+	overflow: hidden;
+    display: block;
+    font-size: 12px;
+    margin-right: 0px;
+    width: 200px;
+    height: 30px;
+}
+.dp-img-show{
+    position: fixed;
+    margin: -70px auto;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.3);
+}
+.dp-text-detail{
+    background-color: white;
+    margin-top: 5%;
+    height: 500px;
+    margin-left: calc((100% - 400px)/2);
+    width: 400px;
+    border: 1px lightgray solid;
+    box-shadow: 5px 5px 5px gray ;
+    border-radius: 5px;
+}
+.dp-img-detail{
+    background-color: white;
+    margin-top: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 500px;
+    width: 400px;
+    border: 1px lightgray solid;
+    box-shadow: 5px 5px 5px gray ;
+    border-radius: 5px;
+}
+.dp-img-detail img{
+    margin:5px;
+    width: 390px;
+    height: 490px;
+}
+
+.dp-reply-content{
+    text-align: left;
+    background-color: white;
+    margin-top: 70px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 600px;
+    width: 700px;
+    border: 1px lightgray solid;
+    box-shadow: 5px 5px 5px gray;
+    border-radius: 5px;
+}
+.dp-reply-content label{
+    width: 80px;
+}
+.dp-reply-content input{
+    margin-left: 30px;
+    width: calc(100% - 150px);
+    border: 1px lightgray solid;
+    border-radius: 5px;
+}
+.dp-reply-content textarea{
+    display: inline;
+    margin-left: 30px;
+    width: calc(100% - 150px);
+    height: 150px;
+    border: 1px lightgray solid;
+    border-radius: 5px;
+}
+.dp-reply-content span{
+    margin-left: calc(100% - 101px);
+}
+.dp-reply-button{
+	position:relative;
+	margin-left:auto;
+	margin-right:auto;
+	text-align: center;
+	margin-top:25px;
+}

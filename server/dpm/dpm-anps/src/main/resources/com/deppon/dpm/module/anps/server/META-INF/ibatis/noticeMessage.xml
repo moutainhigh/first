@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.dpm.module.anps.server.dao.impl.NoticeMessageDao">
+
+	<resultMap id="noticeMessageMap"
+		type="com.deppon.dpm.module.anps.shared.domain.NoticeMessage">
+		<result property="noticeId" column="notice_id" />
+		<result property="reciverUserId" column="reciver_userId" />
+		<result property="sendUserId" column="send_userID" />
+		<result property="noticeTitle" column="notice_title" />
+		<result property="noticeContent" column="notice_content" />
+		<result property="userName" column="userName" />
+		<result property="level" column="import_level" />
+		<result property="headPath" column="pictPath" />
+		<result property="isPraise" column="is_praise" />
+		<result property="isRead" column="is_read" />
+		<result property="createTime" column="create_time" />
+		<result property="receiveSize" column="receiveSize" />
+	</resultMap>
+
+	<resultMap id="noticeMessageDetailMap"
+		type="com.deppon.dpm.module.anps.shared.domain.NoticeMessageDetail">
+		<result property="id" column="id" />
+		<result property="noticeTitle" column="notice_title" />
+		<result property="noticeContent" column="notice_content" />
+		<result property="noticePhoto" column="notice_Photo" />
+		<result property="reciveNames" column="reciveNames" />
+		<result property="userName" column="userName" />
+		<result property="createTime" column="create_Time" />
+		<result property="isRead" column="is_read" />
+		<result property="isPraise" column="is_praise" />
+		<result property="jobGroup" column="job_group" />
+		<result property="reciverUserId" column="reciver_userId" />
+		<result property="sendUserId" column="send_userID" />
+		<result property="noReadNum" column="noReadNum" />
+		<result property="readNum" column="readNum" />
+		<result property="praiseNum" column="praiseNum" />
+		<result property="isSend" column="isSend" />
+		<result property="isPariseComment" column="isPariseComment" />
+		<result property="reciverObject" column="reciverObject" />
+		<result property="receiveSize" column="receiveSize" />
+		<result property="reciveUserDetail" column="reciveUserDetail" />
+	</resultMap>
+
+	<resultMap id="noticeAuthortyMap"
+		type="com.deppon.dpm.module.anps.shared.domain.NoticeAuthorty">
+		<result property="id" column="id" />
+		<result property="createTime" column="createTime" />
+		<result property="employeeCode" column="employee_code" />
+		<result property="noticeSendType" column="notice_send_type" />
+	</resultMap>
+	<!-- 公文评论 -->
+	<resultMap type="com.deppon.dpm.module.anps.shared.domain.NoticeComment"
+		id="noticeCommentMap">
+		<result property="noticeId" column="notice_id" />
+		<result property="conTent" column="notice_content" />
+		<result property="createTime" column="create_time" />
+		<result property="commentEmployId" column="comment_employId" />
+		<result property="toCommentEmployId" column="toCommentEmployId" />
+		<result property="commentType" column="commentType" />
+
+	</resultMap>
+
+	<resultMap type="com.deppon.dpm.module.anps.shared.domain.ReadSolution"
+		id="readSolutionMap">
+		<result property="readNum" column="readNum" />
+		<result property="orgIName" column="orgIName" />
+	</resultMap>
+
+	<!-- 公告阅读人员详情 -->
+	<resultMap type="com.deppon.dpm.module.anps.shared.domain.ReadPeopleDetail"
+		id="readPeopleDetailMap">
+		<result property="reciveUserId" column="reciveUserId" />
+		<result property="headPath" column="pictPath" />
+		<result property="empName" column="empName" />
+		<result property="orgName" column="orgName" />
+		<result property="jobName" column="jobName" />
+		<result property="orgLevel" column="orgLevel" />
+		<result property="orgId" column="orgId" />
+		<result property="deptseq" column="DEPTSEQ" />
+		<result property="isRead" column="is_read" />
+
+	</resultMap>
+
+	<!-- 添加发件人消息表 -->
+	<insert id="insertNoticeMessageDetail" parameterType="map">
+		insert into
+		notice_send_message(notice_Title,
+		send_userID,
+		userName,notice_photo,
+		reciveNames,import_level,
+		job_group,
+		create_Time,
+		isPariseComment,
+		notice_content,
+		reciverObject,
+		receiveSize,
+		reciveUserDetail
+		)
+		values
+		(#{noticeTitle},
+		#{employId},
+		#{userName},
+		#{noticePhoto},
+		#{reciveNames},
+		#{level},
+		#{jobGroup},
+		NOW(),
+		#{isPariseComment},
+		#{noticeContent},
+		#{reciverObject},
+		#{receiveSize},
+		#{reciveUserDetail}
+		)
+	</insert>
+
+	<!-- 添加公文内容 -->
+	<!-- <insert id="insertNoticeContent" parameterType="map"> insert into notice_message_content 
+		(notice_id, notice_content, create_time) values (#{noticeMessageId}, #{noticeContent}, 
+		NOW()) </insert> -->
+
+	<!-- 添加收件人消息表 -->
+	<insert id="insertNoticeMessage" parameterType="map">
+		insert into
+		notice_receive_message
+		(notice_id, reciver_userId, is_read,
+		is_praise,create_time)
+		values
+		(#{noticeId},
+		#{receiveUserId},
+		'0',
+		'0',
+		NOW())
+	</insert>
+
+	<!-- 查询公文详情 -->
+	<select id="getNoticeMessageById" parameterType="Integer"
+		resultMap="noticeMessageDetailMap">
+		select distinct
+		t1.id as noticeId,
+		t1.userName,
+		t1.notice_photo,
+		t1.notice_content,
+		t1.reciveNames,
+		t1.notice_title,
+		t1.job_group,
+		t1.create_time,
+		t1.isPariseComment,
+		t1.receiveSize,
+		t1.reciveUserDetail,
+		t1.send_userID,
+		(select
+		count(DISTINCT reciver_userId) from
+		notice_receive_message
+		where
+		notice_id=#{noticeMessageId} and is_praise ='1' ) praiseNum,
+
+		(select
+		count(DISTINCT reciver_userId) from
+		notice_receive_message
+		where
+		notice_id=#{noticeMessageId} and is_read='1' ) readNum
+
+		from
+		notice_send_message t1
+		where
+		 t1.id=#{noticeMessageId}
+
+	</select>
+
+	<update id="updateIsRead">
+		update notice_receive_message
+		<set>
+			<if test="isRead != null">
+				is_read = #{isRead}
+			</if>
+		</set>
+		WHERE
+		notice_id = #{noticeMessageId}
+		and reciver_userId= #{userId}
+	</update>
+
+
+	<!-- 分页展示收件人信息列表 -->
+	<select id="getNoticeMessage" parameterType="map" resultMap="noticeMessageMap">
+		select DISTINCT t1.id as noticeId ,
+		t1.userName,
+		case when pic.pictPath is NULL
+		THEN
+		"" else pic.pictPath END headPath,
+		t1.notice_content,
+		t1.notice_title,
+		t1.send_userID,
+		t1.import_level,
+		t1.create_time,
+		t1.receiveSize
+		from
+		notice_send_message t1
+		inner join notice_receive_message t
+		on t.notice_id=t1.id
+
+		left join emp_pic pic
+		on t1.send_userID = pic.empCode
+		where
+		t.reciver_userId=#{userId}
+		<if test="isRead != null">
+			and t.is_read = #{isRead}
+		</if>
+		order by t1.create_time DESC
+		<if test="pageSize>0">
+			limit #{startNo}, #{pageSize}
+		</if>
+	</select>
+
+	<!-- 分页展示收件人信息数量 -->
+	<select id="getNoticeMessageCount" parameterType="map"
+		resultType="Integer">
+		select count(1) from
+		(select DISTINCT t1.id,
+		t1.userName,
+		case when
+		pic.pictPath is NULL
+		THEN "" else pic.pictPath END headPath,
+		t1.notice_content,
+		t1.notice_title,
+		t1.import_level,
+		t1.create_time,
+		t1.receiveSize
+		from
+		notice_send_message t1
+		inner join notice_receive_message t
+		on t.notice_id=t1.id
+
+		left join emp_pic pic
+		on t1.send_userID = pic.empCode
+		where
+		t.reciver_userId=#{userId}
+		<if test="isRead != null">
+			and t.is_read = #{isRead}
+		</if>
+		) T
+	</select>
+
+
+	<!-- 分页展示未发布消息列表 -->
+	<select id="getPublicNoticeMessage" parameterType="String"
+		resultMap="noticeMessageMap">
+		select DISTINCT
+		t1.id as noticeId,
+		t1.userName,
+		case when pic.pictPath is NULL
+		THEN "" else pic.pictPath
+		END headPath,
+		t1.notice_title,
+		t1.import_level,
+		t1.create_time,
+		t1.receiveSize
+		from
+
+		notice_send_message t1
+
+		left join emp_pic pic
+		on
+		t1.send_userID = pic.empCode
+
+		where
+		t1.send_userID =
+		#{userId}
+		order by t1.create_time DESC
+		<if test="pageSize>0">
+			limit #{startNo}, #{pageSize}
+		</if>
+	</select>
+
+	<!-- 已发布公告数目 -->
+	<select id="getPublicNoticeMessageCount" resultType="Integer">
+		select
+		count(1) from (
+		select DISTINCT t.notice_id,
+		t1.userName,
+		case when
+		pic.pictPath is NULL THEN "" else pic.pictPath END headPath,
+		t1.notice_title,
+		t1.import_level,
+		t.create_time,
+		t1.receiveSize
+		from
+		notice_receive_message t
+		inner join
+		notice_send_message t1
+		on
+		t.notice_id=t1.id
+		left join emp_pic pic
+		on
+		t1.send_userID = pic.empCode
+		where
+		t1.send_userID = #{userId}
+		order by t1.create_time DESC
+		)T
+	</select>
+
+	<!-- 查询公文消息详情id -->
+	<select id="getNoticeMessageByUserID" resultType="Integer">
+		select DISTINCT
+		id as noticeId
+		 from
+		notice_send_message
+		where send_userID = #{userId}
+		and create_time
+		= #{createTime}
+
+	</select>
+
+	<!-- 获取发件人所在组织 -->
+	<select id="getSendManOrg" resultType="Integer">
+		select DISTINCT ORGID
+		from
+		om_organization WHERE
+		PARENTORGID =
+		(select DISTINCT
+		t4.orgId
+		from
+		notice_send_message t1,
+		om_employee t3,
+		om_organization t4
+		where
+		t3.empCode=t1.send_userId
+		and t3.orgId=t4.orgId
+
+		and t1.id=
+		#{noticeMessageId}
+		)
+	</select>
+	<!-- 获取发件人所在组织 -->
+	<select id="getSendOrg" resultType="Integer">
+		select DISTINCT ORGID
+		from
+		om_organization WHERE
+		PARENTORGID =
+		#{orgId}
+
+	</select>
+
+	<!-- 获取阅读情况 -->
+	<select id="getReadSoluting" parameterType="Integer" resultMap="readSolutionMap">
+
+		select DISTINCT
+		COUNT(1) as readNum ,
+		(SELECT ORGNAME from
+		om_organization where orgId = #{secondOrgid}) as
+		orgIName
+
+		from
+		notice_receive_message t,
+		om_organization t2, om_employee t3
+		where
+		t3.empCode=t.reciver_userId
+		and t2.orgId=t3.orgId
+
+		and t2.DEPTSEQ like
+		CONCAT(CONCAT('%',#{secondOrgid}),'%')
+		and
+		t.notice_id=#{noticeMessageId}
+		<if test="isRead != null">
+			and t.is_read = #{isRead}
+		</if>
+
+	</select>
+
+	<!-- 获取阅读情况 -->
+	<select id="getTotalReadNum" parameterType="Integer" resultType="Integer">
+
+		select DISTINCT
+		COUNT(1) as totalReadNum
+		from
+		om_organization t2, om_employee t3
+		where
+
+		t2.orgId=t3.orgId
+
+		and t2.DEPTSEQ like
+		CONCAT(CONCAT('%',#{secondOrgid}),'%')
+
+
+	</select>
+     
+    <!--获取 阅读人员详情  --> 
+    <select id="getReadPeopleDetail" resultMap="readPeopleDetailMap">
+       select distinct
+       emp.empCode  reciveUserId,
+       emp.empName empName,
+       case when pic.pictPath is NULL THEN "" else pic.pictPath END headPath,
+		emp.jobName,
+		orgs.orgName,
+		orgs.orgId,
+		orgs.DEPTSEQ,
+		orgs.orgLevel
+       
+       FROM om_employee emp
+       inner join om_organization orgs
+	   on emp.orgId=orgs.orgId      
+       left join emp_pic pic on emp.empcode = pic.empCode
+       where emp.empstatus='on'
+		and emp.empCode = #{userId}
+    
+    
+    
+    </select>
+
+	<!-- 阅读人员详情 -->
+	<select id="getNoticeMessageReadDetail" resultMap="readPeopleDetailMap">
+		select DISTINCT t.reciver_userId reciveUserId,
+		emps.empname empName,
+		emps.jobName,
+		case when pic.pictPath is NULL THEN "" else pic.pictPath END headPath,
+		orgs.orgName,
+		orgs.orgId,
+		orgs.DEPTSEQ,
+		orgs.orgLevel,
+		t.is_read
+		from notice_receive_message t
+		inner join notice_send_message t1
+		on t.notice_id=t1.id
+		inner join om_employee emps
+		on t.reciver_userId = emps.empCode
+		inner join om_organization orgs
+		on emps.orgId=orgs.orgId
+		left join emp_pic pic on
+		t.reciver_userId = pic.empCode
+		WHERE
+		emps.empstatus='on'
+		and
+		t1.id=#{noticeMessageId}
+		<if test="isRead != null">
+			and t.is_read = #{isRead}
+		</if>
+
+		<if test="pageSize>0">
+			limit #{startNo}, #{pageSize}
+		</if>
+	</select>
+
+	<!-- 阅读人员详情 -->
+	<select id="getNoticeMessageReadDetailAll" resultMap="readPeopleDetailMap">
+		select DISTINCT t.reciver_userId reciveUserId,
+		emps.empname empName,
+		emps.jobName,
+		case when pic.pictPath is NULL THEN "" else pic.pictPath END headPath,
+		orgs.orgName,
+		orgs.orgId,
+		orgs.DEPTSEQ,
+		orgs.orgLevel,
+		t.is_read
+		from notice_receive_message t
+		inner join notice_send_message t1
+		on t.notice_id=t1.id
+		inner join om_employee emps
+		on t.reciver_userId = emps.empCode
+		inner join om_organization orgs
+		on emps.orgId=orgs.orgId
+		left join emp_pic pic on
+		t.reciver_userId = pic.empCode
+		WHERE
+		emps.empstatus='on'
+		and
+		t1.id=#{noticeMessageId}
+
+	</select>
+
+	<!-- 阅读人员详情数量 -->
+	<select id="getNoticeMessageReadDetailCount" resultType="Integer">
+		select count(1)
+		from (select DISTINCT t.reciver_userId reciveUserId,
+		emps.empname empName,
+		emps.jobName,
+		case when pic.pictPath is NULL THEN "" else pic.pictPath END headPath,
+		orgs.orgName,
+		orgs.orgId,
+		orgs.orgLevel,
+		orgs.DEPTSEQ,
+		t.is_read
+		from
+		notice_receive_message t
+		inner join notice_send_message t1
+		on
+		t.notice_id=t1.id
+		inner join om_employee emps
+		on t.reciver_userId =
+		emps.empCode
+		inner join om_organization orgs
+		on emps.orgId=orgs.orgId
+		left join emp_pic pic on
+		t.reciver_userId = pic.empCode
+		WHERE
+		emps.empstatus='on'
+		and
+		t1.id=#{noticeMessageId}
+		<if test="isRead != null">
+			and t.is_read = #{isRead}
+		</if>
+		)T
+
+	</select>
+
+	<select id="getNoticeAuthorty" resultMap="noticeAuthortyMap">
+		select DISTINCT * from
+		notice_authority
+		where employ_code = #{userId}
+	</select>
+
+	<select id="getReadNum" resultType="Integer">
+		select count(DISTINCT
+		reciver_userId) from notice_receive_message
+		where notice_id=#{noticeId}
+		and is_read='1'
+	</select>
+
+	<select id="getNoReadNum" resultType="Integer">
+		select
+		count(DISTINCT reciver_userId)
+		from notice_receive_message
+		where notice_id = #{noticeId}
+		and is_read='0'
+	</select>
+
+	<!-- 查询公文评论 -->
+	<select id="getNoticeComment" parameterType="Integer" resultMap="noticeCommentMap">
+		select distinct * from (
+		select DISTINCT notice_id,
+		notice_content,
+		comment_employId,
+		create_time,
+		toCommentEmployId,
+		commentType
+		from
+		notice_message_comments
+		where notice_id = #{noticeMessageId}
+		and
+		commentType='1'
+		union
+		select notice_id,
+		notice_content,
+		comment_employId,
+		create_time,
+		toCommentEmployId,
+		commentType
+		from
+		notice_message_comments
+		where
+		notice_id = #{noticeMessageId}
+		and commentType='0'
+		ORDER BY
+		commentType desc , create_time desc
+		)Tab
+
+	</select>
+
+	<!-- 插入公文评论 -->
+	<insert id="saveNoticeMessageComment">
+		insert into
+		notice_message_comments(
+		notice_id,
+		notice_content,
+		comment_employId,
+		toCommentEmployId,
+		commentType,
+		create_time)
+		values(
+		#{noticeMessageId},
+		#{noticeComment},
+		#{userId},
+		#{toCommentEmployId},
+		#{commentType},
+		Now())
+
+	</insert>
+
+	<!-- 更新公文点赞状态 -->
+	<update id="updateIsParse">
+		update notice_receive_message
+		set is_praise =
+		#{isParise}
+		where notice_id = #{noticeId}
+		and reciver_userId = #{userId}
+
+	</update>
+
+	<!-- 更新公文提醒邮件是否发送 -->
+	<update id="updateIsSend">
+		update notice_send_message
+		set isSend = '1'
+		where
+		id = #{noticeId}
+	</update>
+
+	<!-- 获取点赞状态 -->
+	<select id="getIsPariseStatus" resultType="Integer">
+		select distinct
+		is_praise from
+		notice_receive_message
+		where notice_id = #{noticeId}
+		and
+		reciver_userId = #{userId}
+
+	</select>
+
+	<!-- 删除已读公文 -->
+	<delete id="deletIsReadMessage">
+		delete from
+		notice_receive_message
+		where notice_id =
+		#{noticeId}
+		and reciver_userId = #{userId}
+		and is_read='1'
+	</delete>
+
+	<!-- 获取所有公文 -->
+	<select id="getNoticeMessageDetail" resultMap="noticeMessageDetailMap">
+
+		select distinct
+	     <![CDATA[
+		t1.id,
+		t1.userName,
+		t1.notice_photo,
+		t1.notice_content,
+        t1.reciveNames,
+		t1.notice_title,
+		t1.job_group,		
+		t1.create_time,
+		t1.isSend,
+		t1.reciverObject,
+		t1.send_userID,
+		t1.reciveUserDetail
+
+		from
+		notice_send_message
+		t1
+		
+	    ]]>
+
+	</select>
+
+
+	<!-- 获取今天已发布消息列表 -->
+	<select id="getTodayPublicNoticMessage" resultMap="noticeMessageMap">
+		select
+		DISTINCT t1.id,
+		t1.send_userId,
+		t1.userName,
+		t1.notice_title,
+		t1.import_level,
+		t1.create_time,
+		t1.receiveSize
+		from
+
+		notice_send_message t1
+		where
+		to_days(t1.create_time) = to_days(now())
+		order by t1.create_time DESC
+
+	</select>
+
+	<!-- 获取今天已发布消息列表数量 -->
+	<select id="getTodayPublicNoticMessageCount" resultType="Integer">
+		select
+		count(1) from (
+		select DISTINCT t1.id,
+		t1.send_userId,
+		t1.userName,
+		t1.notice_title,
+		t1.import_level,
+		t1.create_time,
+		t1.receiveSize
+		from
+
+		notice_send_message t1
+		where
+		to_days(t1.create_time) = to_days(now())
+		)T
+	</select>
+
+	<select id="getOrgIdByNoticeId" resultType="Integer">
+		SELECT t1.orgId from notice_send_message t,om_employee t1
+		where t.send_userId=t1.empCode
+		and t.id= #{noticeId}
+	</select>
+
+	<!-- 判断公文是否已经存在 -->
+	<select id="getReceiveMessage" resultMap="noticeMessageMap">
+		select t.notice_id,t.reciver_userId from notice_receive_message t
+		where reciver_userId = #{userId}
+		and notice_id = #{noticeId}
+
+	</select>
+
+
+</mapper>

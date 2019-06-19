@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.UserFuncStatusDao">
+	<resultMap id="userFuncStatusEntity"
+		type="com.deppon.dpm.module.common.shared.domain.UserFuncStatusEntity">
+		<result property="id" column="id"/>
+		<result property="userId" column="user_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deviceToken" column="device_token" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="exceptionMonitorStatus" column="exception_monitor_status"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+	</resultMap>
+
+	<select id="queryByUserId" parameterType="string" resultMap="userFuncStatusEntity">
+		SELECT * FROM om_user_func_status WHERE user_id = #{userId}
+	</select>
+	
+	<delete id="delete" parameterType="string">
+		DELETE FROM om_user_func_status WHERE id = #{id}
+	</delete>
+	
+	<update id="update" parameterType="com.deppon.dpm.module.common.shared.domain.UserFuncStatusEntity">
+		UPDATE om_user_func_status 
+		<set>
+			device_token = #{deviceToken},
+			exception_monitor_status = #{exceptionMonitorStatus},
+			update_time = NOW()
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+	
+	<insert id="insert" parameterType="com.deppon.dpm.module.common.shared.domain.UserFuncStatusEntity">
+		INSERT INTO om_user_func_status
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">
+				user_id,
+			</if>
+			<if test="deviceToken != null and deviceToken != ''">
+				device_token,
+			</if>
+			<if test="exceptionMonitorStatus != null">
+				exception_monitor_status,
+			</if>
+			create_time,
+			update_time
+		</trim>
+		<trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+			<if test="userId != null and userId != ''">
+				#{userId},
+			</if>
+			<if test="deviceToken != null and deviceToken != ''">
+				#{deviceToken},
+			</if>
+			<if test="exceptionMonitorStatus != null">
+				#{exceptionMonitorStatus},
+			</if>
+			NOW(),
+			NOW()
+		</trim>
+	</insert>
+</mapper>

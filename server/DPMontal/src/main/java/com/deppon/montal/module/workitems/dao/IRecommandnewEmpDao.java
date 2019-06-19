@@ -1,0 +1,16 @@
+
+    package com.deppon.montal.module.workitems.dao; 
+
+import com.deppon.montal.model.RecommandNewEMP;
+   /** 
+ * @Title: IRecommandnewEmpDao.java
+ * @Package com.deppon.montal.module.workitems.dao 
+ * @Description: TODO(添加描述) 
+ * @author 何玲菠 
+ * @date 2013-5-13 下午2:42:08 
+ * @version V1.0 
+ */
+public interface IRecommandnewEmpDao {
+	public RecommandNewEMP getRecommandNewEmp(String pid);
+}
+

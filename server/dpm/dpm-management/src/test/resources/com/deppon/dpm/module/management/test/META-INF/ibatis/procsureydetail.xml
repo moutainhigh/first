@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procsureydetail">
+	<select id="getProcDeatils"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcSurveyMsg">
+
+		SELECT c.id,c.partCode,c.partName,
+		c.proCode,c.proName,c.explainCode,
+		c.explainName,c.lineId,
+		c.orderId,d.arrayCode,
+		d.arrayName
+		FROM(
+		SELECT a.id ,a.part_code AS
+		partCode,
+		a.part_name as partName,
+		a.pro_code as proCode,a.pro_name as
+		proName,
+		a.explain_code as explainCode,
+		a.explain_name as
+		explainName,a.line_id as lineId,
+		a.order_id as orderId
+		FROM
+		proc_survey_msg a
+		WHERE a.part_code=#{partCode}
+
+		)c,
+		(SELECT
+		GROUP_CONCAT(DISTINCT b.pro_code ) as arrayCode,
+		GROUP_CONCAT(DISTINCT
+		b.pro_name ) as arrayName,
+		b.part_code
+		FROM
+		proc_survey_msg b WHERE
+		b.part_code=#{partCode} )d
+		WHERE c.partCode =
+		d.part_code
+
+
+
+
+
+	</select>
+
+
+	<select id="countDetail" resultType="java.lang.Integer">
+		  <![CDATA[ 
+		  SELECT COUNT(*)
+           FROM(
+              SELECT id FROM proc_survey_msg GROUP BY pro_code
+              )a
+			 
+		 ]]>
+	</select>
+
+
+
+	<select id="getListId" resultType="String">
+		  <![CDATA[ 
+		  SELECT DISTINCT(a.msg_id) as msgId
+		  FROM proc_survey_submit a ,proc_survey_photo b,proc_survey_msg c
+		  WHERE a.check_id = b.check_id 
+		  and a.msg_id = c.id 
+		  and c.part_code=#{partCode}
+		  and a.check_id=#{checkId}
+			 
+		 ]]>
+	</select>
+
+	<select id="lineIdList"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcSurveyMsg">
+		  <![CDATA[ 
+		SELECT DISTINCT b.line_id as lineId, 
+		b.pro_code as proCode
+        FROM proc_survey_msg b 
+        WHERE b.part_code=#{partCode}
+        and b.pro_code= #{proCode};
+			 
+		 ]]>
+	</select>
+
+	<!-- 得到已勘测的综合数据 -->
+
+	<select id="getPhotoDetail"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcSurveyPhoto">
+  <![CDATA[ 
+  
+  SELECT  
+      p.id, p.check_id as checkId,
+       p.note,p.mark,
+       p.photo1,p.photo2,
+       p.photo3,p.photo4,
+      p.photo5
+      FROM proc_survey_photo p,(
+      SELECT MAX(id) as id FROM proc_survey_photo c
+      WHERE c.check_id = #{checkId}
+        ) b
+        WHERE p.check_id = #{checkId}
+      AND p.id = b.id;
+
+
+
+               ]]>
+
+
+	</select>
+
+</mapper>

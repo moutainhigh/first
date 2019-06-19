@@ -1,0 +1,29 @@
+<ion-view view-title='登录界面'> <ion-content class='wechatLogin'>
+<div id="content">
+	<div id="loginform" action='' method='post'>
+		<!-- <h1 style="text-align:center; font-size:30px;">后台管理系统</h1> -->
+		<div id="login" class="login-box">
+			<div class="login-by-id">
+				<p class="login-username">
+					<i></i> <input id="UserName" class="inp-login inp-username"
+						type="text" ng-model="userInfo.userName" placeholder="用户名"
+						aria-label="用户名"></input>
+				</p>
+
+				<p class="login-password">
+					<i></i> <input id="Password" class="inp-login inp-password"
+						type="password" ng-model="userInfo.password" placeholder="密码"
+						aria-label="密码" autocomplete="off"></input>
+				</p>
+			</div>
+		</div>
+		<div class="login-sub">
+			<p id="loginSub1">
+				<input type="submit" name="submit" value="登录"
+					class="sub-default sub" ng-click="loginAction()" />
+			</p>
+		</div>
+	</div>
+</div>
+</ion-content> </ion-view>
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procCheckStandard" >
+   
+    <resultMap type="com.deppon.dpm.module.management.shared.domain.StandardTableEntity"
+		id="baseMap">
+		<result property="id" column="id" />
+		<result property="navCode" column="navCode" />
+		<result property="navName" column="navName" />
+		<result property="origItemCode" column="origItemCode" />
+		<result property="origItemName" column="origItemName" />
+		<result property="standardName" column="standardName" />
+		<result property="score" column="score" />
+		<result property="isKeyPro" column="isKeyPro" />
+		<result property="checkMethod" column="checkMethod" />
+		<result property="remark" column="remark" />
+	</resultMap> 
+	
+    <!-- 批量插入基础数据信息 -->
+	<insert id="insertTable" parameterType="java.util.List" useGeneratedKeys="true">
+	    INSERT INTO proc_check_standardinfo (navCode,navName,origItemCode,origItemName,standardName,
+	    score,isKeyPro,checkMethod,remark,updateTime,isDel) VALUES
+			<foreach collection="list"  item="item" index="index" separator="," >
+			(
+				#{item.navCode},#{item.navName},#{item.origItemCode},
+				#{item.origItemName},#{item.standardName},#{item.score},
+				#{item.isKeyPro},#{item.checkMethod},
+				#{item.remark},now(),0
+			)
+			</foreach>
+	</insert> 
+	
+	<insert id="insertOneTable" parameterType="com.deppon.dpm.module.management.shared.domain.StandardTableEntity">
+		INSERT INTO proc_check_standardinfo (navCode,navName,origItemCode,origItemName,standardName,
+	    score,isKeyPro,checkMethod,remark,updateTime,isDel) VALUES
+	    (
+	    	#{item.navCode},
+	    	#{item.navName},
+	    	#{item.origItemCode},
+	    	#{item.origItemName},
+	    	#{item.standardName},
+	    	#{item.score},
+	    	#{item.isKeyPro},
+	    	#{item.checkMethod},
+	    	#{item.remark},
+	    	now(),0
+	    )
+	</insert>
+	
+	<!-- 修改验收明细基础信息-->
+	<update id="updateTable"  parameterType="java.util.List">
+		  
+			<foreach collection="list"  item="item" index="index" open="" close="" separator=";" >
+			UPDATE proc_check_standardinfo 
+					set 
+			    		navCode=#{item.navCode},navName=#{item.navName},origItemName=#{item.origItemName},
+			     		standardName=#{item.standardName},score=#{item.score},isKeyPro=#{item.isKeyPro},
+			     		checkMethod=#{item.checkMethod},updateTime=now(),isDel=0 
+			     	where origItemCode=#{item.origItemCode}
+	     	</foreach>
+	</update>
+	
+	<!-- 查询验收明细基础信息是否存在 -->
+	<select id="hasStandardCheck"  parameterType="java.lang.String" resultType="java.lang.Integer">
+	    select count(ID) from  proc_check_standardinfo where origItemCode=#{origItemCode,jdbcType=VARCHAR} and isDel=0
+	</select>
+	
+	<!-- 删除验收明细基础信息 -->
+	<delete id="deleteStandardInfo" parameterType="java.util.List">
+		<foreach collection="list"  item="item" index="index" separator="," >
+		    update proc_check_standardinfo 
+		    	set isDel=1
+		    where origItemCode=#{item.origItemCode,jdbcType=VARCHAR}
+	    </foreach>
+	</delete>
+	
+	<select id="getList" resultType="com.deppon.dpm.module.management.shared.domain.StandardTableEntity">
+		select * from proc_check_standardinfo where isDel=0
+	</select>
+	
+	<select id="getListByNavCode" parameterType="java.lang.String" resultType="com.deppon.dpm.module.management.shared.domain.StandardTableEntity">
+		select * from proc_check_standardinfo where navCode=#{navCode} isDel=0
+	</select>
+	
+</mapper>

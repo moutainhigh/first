@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.dpm.doc.server.dao.impl.DidiTicketDao">
+
+	<resultMap id="didiTicketResult" type="com.deppon.dpm.doc.server.entity.DidiTicketEntity">
+		<result column="ID" property="id" />
+		<result column="ORDER_ID" property="orderId" />
+		<result column="TICKET" property="ticket" />
+		<result column="USERID" property="userid" />
+		<result column="USERNAME" property="username" />
+		<result column="USERTEL" property="usertel" />
+		<result column="DEPT" property="dept" />
+		<result column="FINANCEDEPT" property="financedept" />
+		<result column="FLAG" property="flag" />
+		<result column="DEF1" property="def1" />
+		<result column="DEF2" property="def2" />
+		<result column="DEF3" property="def3" />
+		<result column="DEF4" property="def4" />
+		<result column="DEF5" property="def5" />
+		<result column="REMARK" property="remark" />
+		<result column="REMARKINFO" property="remarkinfo" />
+		<result column="COMPANY" property="company" />
+		<result column="CUSTOMNAME" property="customname" />
+		<result column="BANKCARDNUM" property="bankcardnum" />
+		<result column="CUSTOMTEL" property="customtel" />
+		<result column="CUSTOMCODE" property="customcode" />
+		<result column="MEETINGNAME" property="meetingname" />
+		<result column="FROMMANAGERNAME" property="frommanagername" />
+		<result column="TOMANAGERNAME" property="tomanagername" />
+		<result column="TOMANAGERCODE" property="tomanagercode" />
+		<result column="FROMMANAGERCODE" property="frommanagercode" />
+		<result column="AUDITORCODE" property="auditorcode" />
+		<result column="AUDITORNAME" property="auditorname" />
+		<result column="USERHEADPIC" property="userheadpic" />
+		<result column="DEPARTURETIME" property="departuretime" />
+		<result column="DEPARTURETIME" property="departuretime" />
+		<result column="JOBLEVEL" property="joblevel" />
+		<result column="NEWMEETINGNAME" property="newmeetingname" />
+		<result column="NEWMEETINGSTART" property="newmeetingstart" />
+		<result column="NEWMEETINGEND" property="newmeetingend" />
+		<result column="REFUNDPRICE" property="refundprice" />
+		<result column="REFUNDAMOUNT" property="refundamount" />
+		<result column="PHONE" property="phone" />
+		<result column="TRAVELWORKFLOWNO" property="travelWorkflowNo" />
+		<result column="REMOTEADDR" property="remoteAddr" />
+		<result column="CREATETIME" property="createTime" />
+	</resultMap>
+	
+	<!--表名-->
+	<sql id="table_name">
+		DIDI_TICKET
+	</sql>
+	
+	<sql id="columns">
+		ID, ORDER_ID,TICKET, USERID, USERNAME, USERTEL, DEPT, FINANCEDEPT, FLAG, DEF1, DEF2, DEF3, DEF4, DEF5,REMARK,REMARKINFO,COMPANY,CUSTOMNAME,BANKCARDNUM,CUSTOMTEL,CUSTOMCODE
+		,MEETINGNAME,FROMMANAGERNAME,TOMANAGERNAME,TOMANAGERCODE,FROMMANAGERCODE,AUDITORCODE,AUDITORNAME,USERHEADPIC,DEPARTURETIME,JOBLEVEL,NEWMEETINGNAME
+		,NEWMEETINGSTART,NEWMEETINGEND,REFUNDPRICE,REFUNDAMOUNT,PHONE,TRAVELWORKFLOWNO,REMOTEADDR,CREATETIME
+	</sql>
+
+	<sql id="didiTicket_conditon">
+		<if test="id != null"> and ID = #{id}</if>
+		<if test="orderId != null and orderId != '' "> and ORDER_ID = #{orderId, jdbcType=VARCHAR}</if>
+		<if test="userid != null and userid != '' "> and USERID = #{userid, jdbcType=VARCHAR}</if>
+		<if test="ticket != null and ticket != '' "> and TICKET = #{ticket, jdbcType=VARCHAR}</if>
+		<if test="username != null and username != '' "> and USERNAME = #{username, jdbcType=VARCHAR}</if>
+		<if test="usertel != null and usertel != '' "> and USERTEL = #{usertel, jdbcType=VARCHAR}</if>
+		<if test="dept != null and dept != '' "> and DEPT = #{dept, jdbcType=VARCHAR}</if>
+		<if test="financedept != null and financedept != '' "> and FINANCEDEPT = #{financedept, jdbcType=VARCHAR}</if>
+		<if test="flag != null"> and FLAG = #{flag}</if>
+		<if test="def1 != null and def1 != '' "> and DEF1 = #{def1, jdbcType=VARCHAR}</if>
+		<if test="def2 != null and def2 != '' "> and DEF2 = #{def2, jdbcType=VARCHAR}</if>
+		<if test="def3 != null and def3 != '' "> and DEF3 = #{def3, jdbcType=VARCHAR}</if>
+		<if test="def4 != null and def4 != '' "> and DEF4 = #{def4, jdbcType=VARCHAR}</if>
+		<if test="def5 != null and def5 != '' "> and DEF5 = #{def5, jdbcType=VARCHAR}</if>
+		<if test="remark != null and remark != '' "> and REMARK = #{remark, jdbcType=VARCHAR}</if>
+		<if test="remarkinfo != null and remarkinfo != '' "> and REMARKINFO = #{remarkinfo, jdbcType=VARCHAR}</if>
+		<if test="company != null and company != '' "> and COMPANY = #{company, jdbcType=VARCHAR}</if>
+	</sql>
+	
+	<sql id="didiTicket_update_conditon">
+		<if test="orderId != null and orderId != '' "> ORDER_ID = #{orderId, jdbcType=VARCHAR}</if>
+		<if test="ticket != null and ticket != '' "> ,TICKET = #{ticket, jdbcType=VARCHAR}</if>
+		<if test="userid != null and userid != '' "> ,USERID = #{userid, jdbcType=VARCHAR}</if>
+		<if test="username != null and username != '' "> ,USERNAME = #{username, jdbcType=VARCHAR}</if>
+		<if test="usertel != null and usertel != '' "> ,USERTEL = #{usertel, jdbcType=VARCHAR}</if>
+		<if test="dept != null and dept != '' "> ,DEPT = #{dept, jdbcType=VARCHAR}</if>
+		<if test="financedept != null and financedept != '' "> ,FINANCEDEPT = #{financedept, jdbcType=VARCHAR}</if>
+		<if test="flag != null"> ,FLAG = #{flag}</if>
+		<if test="def1 != null and def1 != '' "> ,DEF1 = #{def1, jdbcType=VARCHAR}</if>
+		<if test="def2 != null and def2 != '' "> ,DEF2 = #{def2, jdbcType=VARCHAR}</if>
+		<if test="def3 != null and def3 != '' "> ,DEF3 = #{def3, jdbcType=VARCHAR}</if>
+		<if test="def4 != null and def4 != '' "> ,DEF4 = #{def4, jdbcType=VARCHAR}</if>
+		<if test="def5 != null and def5 != '' "> ,DEF5 = #{def5, jdbcType=VARCHAR}</if>
+		<if test="remark != null and remark != '' "> ,REMARK = #{remark, jdbcType=VARCHAR}</if>
+		<if test="remarkinfo != null and remarkinfo != '' "> ,REMARKINFO = #{remarkinfo, jdbcType=VARCHAR}</if>
+		<if test="company != null and company != '' "> ,COMPANY = #{company, jdbcType=VARCHAR}</if>
+	</sql>
+
+	<sql id="didiTicket_default_order">
+		order by ID
+	</sql>
+	
+	<!--插入数据-->
+	<insert id="insertDidiTicket" parameterType="com.deppon.dpm.doc.server.entity.DidiTicketEntity">
+		insert into <include refid="table_name" /> ( <include refid="columns" /> )
+		values(#{id, jdbcType=VARCHAR}, #{orderId, jdbcType=VARCHAR},#{ticket, jdbcType=VARCHAR}, #{userid, jdbcType=VARCHAR}, #{username, jdbcType=VARCHAR}, #{usertel, jdbcType=VARCHAR}, #{dept, jdbcType=VARCHAR}, #{financedept, jdbcType=VARCHAR}, #{flag, jdbcType=VARCHAR}, #{def1, jdbcType=VARCHAR}, #{def2, jdbcType=VARCHAR}, #{def3, jdbcType=VARCHAR}, #{def4, jdbcType=VARCHAR}, #{def5, jdbcType=VARCHAR}, #{remark, jdbcType=VARCHAR}, #{remarkinfo, jdbcType=VARCHAR}, 
+		#{company, jdbcType=VARCHAR},
+		#{customname, jdbcType=VARCHAR},
+		 #{bankcardnum, jdbcType=VARCHAR},
+		 #{customtel, jdbcType=VARCHAR},
+		 #{customcode, jdbcType=VARCHAR},
+		 #{meetingname, jdbcType=VARCHAR},
+		 #{frommanagername, jdbcType=VARCHAR},
+		 #{tomanagername, jdbcType=VARCHAR},
+		 #{tomanagercode, jdbcType=VARCHAR},
+		 #{frommanagercode, jdbcType=VARCHAR},
+		 #{auditorcode, jdbcType=VARCHAR},
+		 #{auditorname, jdbcType=VARCHAR},
+		 #{userheadpic, jdbcType=VARCHAR},
+		 #{departuretime, jdbcType=VARCHAR},
+	     #{joblevel, jdbcType=VARCHAR},
+	     #{newmeetingname, jdbcType=VARCHAR},
+		 #{newmeetingstart, jdbcType=VARCHAR},
+		 #{newmeetingend, jdbcType=VARCHAR},
+		 #{refundprice, jdbcType=VARCHAR},
+		 #{refundamount, jdbcType=VARCHAR},
+		 #{phone, jdbcType=VARCHAR},
+		 #{travelWorkflowNo, jdbcType=VARCHAR},	
+		 #{remoteAddr, jdbcType=VARCHAR},
+		 NOW()
+		)
+	</insert>
+	
+	<!-- 更新记录 -->
+	<update id="updateDidiTicket" parameterType="com.deppon.dpm.doc.server.entity.DidiTicketEntity">
+		update <include refid="table_name" />
+		set 
+		<include refid="didiTicket_update_conditon" />
+		where ID=#{id}
+	</update>
+	
+	
+	<!-- 根据主键查找 -->
+	<select id="getDidiTicket" parameterType="java.util.Map" resultMap="didiTicketResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where ID=#{id} 
+	</select>
+	
+	<!-- 查找符合条件的记录 -->
+	<select id="listDidiTicket" parameterType="com.deppon.dpm.doc.server.entity.DidiTicketEntity" resultMap="didiTicketResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 1=1
+		<include refid="didiTicket_conditon" />
+	</select>
+	
+
+	<!-- 满足条件的记录数 -->
+	<select id="countDidiTicket" parameterType="java.util.Map" resultType="long">
+		select count(*) from <include refid="table_name" /> where 1=1
+		<include refid="didiTicket_conditon" />
+	</select>
+	
+	<!-- 分页查找记录 -->
+	<select id="pageDidiTicket" parameterType="java.util.Map" resultMap="didiTicketResult">
+		select * from <include refid="table_name" /> where 1=1
+		<include refid="didiTicket_conditon" />
+		<include refid="didiTicket_default_order" /> LIMIT  <![CDATA[${rowBegin}]]>,<![CDATA[ ${limit} ]]>
+	</select>
+	
+	<!-- 根据标识筛选不存在的订单  -->
+	<select id="listEntityByFlag" parameterType="com.deppon.dpm.doc.server.entity.DidiTicketEntity" resultMap="didiTicketResult">
+		select * from <include refid="table_name" /> where 1=1
+		and USERID = #{userId, jdbcType=VARCHAR} and FLAG = 0 
+	</select>
+	
+	<!-- 按主键删除记录 -->
+	<delete id="deleteDidiTicket" parameterType="java.lang.String">
+		delete from <include refid="table_name" /> where ID=#{id}
+	</delete>
+	
+	<!-- 动态插入数据 -->
+	<insert id="insertDidiTicketSo" parameterType="com.deppon.dpm.doc.server.entity.DidiTicketEntity">
+		insert into <include refid="table_name" /> 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">ID,</if>
+			<if test="orderId != null and orderId != '' ">ORDER_ID,</if>
+			<if test="ticket != null and ticket != '' ">TICKET,</if>
+			<if test="userid != null and userid != '' ">USERID,</if>
+			<if test="username != null and username != '' ">USERNAME,</if>
+			<if test="usertel != null and usertel != '' ">USERTEL,</if>
+			<if test="dept != null and dept != '' ">DEPT,</if>
+			<if test="financedept != null and financedept != '' ">FINANCEDEPT,</if>
+			<if test="flag != null">FLAG,</if>
+			<if test="def1 != null and def1 != '' ">DEF1,</if>
+			<if test="def2 != null and def2 != '' ">DEF2,</if>
+			<if test="def3 != null and def3 != '' ">DEF3,</if>
+			<if test="def4 != null and def4 != '' ">DEF4,</if>
+			<if test="def5 != null and def5 != '' ">DEF5,</if>
+			<if test="remark != null and remark != '' ">REMARK,</if>
+			<if test="remarkinfo != null and remarkinfo != '' ">REMARKINFO,</if>
+			<if test="company != null and company != '' ">COMPANY,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">#{id},</if>
+			<if test="orderId != null and orderId != '' ">#{orderId, jdbcType=VARCHAR},</if>
+			<if test="ticket != null and ticket != '' ">#{ticket, jdbcType=VARCHAR},</if>
+			<if test="userid != null and userid != '' ">#{userid, jdbcType=VARCHAR},</if>
+			<if test="username != null and username != '' ">#{username, jdbcType=VARCHAR},</if>
+			<if test="usertel != null and usertel != '' ">#{usertel, jdbcType=VARCHAR},</if>
+			<if test="dept != null and dept != '' ">#{dept, jdbcType=VARCHAR},</if>
+			<if test="financedept != null and financedept != '' ">#{financedept, jdbcType=VARCHAR},</if>
+			<if test="flag != null">#{flag},</if>
+			<if test="def1 != null and def1 != '' ">#{def1, jdbcType=VARCHAR},</if>
+			<if test="def2 != null and def2 != '' ">#{def2, jdbcType=VARCHAR},</if>
+			<if test="def3 != null and def3 != '' ">#{def3, jdbcType=VARCHAR},</if>
+			<if test="def4 != null and def4 != '' ">#{def4, jdbcType=VARCHAR},</if>
+			<if test="def5 != null and def5 != '' ">#{def5, jdbcType=VARCHAR},</if>
+			<if test="remark != null and remark != '' ">#{remark, jdbcType=VARCHAR},</if>
+			<if test="remarkinfo != null and remarkinfo != '' ">#{remarkinfo, jdbcType=VARCHAR},</if>
+			<if test="company != null and company != '' ">#{company, jdbcType=VARCHAR},</if>
+		</trim>	
+	</insert>
+</mapper>

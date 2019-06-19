@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html ng-app="loginApp">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+
+<link href="../css/login.css"  rel="stylesheet" type="text/css"> </link>
+<script type="text/javascript" src="../lib/angular/angular.min.js"></script>
+<script type="text/javascript" src="../js/loginController.js"></script>
+</head>
+<body ng-controller="loginCtl">
+<h1>意见反馈登录入口</h1>
+
+<form id="loginform" action='' method='post'>
+      <div id="login" class="login-box" style="display:block;">
+       <div class="login-by-id">  
+        <p class="login-username">
+        <i></i>
+        <input id="UserName" class="inp-login inp-username" type="text" ng-model="userName" placeholder="用户名" aria-label="用户名"></input>
+        </p>
+        
+        <p class="login-password">
+        <i></i>
+        <input id="Password" class="inp-login inp-password" type="password" ng-model="password" placeholder="密码" aria-label="密码" autocomplete="off"></input>
+        </p>
+        </div>
+      </div>
+        <div class="login-sub">
+           <p id="loginSub1"><input type="submit" name="submit" value="登 录"   class="sub-default sub" ng-click="loginAction()" /></p>
+        </div>
+  </form>
+</body>
+</html>

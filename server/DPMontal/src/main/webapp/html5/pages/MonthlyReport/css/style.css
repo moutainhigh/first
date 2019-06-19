@@ -1,0 +1,144 @@
+/* Empty. Add your own CSS if you like */
+ion-nav-view {
+	background-color: #ffffff;
+}
+
+/*标题栏按钮文字靠上*/
+.bar .button.button-icon {
+	font-size: 18px;
+}
+
+.first-page,.first-page:before {
+	font-weight: 600;
+}
+/*已读、未读 颜色*/
+.unread{
+	color:#000 ! important ;
+}
+.read{
+	color:#666 ! important ;
+	
+}
+/*
+.item-thumbnail-left, .item-thumbnail-left .item-content {
+padding-left: 130px;
+max-height: 80px;
+}
+.item-thumbnail-left .item-content .item-image, .item-thumbnail-left .item-content>img:first-child, .item-thumbnail-left .item-image, .item-thumbnail-left>img:first-child {
+position: absolute;
+top: 10px;
+left: 10px;
+max-width: 116px;
+min-height: 59px;
+max-height: 59px;
+width: 100%;
+}
+.news-image{
+	width:116px;
+	height:59px;
+	padding:6px 0 3px 0;
+}*/
+.news-image {
+	width: 100%;
+	height: 60%;
+	padding: 6px 0 3px 0;
+}
+.col50 {
+	width: 50%;
+	float: left;
+}
+.center{
+	  text-align: center;
+}
+
+.depponback{
+	color:#157DFB ! important ;
+}
+.news-image2 {
+	width: 90%;
+	height: 100%;
+	padding: 0px 0 3px 0;
+}
+
+a {
+	text-decoration: none;
+	color: #000;
+	margin: 0 auto;
+}
+
+.inner {
+	font-size: 28px;
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+.newsImage .scroll {
+    height: 100%;
+}
+.box2 {
+	background-image:
+		url(http://oa.deppon.com/dipApp/informationCenter/e_journals/images/hd.gif);
+	width: 90%;
+	height: 90%;
+	margin-top: 0px;
+	background-repeat: no-repeat;
+}
+.item-thumbnail-left, .item-thumbnail-left .item-content {
+	padding-left: 126px;
+	min-height:100px;
+}
+.div-row {
+	padding: 0px;
+}
+
+.div-left {
+	width: 30%;
+}
+
+.div-right {
+	width: 70%;
+}
+
+.div-right .item {
+	margin-left: 0px;
+	border-color: #ccc;
+	background-color: #D9D9D9;
+}
+
+.div-right .item.activated {
+	background-color: #ccc !important;
+}
+
+.silde-qikan img {
+	box-shadow: 10px 10px 5px #888888;
+	border: 1px #ccc solid;
+}
+
+.div-layout {
+	float: right;
+}
+.inner2 {
+	text-align: center;
+}
+.text-span p {
+	font-size: 12px;
+	color: #000;
+	font-weight: normal;
+}
+.bar .title {
+position: absolute;
+top: 0;
+right: 0;
+left: 0;
+z-index: 0;
+overflow: hidden;
+margin: 0 10px;
+min-width: 30px;
+height: 43px;
+text-align: center;
+text-overflow: ellipsis;
+white-space: nowrap;
+font-size: 19px;
+font-weight:bold;
+line-height: 44px;
+}

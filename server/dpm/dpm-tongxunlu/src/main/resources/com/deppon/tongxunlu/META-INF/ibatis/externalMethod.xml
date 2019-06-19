@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.tongxunlu.server.dao.impl.ExternalMethodDao" >
+ 
+    <resultMap id="empVo" type="com.deppon.dpm.tongxunlu.shared.vo.EmployeeVO">
+		<!-- 有依赖其它模块的mapper的时候，可以通过如下方法进行mapper的引用 -->
+		<result property="empId" column="empId" jdbcType="NUMERIC" />
+		<result property="empCode" column="empCode" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="empName" column="empName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="mobileNo" column="mobileNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="gender" column="gender" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="inDate" column="inDate" javaType="Date"
+			jdbcType="DATE"/>
+		<result property="updateTime" column="updateTime" javaType="Date"
+			jdbcType="DATE"/>
+		<result property="birthDate" column="birthDate" javaType="Date"
+			jdbcType="DATE" />
+		<result property="empStatus" column="empStatus" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardNo" column="cardNo" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="cardType" column="cardType" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="email" column="pEmail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobGroups" column="jobGroups" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobName" column="jobName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobLevel" column="jobLevel" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobDuty" column="jobDuty" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="jobSequence" column="jobSequence" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgId" column="orgId" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="tel" column="TEL" javaType="String" jdbcType="VARCHAR" />
+		<result property="emailUserName" column="oemail" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="emailPassword" column="email_password"
+			javaType="String" jdbcType="VARCHAR" />
+		<result property="address" column="address" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="callFrequency" column="callFrequency"
+			javaType="Integer" jdbcType="INTEGER" />
+		<result property="parentOrgId" column="parentOrgId" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="orgName" column="orgName" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deptSeq" column="DEPTSEQ" javaType="String"
+		jdbcType="VARCHAR" />
+		<result property="headPhoto" column="pictPath" javaType="String"
+		jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="deptEntity" type="com.deppon.dpm.tongxunlu.shared.domain.MyConsumptionRequestEntity">
+		<result property="deptName" column="orgname" javaType="String" jdbcType="VARCHAR" />
+		<result property="deptId" column="orgid" javaType="String" jdbcType="VARCHAR" />
+		<result property="empName" column="empName" javaType="String" jdbcType="VARCHAR" />
+		<result property="empNo" column="empcode" javaType="String" jdbcType="VARCHAR" />
+		<result property="jobGroups" column="jobgroups" javaType="String" jdbcType="VARCHAR" />
+		<result property="pictPath" column="pictPath" javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="orgVo" type="com.deppon.dpm.tongxunlu.shared.vo.OrganizationVO">
+		<result property="orgId" column="orgId" javaType="Integer" jdbcType="INTEGER" />
+		<result property="orgName" column="orgName" javaType="String" jdbcType="VARCHAR" />
+		<result property="orgCode" column="orgCode" javaType="String" jdbcType="VARCHAR" />
+		<result property="deptSeq" column="deptSeq" javaType="String" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<!-- 根据工号查询员工信息 -->
+	<select id="getEmpInfo" parameterType="String" resultMap="empVo">
+	   SELECT * FROM om_employee WHERE EMPCODE = #{empCode} AND empstatus = 'on'
+	</select>
+	
+	<!-- 根据工号获取部门信息 -->
+	<select id="getDeptByEmpcode" parameterType="string" resultMap="orgVo">
+	   SELECT * FROM om_organization 
+	   WHERE orgid = 
+	   (SELECT orgid FROM om_employee WHERE EMPCODE = #{empCode} AND empstatus = 'on')
+	   limit 1
+	</select>
+	
+	<!-- 根据部门id查询部门领导 -->
+	<select id="getLeaderInfo" parameterType="String" resultMap="empVo">
+		SELECT oe.empcode,oe.empname,oe.joblevel,ep.pictPath pictPath , oe.OEMAIL 
+		  FROM om_employee oe
+		  INNER JOIN om_organization oo ON oe.EMPCODE = oo.managerId
+		  LEFT JOIN emp_pic ep on oe.EMPCODE=ep.empCode
+		  WHERE oo.orgid = #{orgid} AND oe.jobgroups = '管理族群' AND oe.empstatus = 'on' AND oe.jobname not like '%储备%'
+		  ORDER BY JOBLEVEL DESC
+	</select>
+
+	<!-- 根据部门id查询部门领导 -->
+	<select id="getALLLeaderInfo" parameterType="java.util.List" resultMap="empVo">
+		SELECT oe.empcode,oe.empname,oe.orgid,oe.joblevel,ep.pictPath pictPath
+		FROM om_employee oe
+		INNER JOIN om_organization oo ON oe.orgid = oo.orgid
+		LEFT JOIN emp_pic ep on oe.EMPCODE=ep.empCode
+		WHERE oe.orgid in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+		(
+		#{item}
+		)
+	   </foreach>
+		AND oe.jobgroups = '管理族群' AND oe.empstatus = 'on' AND oe.jobname not like '%储备%'
+		ORDER BY JOBLEVEL DESC
+	</select>
+	
+	<!-- 判断员工所在部门是否有高于他等级的管理层 -->
+	<select id="getUpperManager" parameterType="map" resultMap="empVo">
+	   SELECT * FROM om_employee 
+	   WHERE ORGID = #{orgid}
+	   AND JOBLEVEL > #{joblevel} 
+	   AND EMPSTATUS = 'on'
+	   AND JOBGROUPS = '管理族群'
+	</select>
+	
+	<!-- 根据部门id查询上级部门关系序列 -->
+	<select id="getUpperOrg" parameterType="String" resultType="String">
+	   SELECT parentorgid FROM om_organization 
+	   WHERE orgid = #{orgid}
+	</select>
+	
+	<!-- 根据工号或姓名搜索员工 -->
+	<select id="getEmpInfolist" parameterType="String" resultMap="empVo">
+	   SELECT emp.empcode,emp.empname,emp.JOBLEVEL,emp.jobgroups,org.orgid,org.orgname,pic.pictPath
+	   FROM om_employee emp
+       INNER JOIN om_organization org ON org.orgid = emp.orgid
+       LEFT JOIN emp_pic pic on emp.empcode = pic.empCode
+       WHERE emp.empstatus='on' 
+       AND 
+       emp.empcode = #{employee} OR emp.empname = #{employee}
+       GROUP BY emp.empcode
+       ORDER BY pic.lastUpdateTime DESC
+	</select>
+	
+	<!-- 根据工号获取工号，姓名，部门id，部门名 -->
+	<select id="getDept" parameterType="String" resultMap="deptEntity">
+	  SELECT oe.EMPCODE ,oe.empname ,oe.JOBGROUPS ,oo.ORGID ,oo.ORGNAME ,ep.pictPath pictPath
+	  FROM om_employee oe
+	  INNER JOIN om_organization oo ON oe.ORGID = oo.ORGID
+	  LEFT  JOIN  emp_pic  ep on oe.EMPCODE =ep.empCode
+      WHERE oe.EMPCODE = #{empNo} limit 0,1 
+	</select>
+	
+	<!-- 根据组织id查询所有子组织信息 -->
+	<select id="getChildOrgs" parameterType="string" resultMap="deptEntity">
+	  SELECT t.orgid,t.orgname
+      FROM om_organization t
+      WHERE t.PARENTORGID = #{orgid}
+	</select>
+	
+	<!-- 查询一个大部门下的所有大小部门 -->
+	<select id="getAllChilddept" parameterType="string" resultMap="deptEntity">
+	  SELECT orgid, orgname
+	  FROM
+	  om_organization
+	  WHERE
+	  deptseq LIKE '%.${_parameter}.%'
+	</select>
+	
+	<!-- 查询相同部门的人的工号姓名 -->
+	<select id="getSameLevelEmp" parameterType="map" resultMap="deptEntity"> 
+	   SELECT oe.EMPCODE ,oe.empname, ep.pictPath   
+	   FROM om_employee oe
+	   LEFT JOIN emp_pic ep on oe.EMPCODE=ep.empCode
+	   WHERE oe.ORGID = #{orgid} 
+	   AND oe.EMPSTATUS = 'on'
+	   AND oe.EMPCODE != #{empNo}
+	</select>
+	
+	<!-- 根据组织id递归查询所有子组织信息 然后部门人数相加${_parameter} and o.deptseq  LIKE '%.${_parameter}.%'  -->
+	<select id="getEmpNum" parameterType="string" resultType="java.lang.Integer">
+	 SELECT 
+        COUNT(1) 
+    FROM
+        om_employee t,
+        om_organization o
+    WHERE
+        t.orgid = o.orgid and t.EMPSTATUS = 'on' 
+        and o.deptseq like '${_parameter}%'
+
+        
+        
+	</select>
+	
+	<!-- 判断是否有相同联系方式 -->
+	<select id="getSameMobile" parameterType="string" resultType="java.lang.Integer">
+	   SELECT count(*) FROM om_employee 
+	   WHERE mobileno = #{mobileno} AND EMPSTATUS = 'on'
+	</select>
+	
+	<!-- 根据部门名获取部门id -->
+	<select id="getOrgnameById" parameterType="string" resultType="string">
+	   SELECT ORGID FROM om_organization WHERE orgname = #{orgname}
+	</select>
+	
+	<!-- 根据部门id获取部门序列 -->
+	<select id="getDeptseqById" parameterType="string" resultType="string">
+	   SELECT deptseq FROM om_organization 
+	   WHERE orgid = #{orgid}
+	   limit 1
+	</select>
+	<!-- 根据部门id获取上级部门信息 -->
+	<select id="getParentOrg" parameterType="java.util.List" resultMap="orgVo">
+	   SELECT orgid,orgname FROM om_organization
+	   WHERE orgid IN
+	   <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+		(
+		#{item}
+		)
+	   </foreach>
+	   ORDER BY ORGLEVEL 
+	</select>
+	
+	<!-- 根据手机号获取工号 -->
+	<select id="getEmpcodebyTel" resultType="String" parameterType="java.util.List">
+	   SELECT oe.empcode FROM om_employee oe
+	   WHERE oe.mobileno in 
+	   <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+	    (
+	    #{item} 
+	    )
+	    </foreach>
+	   AND oe.EMPSTATUS = 'on'
+	</select>
+
+</mapper>

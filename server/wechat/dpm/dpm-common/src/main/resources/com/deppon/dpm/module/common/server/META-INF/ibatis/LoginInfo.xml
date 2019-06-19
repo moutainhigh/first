@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.logininfo">
+	<resultMap id="smsEntityResult"
+		type="com.deppon.dpm.module.common.shared.domain.SmsEntity">
+		<result property="id" column="id"/>
+		<result property="userId" column="user_id" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="deviceToken" column="device_token" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="smsStatus" column="sms_status" javaType="String"
+			jdbcType="VARCHAR" />
+	</resultMap>
+	<insert id="insert"
+		parameterType="com.deppon.dpm.module.common.shared.domain.LoginInfoEntity">
+		INSERT INTO
+		LOGIN_INFORMATION(USER_ID,USER_CODE,LOGIN_TIME,LOGIN_TYPE,OS_TYPE,APP_VERSION)
+		values(NULL,#{userCode,jdbcType=VARCHAR}
+		,#{loginTime,jdbcType=TIMESTAMP},#{loginType,jdbcType=VARCHAR}
+		,#{osType,jdbcType=VARCHAR},#{appVersion,jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateStatusByIds" parameterType="list">
+		UPDATE emp_extension SET empStatus = 'off' WHERE id IN 
+			<foreach collection="list" open="(" close=")" separator="," item="id">
+				#{id}
+			</foreach>
+	</update>
+	<update id="updateLoginInfoById" parameterType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity">
+		UPDATE emp_extension SET
+			<if test="empStatus != null">
+				empStatus = #{empStatus},
+			</if>
+			<if test="updateTime != null">
+				updateTime = #{updateTime},
+			</if>
+			<if test="loginTime != null">
+				loginTime = #{loginTime},
+			</if>
+			<if test="osType != null">
+				osType = #{osType},
+			</if>
+			<if test="longitude != null">
+				longitude = #{longitude},
+			</if>
+			<if test="latitude != null">
+				latitude = #{latitude},
+			</if>
+			<if test="location != null">
+				location = #{location},
+			</if>
+			<if test="phoneMac != null">
+				phone_mac = #{phoneMac},
+			</if>
+			<if test="phoneModel != null">
+				phone_model = #{phoneModel},
+			</if>
+			<if test="osVersion != null">
+				os_version = #{osVersion},
+			</if>
+				app_version = #{appVersion}
+			 WHERE id = #{id}
+	</update>
+	
+	<select id="queryLoginInfoByEmpCode" parameterType="string" 
+		resultType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity">
+		select id,deviceToken from emp_extension where empCode =
+		#{empCode,jdbcType=VARCHAR}
+		AND empStatus = "on" order by updateTime DESC
+	</select>
+	
+	<select id="queryAllLoginInfoByEmpCode" parameterType="string" 
+		resultType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity">
+		select empCode,deviceToken,empStatus,loginTime,osType,phone_model phoneModel,os_version osVersion,phone_mac phoneMac,app_version appVersion from emp_extension where empCode =
+		#{empCode,jdbcType=VARCHAR}
+		order by loginTime DESC
+	</select>
+	
+	<select id="queryCountByEmpCode" parameterType="string" resultType="long">
+		select count(*) from emp_extension where empCode = #{empCode}
+	</select>
+
+	<insert id="addDeviceToken"
+		parameterType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity">
+		insert into emp_extension
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="empCode != null">
+				empCode,
+			</if>
+			<if test="deviceToken != null">
+				deviceToken,
+			</if>
+			<if test="empStatus != null">
+				empStatus,
+			</if>
+			<if test="updateTime != null">
+				updateTime,
+			</if>
+			<if test="osType != null">
+				osType,
+			</if>
+			<if test="longitude != null">
+				longitude,
+			</if>
+			<if test="latitude != null">
+				latitude,
+			</if>
+			<if test="location != null">
+				location,
+			</if>
+			<if test="phoneMac != null">
+				phone_mac,
+			</if>
+			<if test="phoneModel != null">
+				phone_model,
+			</if>
+			<if test="osVersion != null">
+				os_version,
+			</if>
+			<if test="appVersion != null">
+				app_version,
+			</if>
+				loginTime
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="empCode != null">
+				#{empCode,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceToken != null">
+				#{deviceToken,jdbcType=VARCHAR},
+			</if>
+			<if test="empStatus != null">
+				#{empStatus,jdbcType=VARCHAR},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime},
+			</if>
+			<if test="osType != null">
+				#{osType,jdbcType=VARCHAR},
+			</if>
+			<if test="longitude != null">
+				#{longitude,jdbcType=VARCHAR},
+			</if>
+			<if test="latitude != null">
+				#{latitude,jdbcType=VARCHAR},
+			</if>
+			<if test="location != null">
+				#{location,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneMac != null">
+				#{phoneMac,jdbcType=VARCHAR},
+			</if>
+			<if test="phoneModel != null">
+				#{phoneModel,jdbcType=VARCHAR},
+			</if>
+			<if test="osVersion != null">
+				#{osVersion,jdbcType=VARCHAR},
+			</if>
+			<if test="appVersion != null">
+				#{appVersion,jdbcType=VARCHAR},
+			</if>
+				#{loginTime}
+		</trim>
+	</insert>
+
+	<select id="queryDeviceNumByEmpCode" parameterType="string"
+		resultType="string">
+		select deviceToken from emp_extension where empCode =
+		#{empCode,jdbcType=VARCHAR}
+		AND empStatus = "on" order by updateTime DESC
+	</select>
+
+	<select id="queryMore"
+		parameterType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity"
+		resultType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity">
+		select empCode,deviceToken,empStatus,updateTime,location from
+		emp_extension
+		<where>
+			1=1
+			<if test="empCode != null">
+				AND empCode = #{empCode,jdbcType=VARCHAR}
+			</if>
+			<if test="deviceToken != null">
+				AND deviceToken = #{deviceToken,jdbcType=VARCHAR}
+			</if>
+		</where>
+		order by updateTime DESC limit 0,5
+	</select>
+
+	<update id="updateStatusByDeviceToken"
+		parameterType="com.deppon.dpm.module.common.shared.domain.EmpExtensionEntity">
+		update emp_extension set empStatus = #{empStatus,jdbcType=VARCHAR}
+		<where>
+			1=1
+			<if test="updateTime != null">
+				AND updateTime = #{updateTime}
+			</if>
+			<if test="empCode != null">
+				AND empCode = #{empCode,jdbcType=VARCHAR}
+			</if>
+			<if test="deviceToken != null">
+				AND deviceToken = #{deviceToken,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</update>
+
+	<insert id="saveUserIdAndDeviceToken" parameterType="map">
+		insert into om_sms_user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				user_id,
+			</if>
+			<if test="deviceToken != null">
+				device_token,
+			</if>
+			<choose>
+				<when test="smsStatus != null and smsStatus != ''">
+					sms_status
+				</when>
+				<otherwise>
+					sms_status
+				</otherwise>
+			</choose>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceToken != null">
+				#{deviceToken,jdbcType=VARCHAR},
+			</if>
+			<choose>
+				<when test="smsStatus != null and smsStatus != ''">
+					#{smsStatus,jdbcType=VARCHAR}
+				</when>
+				<otherwise>
+					"on"
+				</otherwise>
+			</choose>
+		</trim>
+	</insert>
+
+	<update id="updateUserIdAndDeviceToken" parameterType="map">
+		update om_sms_user
+		<set>
+			<if test="deviceToken != null and deviceToken != ''">
+				device_token = #{deviceToken,jdbcType=VARCHAR},
+			</if>
+			<if test="smsStatus != null and smsStatus != ''">
+				sms_status = #{smsStatus,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where id in
+		<foreach collection="smsList" item="smsEntity" open="(" separator="," close=")">
+			#{smsEntity.id}
+		</foreach>
+	</update>
+
+	<!-- <delete id="deleteUserAndToken" parameterType="string"> delete from 
+		om_sms_user where user_id =#{userId} </delete> -->
+
+	<select id="querySmsStatus" parameterType="string" resultType="string">
+		select sms_status from om_sms_user where user_id = #{userId} limit 0,1
+	</select>
+	<select id="existUserIdAndToken" parameterType="map" resultType="int">
+		select count(1) from om_sms_user where user_id = #{userId} and
+		device_token =#{deviceToken}
+	</select>
+
+	<select id="getPhone" parameterType="string" resultType="string">
+		select
+		mobileno from om_employee where empcode = #{userId} and EMPSTATUS = 'on' limit 0,1
+	</select>
+
+	<select id="queryByUserId" parameterType="string" resultMap="smsEntityResult">
+		select * from om_sms_user where user_id = #{userId}
+	</select>
+
+</mapper>

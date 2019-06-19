@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.doc.server.domain.EmployeeEntity">
+
+	<resultMap id="groupMap" type="com.deppon.dpm.doc.server.vo.DidiOrderVO">
+		<result property="id" column="id" />
+		<result property="billno" column="billno" />
+		<result property="name" column="name" />
+		<result property="employeeno" column="employeeno" />
+		<result property="models" column="models" />
+		<result property="fromName" column="fromName" />
+		<result property="toName" column="toname" />
+		<result property="taxidate" column="taxidate" />
+		<result property="boardingtime" column="boardingtime" />
+		<result property="offtime" column="offtime" />
+		<result property="orderstatus" column="orderstatus" />
+		<result property="normalDistance" column="normalDistance" />
+		<result property="totalPrice" column="totalPrice" />
+		<result property="dept" column="dept" />
+		<result property="financedept" column="financedept" />
+		<result property="budgetratio" column="budgetratio" />
+		<result property="timeschedule" column="timeschedule" />
+		<result column="sub_status" property="sub_status" />
+		<result column="remark" property="remark" />
+		<result column="remarkinfo" property="remarkinfo" />
+		<result column="COMPANY" property="company" />
+	</resultMap>
+	
+	<resultMap id="mpMap" type="com.deppon.dpm.doc.server.entity.QueryResponseBudgetEntity">
+        <result property="month" column="month"/>
+		<result property="day" column="day"/>
+		<result property="hour" column="hour"/>
+		<result property="deptName" column="deptName"/>
+		<result property="deptCode" column="deptCode"/>
+		<result property="empCode" column="empCode"/>
+		<result property="status" column="status" />
+		<result property="percent" column="percent" />
+		<result property="leftAmount" column="leftAmount" />
+		<result property="createtime" column="createtime" />
+	</resultMap>
+
+	<!-- 条件SQL -->
+	<sql id="person_conditon">
+		<if test="remark!=null and remark!='' "> and REMARK=#{remark,jdbcType=VARCHAR}</if>
+		<if test="employee!=null and employee!='' "> and name=#{employee,jdbcType=VARCHAR}</if>
+	</sql>
+
+
+
+	<select id="queryEntityByUserId" parameterType="String"
+		resultType="com.deppon.dpm.module.common.shared.vo.EmployeeEntity">
+		SELECT
+		a.JOBGROUPS,a.empstatus,a.JOBLEVEL,a.ORGID ,a.EMPNAME,b.ORGNAME
+		FROM om_employee a inner join om_organization b on a.orgid = b.orgid
+		WHERE
+		a.EMPCODE = #{userId,jdbcType=VARCHAR} and a.empstatus = 'on'
+	</select>
+	<select id="queryPersonalCByUserId" parameterType="String"
+		resultType="com.deppon.dpm.module.common.shared.vo.EmployeeEntity">
+		SELECT
+		userTel as mobileNo
+		FROM didi_personalc
+		WHERE userID = #{userId,jdbcType=VARCHAR}
+		ORDER BY createtime DESC
+        LIMIT 0,1
+	</select>
+	<select id="getTelCount" parameterType="String" resultType="String"> 
+	    SELECT
+		distinct(userId)
+		FROM didi_personalc
+		WHERE userTel =
+		#{userTel,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getTotalCount" parameterType="map" resultType="Integer"> 
+	    SELECT COUNT(1) FROM didi_personalc
+	    <where>
+	    	<if test="userId !=null and userId != ''">
+	    		userId = #{userId,jdbcType=VARCHAR}
+	    	</if>
+	    	<if test="userTel !=null and userTel != ''">
+	    		AND userTel = #{userTel,jdbcType=VARCHAR}
+	    	</if>
+	    </where>
+	</select>
+	
+	<select id="getPersonalContacts" parameterType="map" resultType="com.deppon.dpm.doc.server.entity.DidiPersonalContact"> 
+	    SELECT userId,userTel,createTime FROM didi_personalc
+	    <where>
+	    	<if test="userId !=null and userId != ''">
+	    		userId = #{userId,jdbcType=VARCHAR}
+	    	</if>
+	    	<if test="userTel !=null and userTel != ''">
+	    		AND userTel = #{userTel,jdbcType=VARCHAR}
+	    	</if>
+	    </where>
+	    ORDER BY createTime DESC
+	    <trim prefix="LIMIT">
+	    	<if test="beginNum != null">
+	    		#{beginNum,jdbcType=INTEGER},20
+	    	</if>
+	    </trim>
+	</select>
+	
+	<select id="queryLeaveEmployees" parameterType="String" resultType="String"> 
+	    SELECT
+		DISTINCT(EMPCODE)
+		FROM om_leave_employee
+		WHERE LEAVEDATE 
+		BETWEEN DATE_SUB(STR_TO_DATE(#{date,jdbcType=VARCHAR},'%Y-%m-%d'),INTERVAL 1 DAY) 
+		AND STR_TO_DATE(#{date,jdbcType=VARCHAR},'%Y-%m-%d');
+	</select>
+	
+	<update id="updatePersonalC" parameterType="map">
+		UPDATE didi_personalc
+		SET
+		userTel = #{userTel,jdbcType=VARCHAR}
+		WHERE userID = #{userId,jdbcType=VARCHAR}
+	</update>
+	<insert id="insertPersonalC" parameterType="map">
+		INSERT INTO
+		didi_personalc
+		(userID,userTel,createtime)
+		values
+		( #{userId,jdbcType=VARCHAR},
+		  #{userTel,jdbcType=VARCHAR},
+		  NOW()
+		)
+	</insert>
+	<insert id="batchInsertPersonalC" parameterType="map">
+		INSERT INTO
+		didi_personalc
+		(userID,userTel,createtime)
+		VALUES
+		<foreach collection="list" item="userid" index="index" separator=",">
+			(
+				#{userid,jdbcType=VARCHAR},
+		  		'10000000000',
+		  		NOW()
+			)
+		</foreach>
+	</insert>
+	<insert id="insertOaTel" parameterType="String">
+	   INSERT INTO didi_personalc (userID,userTel)
+       VALUES
+	   (
+		#{userId},
+		(SELECT mobileno from om_employee WHERE EMPCODE = #{userId})
+	   )
+	</insert>
+	
+	<select id="getOaTel" parameterType="String" resultType="String">
+	   SELECT mobileno from om_employee 
+	   WHERE EMPCODE = #{userId}
+	</select>
+
+	<select id="totalRecordByUserId" parameterType="map" resultMap="groupMap">
+		SELECT
+		BILLNO as billno ,
+		NAME as name ,
+		EMPLOYEENO as employeeno ,
+		MODELS as models ,
+		FROM_NAME as fromName ,
+		TO_NAME as toName ,
+		TAXIDATE as taxidate ,
+		BOARDINGTIME as boardingtime ,
+		OFFTIME as offtime ,
+		ORDERSTATUS as orderstatus ,
+		TOTAL_PRICE as totalPrice ,
+		NORMAL_DISTANCE as normalDistance ,
+		DEPT as dept ,
+		FINANCEDEPT as financedept ,
+		BUDGETRATIO as budgetratio ,
+		TIMESCHEDULE as timeschedule ,
+		SUB_STATUS as sub_status ,
+		REMARK as remark ,
+		REMARKINFO as remarkinfo ,
+		COMPANY as company
+		FROM didi_order
+		WHERE EMPLOYEENO = #{userId,jdbcType=VARCHAR} ORDER BY
+		TAXIDATE DESC
+	</select>
+	<select id="totalRecordBydept" parameterType="map" resultMap="groupMap">
+		SELECT
+		BILLNO as billno ,
+		NAME as name ,
+		EMPLOYEENO as employeeno ,
+		MODELS as models ,
+		FROM_NAME as fromName ,
+		TO_NAME as toName ,
+		TAXIDATE as taxidate ,
+		BOARDINGTIME as boardingtime ,
+		OFFTIME as offtime ,
+		ORDERSTATUS as orderstatus ,
+		TOTAL_PRICE as totalPrice ,
+		NORMAL_DISTANCE as normalDistance ,
+		DEPT as dept ,
+		FINANCEDEPT as financedept ,
+		BUDGETRATIO as budgetratio ,
+		TIMESCHEDULE as timeschedule ,
+		SUB_STATUS as sub_status ,
+		REMARK as remark ,
+		REMARKINFO as remarkinfo ,
+		COMPANY as company
+		FROM didi_order
+		WHERE DEPT = #{deptname,jdbcType=VARCHAR} and
+		LEFT(taxidate,7)=#{taxidate,jdbcType=VARCHAR} ORDER BY TAXIDATE DESC
+	</select>
+	<select id="pageMsgByUserId" parameterType="map" resultMap="groupMap">
+		SELECT
+		BILLNO as billno ,
+		NAME as name ,
+		EMPLOYEENO as employeeno ,
+		MODELS as models ,
+		FROM_NAME as fromName ,
+		TO_NAME as toName ,
+		TAXIDATE as taxidate ,
+		BOARDINGTIME as boardingtime ,
+		OFFTIME as offtime ,
+		ORDERSTATUS as orderstatus ,
+		TOTAL_PRICE as totalPrice ,
+		NORMAL_DISTANCE as normalDistance ,
+		DEPT as dept ,
+		FINANCEDEPT as financedept ,
+		BUDGETRATIO as budgetratio ,
+		TIMESCHEDULE as timeschedule ,
+		SUB_STATUS as sub_status ,
+		REMARK as remark ,
+		REMARKINFO as remarkinfo ,
+		COMPANY as company
+		FROM didi_order
+		WHERE EMPLOYEENO = #{userId,jdbcType=VARCHAR}
+		ORDER BY TAXIDATE DESC
+		LIMIT #{requestBeginNum},10
+	</select>
+
+	<insert id="insertMessage" parameterType="list">
+		INSERT INTO didi_message
+		(dept,message,state,savetime,userid,msgtitle,billno,abnormalrule)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(
+			#{item.dept},
+			#{item.message},
+			#{item.state},
+			NOW(),
+			#{item.userid} ,
+			#{item.msgtitle},
+			#{item.billno},
+			#{item.abnormalrule}
+			)
+		</foreach>
+	</insert>
+
+	<!-- 推送消息》》》》》》》》》》》》》》》》》》》》》》》》》》》》》 -->
+	<update id="updateById" parameterType="String">
+		UPDATE didi_message
+		SET
+		state = 1
+		WHERE id = #{id,jdbcType=VARCHAR}
+	</update>
+	<!-- 查询该部门下的所有员工 -->
+	<select id="queryAlluserId" parameterType="list"
+		resultType="com.deppon.dpm.module.common.shared.vo.EmployeeEntity">
+		SELECT t1.orgid orgid, t1.orgName orgname, t.* FROM om_employee t
+		INNER JOIN ( SELECT orgid, orgname FROM
+		om_organization WHERE deptseq LIKE #{newdept,jdbcType=VARCHAR} ) t1 ON t.orgid =
+		t1.orgid WHERE t.EMPSTATUS = 'on'
+		and t.JOBGROUPS not in ('管理族群')
+		union all
+		SELECT t1.orgid orgid, t1.orgName orgname, t.* FROM om_employee t INNER JOIN
+		( SELECT orgid, orgname FROM
+		om_organization WHERE deptseq LIKE #{newdept,jdbcType=VARCHAR} ) t1 ON t.orgid =
+		t1.orgid WHERE t.EMPSTATUS = 'on'
+		and t.JOBGROUPS in ('管理族群') and  <![CDATA[ t.JOBLEVEL < 8 ]]>
+	</select>
+	<!-- 查询该部门下的所有高管 -->
+	<select id="queryGGuserId" parameterType="String"
+		resultType="com.deppon.dpm.module.common.shared.vo.EmployeeEntity">
+	    SELECT t1.orgid orgid, t1.orgName orgname, t.* FROM om_employee t INNER JOIN
+		( SELECT orgid, orgname FROM
+		om_organization WHERE deptseq LIKE #{newdept,jdbcType=VARCHAR} ) t1 ON t.orgid = t1.orgid 
+		WHERE t.EMPSTATUS = 'on' and t.JOBGROUPS in ('管理族群') 
+                and  (t.JOBLEVEL > 9 or t.JOBLEVEL = 'C'  or t.JOBLEVEL = 'D')
+    </select>
+    <!-- 查询直属于该部门的所有员工 -->
+    <select id="queryOrguserId" parameterType="String"
+		resultType="com.deppon.dpm.module.common.shared.vo.EmployeeEntity">
+	    SELECT t1.orgid orgid, t1.orgName orgname, t.* FROM om_employee t
+		INNER JOIN 
+		( SELECT orgid, orgname FROM om_organization WHERE orgid = #{dept,jdbcType=VARCHAR} ) t1 
+		ON t.orgid = t1.orgid 
+		WHERE t.EMPSTATUS = 'on' and t.JOBGROUPS not in ('管理族群')
+		union all
+		SELECT t1.orgid orgid, t1.orgName orgname, t.* FROM om_employee t 
+		INNER JOIN
+		( SELECT orgid, orgname FROM om_organization WHERE orgid = #{dept,jdbcType=VARCHAR} ) t1 
+		ON t.orgid = t1.orgid 
+		WHERE t.EMPSTATUS = 'on' and t.JOBGROUPS in ('管理族群') 
+		and <![CDATA[ t.JOBLEVEL < 8 ]]> and t.JOBLEVEL not in ('C','D')		
+    </select>
+
+	<select id="queryOrgIdByCode" parameterType="String" resultType="String">
+		select orgid from om_organization where finasyscode =
+		#{deptcode,jdbcType=VARCHAR}
+
+	</select>
+
+	<select id="queryMsgByUSERId" parameterType="String"
+		resultType="com.deppon.dpm.doc.server.vo.PushMessageVO">
+		SELECT
+		*
+		FROM didi_message
+		WHERE userid = #{userId,jdbcType=VARCHAR}
+		ORDER BY savetime DESC
+	</select>
+	
+	<select id="queryMsgByUSERId4Pagination" parameterType="map"
+		resultType="com.deppon.dpm.doc.server.vo.PushMessageVO">
+		SELECT
+		*
+		FROM didi_message
+		WHERE userid = #{userId,jdbcType=VARCHAR} 
+		<if test="state != null">
+			AND state = #{state,jdbcType=VARCHAR}
+		</if>
+		ORDER BY savetime DESC 
+		LIMIT #{page,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+	</select>
+	
+	<select id="queryMsgByUSERId4Total" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT
+		count(*)
+		FROM didi_message
+		WHERE userid = #{userId,jdbcType=VARCHAR} 
+		<if test="state != null">
+			AND state = #{state,jdbcType=VARCHAR}
+		</if>
+	</select>
+	<!-- 推送消息》》》》》》》》》》》》》》》》》》》》》》》》》》》》》 -->
+
+
+	<!-- 根据年月查询个人当月打车明细 -->
+	<select id="queryDetailByDate" parameterType="java.util.Map"
+		resultMap="groupMap">
+		SELECT
+		BILLNO as billno ,
+		NAME as name ,
+		EMPLOYEENO as employeeno ,
+		MODELS as models ,
+		FROM_NAME as fromName ,
+		TO_NAME as toName ,
+		TAXIDATE as taxidate ,
+		BOARDINGTIME as boardingtime ,
+		OFFTIME as offtime ,
+		ORDERSTATUS as orderstatus ,
+		TOTAL_PRICE as totalPrice ,
+		NORMAL_DISTANCE as normalDistance ,
+		DEPT as dept ,
+		FINANCEDEPT as financedept ,
+		BUDGETRATIO as budgetratio ,
+		TIMESCHEDULE as timeschedule ,
+		SUB_STATUS as sub_status ,
+		REMARK as remark ,
+		REMARKINFO as remarkinfo ,
+		COMPANY as company
+		from didi_order
+		where EMPLOYEENO=#{userId,jdbcType=VARCHAR}
+		and TAXIDATE
+		&gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE
+		&lt;=#{endDate,jdbcType=VARCHAR}
+		and SUB_STATUS
+		in('6001','6002','6100','6101','6102','6103','6104','6105','7000')
+		<include refid="person_conditon" />
+		order by TAXIDATE desc,TOTAL_PRICE desc,NORMAL_DISTANCE desc
+	</select>
+
+	<!-- 根据年月查询部门打车明细 -->
+	<select id="departmentTaxi" parameterType="java.util.Map"
+		resultMap="groupMap">
+		SELECT
+		BILLNO as billno ,
+		NAME as name ,
+		EMPLOYEENO as employeeno ,
+		MODELS as models ,
+		FROM_NAME as fromName ,
+		TO_NAME as toName ,
+		TAXIDATE as taxidate ,
+		BOARDINGTIME as boardingtime ,
+		OFFTIME as offtime ,
+		ORDERSTATUS as orderstatus ,
+		TOTAL_PRICE as totalPrice ,
+		NORMAL_DISTANCE as normalDistance ,
+		DEPT as dept ,
+		FINANCEDEPT as financedept ,
+		BUDGETRATIO as budgetratio ,
+		TIMESCHEDULE as timeschedule ,
+		SUB_STATUS as sub_status ,
+		REMARK as remark ,
+		REMARKINFO as remarkinfo ,
+		COMPANY as company
+		from didi_order
+		where DEPT in
+		<foreach item="deptNameList" index="index" collection="deptNameList"
+			open="(" separator="," close=")">
+			#{deptNameList}
+		</foreach>
+		and TAXIDATE &gt;=#{startDate,jdbcType=VARCHAR}
+		and TAXIDATE
+		&lt;=#{endDate,jdbcType=VARCHAR}
+		<include refid="person_conditon" />
+		order by TAXIDATE desc,TOTAL_PRICE desc,NORMAL_DISTANCE desc
+	</select>
+
+
+	<!--表名 -->
+	<sql id="table_name">
+		DIDI_ORDER
+	</sql>
+
+	<select id="queryMessageByContent" parameterType="String"
+		resultType="com.deppon.dpm.doc.server.vo.PushMessageVO">
+		SELECT
+		*
+		FROM didi_message
+		WHERE message = #{message,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 插入待推送预算不足通知 -->
+	<insert id="insertMessagePush" parameterType="com.deppon.dpm.doc.server.entity.QueryResponseBudgetEntity" >
+		INSERT INTO didi_messagepush
+		   (month,day,hour,status,deptCode,deptName,percent,leftAmount,empcode,createtime) 
+		   values	
+		    (
+		    #{month},
+		    #{day}, 
+		    #{hour},
+		    #{status}, 
+		    #{deptCode},
+		    #{deptName},
+		    #{percent},
+		    #{leftAmount},
+		    #{empCode},
+		    NOW()
+		    )
+	</insert>
+	 
+	<!-- 查询待推送的预算通知 -->
+	<select id="getMessagePush" parameterType="map" resultMap="mpMap">
+	    SELECT
+	    deptCode,deptName,empcode
+	    FROM
+	    didi_messagepush
+	    WHERE
+	    month = #{month}
+	    AND day = #{day}
+	    AND hour = #{hour}
+	    AND status = #{status}
+	    GROUP BY deptCode
+	</select>
+	
+	<!-- 预算通知改为已推送状态 -->
+	<update id="updatePushStatus" parameterType="map">
+	    UPDATE didi_messagepush
+	    SET
+	    status = 'off'
+	    WHERE
+	    month = #{month}
+	    AND day = #{day}
+	    AND hour = #{hour}
+	    AND deptCode = #{deptCode}
+	</update>
+
+        <!-- 欢行登陆校验新增记录 -->
+	<insert id="addloadRecord" parameterType="map">
+	    insert into om_sms_verify
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				userId,
+			</if>
+			<if test="deviceId != null">
+				deviceId,
+			</if>
+			<if test="loginTime != null">
+				loginTime
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="userId != null">
+				#{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="deviceId != null">
+				#{deviceId,jdbcType=VARCHAR},
+			</if>
+			<if test="loginTime != null">
+				#{loginTime,jdbcType=VARCHAR}
+			</if>
+		</trim>
+	</insert>
+        <!-- 获取登录校验记录 -->
+	<select id="getloadRecord" parameterType="map" resultType="com.deppon.dpm.doc.server.entity.LoadRecordEntity">
+	    SELECT * FROM om_sms_verify 
+	    <where>
+			1=1
+			<if test="userId != null">
+				AND userId = #{userId,jdbcType=VARCHAR}
+			</if>
+			<if test="deviceId != null">
+				OR deviceId = #{deviceId,jdbcType=VARCHAR}
+			</if>
+		</where>
+	    ORDER BY loginTime DESC
+	    LIMIT 0,1
+	</select>
+        <!-- 根据工号查询员工信息 -->
+	<select id="getEmpInfo" parameterType="String" resultType="com.deppon.dpm.module.common.shared.vo.EmployeeEntity">
+	   SELECT a.JOBGROUPS, a.JOBLEVEL, a.empcode , a.EMPNAME, a.jobname , a.orgid
+	   FROM om_employee a
+	   WHERE EMPCODE = #{userId} AND empstatus = 'on'
+	</select>
+	<!-- 根据工号查询欢行短信开关 -->
+	<select id="getHxMsmSwitch" parameterType="String" resultType="com.deppon.dpm.doc.server.entity.HxMsmSwitchEntity">
+		select * from hx_msm_switch where userId=#{userId,jdbcType=VARCHAR}
+	</select>
+	<!-- 根据工号更新欢行短信开关 -->
+	<update id="updateHxMsmSwitch" parameterType="map" >
+		update hx_msm_switch set state=#{state,jdbcType=VARCHAR},updatetime=now() where userId=#{userId,jdbcType=VARCHAR}
+	</update>
+	<!-- 插入欢行短信开关 -->
+	<insert id="insertHxMsmSwitch" parameterType="com.deppon.dpm.doc.server.entity.HxMsmSwitchEntity">
+		insert into hx_msm_switch (userId,state) values (#{userId,jdbcType=VARCHAR},"on")
+	</insert>
+</mapper>

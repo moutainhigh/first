@@ -1,0 +1,14 @@
+.i_password{background-image:url("../../images/login/password.png");background-repeat:no-repeat;padding-left:50px;border-top:1px solid #dddddd;border-left:1px solid #dddddd;border-right:1px solid #ffffff;border-bottom:1px solid #ffffff;BACKGROUND-COLOR: #f5f5f5;line-height:18px;width:288px;HEIGHT: 22px;}
+.i_password_focus{outline:medium;background-image:url("../../images/login/password.png");background-repeat:no-repeat;padding-left:50px;border-top:1px solid #157dfb;border-left:1px solid #157dfb;border-right:1px solid #157dfb;border-bottom:1px solid #157dfb;BACKGROUND-COLOR: #f5f5f5;line-height:18px;width:288px;HEIGHT: 22px;}
+.i_userName{background-image:url("../../images/login/username.png");background-repeat:no-repeat;padding-left:50px;border-top:1px solid #dddddd;border-left:1px solid #dddddd;border-right:1px solid #ffffff;border-bottom:1px solid #ffffff;BACKGROUND-COLOR: #f5f5f5;line-height:18px;width:288px;HEIGHT: 22px;}
+.i_userName_focus{outline:medium;background-image:url("../../images/login/username.png");background-repeat:no-repeat;padding-left:50px;border-top:1px solid #157dfb;border-left:1px solid #157dfb;border-right:1px solid #157dfb;border-bottom:1px solid #157dfb;BACKGROUND-COLOR: #f5f5f5;line-height:18px;width:288px;HEIGHT: 22px;}
+.a_login{font-size:18px;-moz-border-radius:4px;-webkit-border-radius:4px;background-color:#157dfb;border:1px solid #93c4fe;color:#fff;padding:8px 30px;}.a_login:hover{text-decoration:none;background-color:#348efb;color:#fff;}.a_login:LINK,.a_login:VISITED{ext-decoration:none;}
+.t-r{text-align:right;padding-top:10px;}
+.login{background-image:url("../../images/login/loginbackground.jpg"); color:#f0f0f0;border:10px solid #cdcccc;background-color:#f0f0f0;opacity:1;-moz-border-radius:10px;-webkit-border-radius:10px;padding:30px 40px 40px;}.login h2{font-size:40px;text-shadow:1px 1px 1px #aaa;margin-bottom:35px;color:#5e6ff2;}.login ul{list-style:none;}.login ul li{font-weight:bold;font-size:20px;margin-bottom:10px;}.login ul li label{display:inline-block;width:90px;padding-left:4px;}.login ul li input{background-color:#f0f0f0;width:270px;opacity:1;padding-right:12px;border:1px solid #d1d0d0;height:24px;vertical-align:middle;line-height:22px;padding:2px;}
+.login_layout{width:480px;margin:0 auto;}
+.layout{padding-top:200px;width:490px;margin:0 auto;}
+body{font-family:MicrosoftYaHei;background-image:url(../../images/login/bodyground.png);background-repeat:no-repeat;background-position:center top;}
+a:link { text-decoration: none} 
+a:active { text-decoration} 
+a:visited { text-decoration: none}
+.error{color:#f00;font-size:16px;}

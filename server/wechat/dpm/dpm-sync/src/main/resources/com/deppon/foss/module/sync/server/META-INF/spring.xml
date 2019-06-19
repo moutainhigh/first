@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+			http://www.springframework.org/schema/util
+			http://www.springframework.org/schema/util/spring-util-3.0.xsd" >
+
+	<bean id="serverListener" class="com.deppon.foss.module.sync.esb.listener.ServerListener" />
+
+	<!--接收请求 -->
+	<bean id="uumsAdminOrgListener" class="com.deppon.foss.module.sync.business.server.UumsAdminOrgListener" >
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+	</bean>
+	<bean id="uumsEmployeeListenner" class="com.deppon.foss.module.sync.business.server.UumsEmployeeListenner">
+		<property name="tongxunLuService" ref="tongxunLuService"/>
+	</bean>
+
+	<!--转换 -->
+	<bean id="syncOrganizationRequestTrans" class="com.deppon.foss.module.sync.business.transfer.SyncOrganizationRequestTrans" />
+	<bean id="syncOrganizationResponseTrans" class="com.deppon.foss.module.sync.business.transfer.SyncOrganizationResponseTrans" />
+	<bean id="syncEmployeeRequestTrans" class="com.deppon.foss.module.sync.business.transfer.SyncEmployeeRequestTrans" />
+	<bean id="syncEmployeeResponseTrans" class="com.deppon.foss.module.sync.business.transfer.SyncEmployeeResponseTrans" />
+	
+	<!-- 人员、部门接口改造 -->
+	<bean id="sendMdmEmpRequestTrans" class="com.deppon.foss.module.sync.business.transfer.SendMdmEmpRequestTrans"/>
+	<bean id="sendMdmEmpResponseTrans" class="com.deppon.foss.module.sync.business.transfer.SendMdmEmpResponseTrans"/>
+	<bean id="sendMdmOrgRequestTrans" class="com.deppon.foss.module.sync.business.transfer.SendMdmOrgRequestTrans"/>
+	<bean id="sendMdmOrgResponseTrans" class="com.deppon.foss.module.sync.business.transfer.SendMdmOrgResponseTrans"/>
+	
+	<!-- 差旅助手-->
+	<!-- <bean id="sendTravelAssistantRequestTrans" class="com.deppon.foss.module.sync.business.transfer.SendTravelAssistantRequestTrans"/> -->
+	
+	<context:annotation-config />
+	<context:component-scan base-package="com.deppon" />
+</beans>

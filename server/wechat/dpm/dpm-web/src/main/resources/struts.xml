@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="dpmManage" namespace="/dpmManage" extends="json-default">
+		<interceptors>
+			<!-- 自定义拦截器 -->
+			<interceptor name="loginInterceptor" class="com.deppon.dpm.module.common.server.interceptor.LoginInterceptor" />
+			<!-- 自定义拦截器栈 -->
+			<interceptor-stack name="loginStack">
+				<!-- 使用struts的默认拦截器栈 -->
+				<interceptor-ref name="defaultStack" />
+				<!-- 使用自定义的拦截器 -->
+				<interceptor-ref name="loginInterceptor">
+					<!-- 排除不拦截的方法 -->
+					<param name="excludeMethods">queryDataMonitor,login,getPageDetails,getMessage,topushhref</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<!-- 使用自定义的拦截器栈 -->
+		<default-interceptor-ref name="loginStack" />	
+		
+		<global-results>
+			<result name="input">/login.jsp</result>
+		</global-results>
+		
+		
+		<!-- ManageAction start -->
+		<action name="manage_*" class="com.deppon.dpm.login.server.action.ManageAction" method="{1}">
+			<result name="loginSuccess" type="redirectAction">
+				<param name="actionName">manage_toHomePage</param>
+				<param name="loginName">${loginName}</param>
+			</result>
+			<result name="toHomePage">/WEB-INF/pages/home.jsp</result>
+			<result name="awardPage">/WEB-INF/pages/award/list.jsp</result>
+			<result name="appStorePage">/WEB-INF/pages/appstore/list.jsp</result>
+			<result name="welcomePage">/WEB-INF/pages/welcome/welcomePageList.jsp</result>
+			<result name="pushPage">/WEB-INF/pages/push/push.jsp</result>
+			<result name="h5FileCountPage">/WEB-INF/pages/h5filecheck/h5FileCheckList.jsp</result>
+			<result name="appVersionConfigPage">/WEB-INF/pages/appVersionConfig/appVersionList.jsp</result>
+			<result name="empExtensionListPage">/WEB-INF/pages/empExtension/empExtensionList.jsp</result>
+			<result name="controlgridPage">/WEB-INF/pages/appVersionUpdateControl/controlgrid.jsp</result>
+			<result name="gesturePage">/WEB-INF/pages/gesture/gesture.jsp</result>
+			<result name="smsPage">/WEB-INF/pages/sms/sms.jsp</result>
+			<result name="projectDeptPage">/WEB-INF/pages/projectManage/projectDeptList.jsp</result>
+			<result name="nativePushPage">/WEB-INF/pages/nativePush/nativePush.jsp</result>
+			<result name="autoPunchClockMonitorPage">/WEB-INF/pages/autoPunchClockMonitor/autoPunchClockMonitor.jsp</result>
+			<result name="userFuncStatusPage">/WEB-INF/pages/userFuncStatus/userFuncStatus.jsp</result>
+			<result name="userOperationMonitorPage">/WEB-INF/pages/userOperationMonitor/userOperationMonitor.jsp</result>
+			<result name="regularBusImgPage">/WEB-INF/pages/regularBus/busImgList.jsp</result>
+			<result name="cidPage">/WEB-INF/pages/cid/cidList.jsp</result>
+		</action>
+		<!-- ManageAction end -->
+		
+		<!-- 悬赏start -->
+		<action name="toAwardPage_*" class="awardPcAction" method="{1}">
+			<result name="success">/WEB-INF/pages/award/{1}.jsp</result>
+		</action>
+		<action name="toSaveAward" class="awardPcAction" method="saveAndEditAward">
+		</action>
+		<action name="awardList" class="awardPcAction" method="awardList">
+			<result type="json" name="success">
+      			 <param name="root">resultObj</param>  
+            </result>
+		</action>
+		<action name="toDeleteAward" class="awardPcAction" method="deleteAward">
+		</action>
+		<!-- 悬赏end -->
+		
+		<!-- 欢迎页start -->
+		<action name="toWelcomePage_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.EditWelcomePageAction">
+			<result name="success">/WEB-INF/pages/welcome/addWelcomePage.jsp</result>
+		</action>
+		<action name="getWelcomePageList" method="getWelcomePageList" 
+			class="com.deppon.dpm.module.common.server.action.EditWelcomePageAction">
+		</action>
+		<action name="saveEditPage" method="saveEditPage" 
+			class="com.deppon.dpm.module.common.server.action.EditWelcomePageAction">
+		</action>
+		<action name="getPageDetails" method="getPageDetails"
+			class="com.deppon.dpm.module.common.server.action.EditWelcomePageAction"/>
+		<action name="delWelcomePage" method="delWelcomePage" 
+			class="com.deppon.dpm.module.common.server.action.EditWelcomePageAction">
+		</action>
+		<action name="getWelcomePageLinks" method="getWelcomePageLinks" 
+			class="com.deppon.dpm.module.common.server.action.EditWelcomePageAction">
+		</action>
+		<!-- 欢迎页end -->
+		
+		
+		<!-- 应用商店start -->
+		<action name="toAppStorePage_*" class="applyStorePcAction" method="{1}">
+			<result name="success">/WEB-INF/pages/appstore/{1}.jsp</result>
+		</action>
+		<action name="toSaveApplyStore" class="applyStorePcAction" method="saveAndEditApplyStore">
+		</action>
+		<action name="applyStoreList" class="applyStorePcAction" method="applyStoreList">
+			<result type="json" name="success">
+      			 <param name="root">resultObj</param>  
+            </result>
+		</action>
+		<action name="toDeleteApplyStore" class="applyStorePcAction" method="deleteApplyStore">
+		</action>
+		<action name="updateDLoadLine" class="applyStorePcAction" method="updateDLoadLine">
+		</action>
+		<!-- 应用商店end -->
+		
+		
+		<!-- 消息推送start -->
+		<action name="push" class="pushpage" method="push">
+			<result name="push">/WEB-INF/pages/push/push.jsp</result>
+		</action>
+		<action name="detail" class="pushpage" method="detail">
+			<result name="detail">/WEB-INF/pages/push/detail.jsp</result>
+		</action>
+		<action name="getMessage" class="pushpage" method="getMessage">
+		</action>
+		<action name="topushhref" class="pushpage" method="topushhref">
+			<result name="topushhref">
+				/WEB-INF/pages/push/pushhref.jsp?id=${id}
+			</result>
+		</action>
+		<!-- 消息推送end -->
+		
+		<!-- 意见反馈  start-->
+		<action name="getFeedbackDetails" method="getFeedbackDetails"
+				class="com.deppon.dpm.login.server.action.FeedbackAction">
+		<result name="success">/WEB-INF/pages/feedback/feedbackDetails.jsp</result>
+		</action>
+		<action name="saveEditFeedback" method="saveEditFeedback"
+				class="com.deppon.dpm.login.server.action.FeedbackAction">
+			<result name="success" type="redirect">getFeedbackDetails.action?currentPage=${currentPage}
+			</result>
+		</action>
+		<action name="exportExcel" method="exportExcel"
+			class="com.deppon.dpm.login.server.action.FeedbackAction">
+		</action>
+		<!-- 意见反馈 end -->
+		
+		<!-- H5资源文件数量对比 start-->
+		<action name="h5AppFileComparePc_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.H5ApplyFileComparePcAction">
+			<result name="toAddPage">/WEB-INF/pages/h5filecheck/addH5FileInfo.jsp</result>
+			<result name="toEditPage">/WEB-INF/pages/h5filecheck/editH5FileInfo.jsp</result>
+		</action>
+		
+		<!-- 应用版本号管理 -->
+		<action name="versionConfig_*" method="{1}"
+			class="com.deppon.dpm.uums.server.action.VersionPcAction">
+			<result name="editPage">/WEB-INF/pages/appVersionConfig/editAppVersion.jsp</result>
+			<result type="json" name="success">
+      			 <param name="root">resultObj</param>  
+            </result>
+		</action>
+		
+		<!-- 访问监控查询接口 -->
+		<action name="queryDataMonitor" method="queryDataMonitor"
+			class="com.deppon.dpm.module.common.server.action.DataMonitorForTongjiAction">
+		</action>
+		
+		<!-- 查询用户登录信息 -->
+		<action name="queryLoginInfo" method="queryLoginInfoByEmpCode"
+			class="com.deppon.dpm.module.common.server.action.LoginInfoPcAction">
+		</action>
+		
+		<!-- app版本更新权限控制 -->
+		<action name="versionUpdateControl_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.VersionUpdateControlAction">
+		</action>
+		
+		<!-- 手势密码管理 -->
+		<action name="gesture_*" method="{1}" 
+			class="com.deppon.dpm.module.common.server.action.GestureAction">
+		</action>
+		
+		<!-- 短信开关管理 -->
+		<action name="smsPc_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.SmsAction">
+		</action>
+		
+		<!-- 工程管理部门 -->
+		<action name="projectManagePcAction_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.ProjectManagePcAction">
+		</action>
+		
+		<!-- 本地推送配置 -->
+		<action name="nativePushPcAction_*" method="{1}"
+			class="com.deppon.dpm.module.common.server.action.NativePushCfgPcAction">
+		</action>
+		
+		<!-- 自动打卡监控 -->
+		<action name="autoPunchClockMonitorPc_queryByPage" method="queryByPage" 
+			class="com.deppon.dpm.module.common.server.action.AutoPunchClockMonitorAction">
+		</action>
+		
+		<!-- 用户功能开关 -->
+		<action name="userFuncStatusAction_*" method="{1}" 
+			class="com.deppon.dpm.module.common.server.action.UserFuncStatusAction">
+		</action>
+		
+		<!-- 用户模块异常监控 -->
+		<action name="userFuncMonitorAction_*" method="{1}" class="userFuncMonitorAction">
+		</action>
+		
+		<!-- 用户操作轨迹监控 -->
+		<action name="userOperationMonitorAction_*" method="{1}" class="userOperationMonitorAction">
+		</action>
+		
+		<action name="jPushNewAction_*" method="{1}" class="jPushNewAction"></action>
+		
+		<!-- 班车服务图片 -->
+		<action name="regularBusImg_*" method="{1}" class="regularBusImgAction">
+		</action>
+		
+		<!-- 推送页面中请求ECC -->
+		<action name="jpushForEcc_*" class="jpushForEccAction" method="{1}"></action>
+		
+		<!-- 来电显示通讯录同步管理 -->
+		<action name="cid_*" class="cIDAction" method="{1}"></action>
+	</package>
+</struts>

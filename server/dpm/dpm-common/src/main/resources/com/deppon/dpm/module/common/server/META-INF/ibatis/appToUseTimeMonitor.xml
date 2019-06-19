@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.AppToUseTimeMonitorDao">
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.AppToUseTimeMonitorEntity">
+		INSERT INTO  app_usetime_monitor  (
+			 id ,
+			 user_id ,
+			 start_time ,
+			 end_time ,
+			 device_token ,
+			 os_type ,
+			 phone_model ,
+			 app_version ,
+			 os_version ,
+			 create_time 
+		)
+		VALUES
+			(
+				NULL,
+				#{userId},
+				#{startTime},
+				#{endTime},
+				#{deviceToken},
+				#{osType},
+				#{phoneModel},
+				#{appVersion},
+				#{osVersion},
+				NOW()
+			)
+	</insert>
+</mapper>

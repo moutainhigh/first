@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procCheckScoreDao">
+    
+    
+	<resultMap
+	type="com.deppon.dpm.module.management.shared.domain.ProcCheckStandardNameEntity"
+	    id="getProcCheckselectItem">
+	    <result property="selectItem" column="selectItem" />
+	   <result property="unSelectItem" column="unSelectItem" />
+	   <result property="imgOne" column="imgOne" />
+		<result property="imgTwo" column="imgTwo" />
+		<result property="imgThree" column="imgThree" />
+		<result property="imgFour" column="imgFour" />
+		<result property="imgFive" column="imgFive" />
+		<result property="opinion" column="opinion" />
+    </resultMap>
+   
+	<!-- 插入 -->
+	<insert id="savaCheckControl"                  
+	     parameterType="com.deppon.dpm.module.common.shared.domain.MonitorCountInfoEntity">
+	    <![CDATA[
+	    INSERT INTO collect_countinfo (USERID,START_TIME,END_TIME,TYPE) 
+	    VALUES(#{userId},#{startTime}, #{endTime},#{type}) 
+	     ]]>
+     </insert>
+
+	<select id="getProcCheckStandardName"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckStandardNameEntity"
+		resultType="String">
+		select standardName from proc_check_standardinfo where
+		navCode = #{navCode}
+		and origItemCode = #{origItemCode}
+	</select>
+	<select id="getProcCheckSelectStandard"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckStandardNameEntity"
+		resultMap="getProcCheckselectItem">
+		select selectItem,unSelectItem,imgOne,imgTwo,imgThree,imgFour,imgFive,opinion
+		from proc_check_score
+		WHERE recordId=(
+		SELECT id FROM proc_check_record
+		WHERE navCode=#{navCode} and addressCode =#{addressCode} AND
+		submitNub=#{submitNub} AND
+		isSubmit=#{isSubmit}) and origItemCode=#{origItemCode} 
+	</select> 
+	
+	
+      
+    
+    <resultMap type="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		id="getRecordMap">
+		<result property="recordid" column="id" />
+		<result property="navName" column="navName" />
+		<result property="navCode" column="navCode" />
+		<result property="addressCode" column="addressCode" />
+		<result property="address" column="address" />
+		<result property="userNo" column="userNo" />
+		<result property="checkDate" column="checkDate" />
+		<result property="submitNub" column="submitNub" />
+	</resultMap>
+	
+     <resultMap type="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		id="getScoreMap">
+		<result property="scoreid" column="id" />
+		<result property="checkrecordId" column="recordId" />
+		<result property="origItemName" column="origItemName" />
+		<result property="origItemCode" column="origItemCode" />
+		<result property="score" column="score" />
+		<result property="staticScore" column="staticScore" />
+		<result property="selectItem" column="selectItem" />
+		<result property="unSelectItem" column="unSelectItem" />
+		<result property="opinion" column="opinion" />
+		<result property="imgOne" column="imgOne" />
+		<result property="imgTwo" column="imgTwo" />
+		<result property="imgThree" column="imgThree" />
+		<result property="imgFour" column="imgFour" />
+		<result property="imgFive" column="imgFive" />
+		<result property="scorecreateDate" column="createDate" />
+		<result property="isKeyPro" column="isKeyPro" />
+		<result property="checkMethod" column="checkMethod" />
+	</resultMap>
+	
+    
+   <!-- 插入 -->
+	<insert id="savaCheckRecord"
+	parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+	    <![CDATA[
+	    INSERT INTO proc_check_record (id,navName,navCode,address,userNo,checkDate,submitNub,addressCode ) 
+	    VALUES(#{recordid},#{navName}, #{navCode},#{address}, #{userNo}, #{checkDate},#{submitNub},#{addressCode}) 
+	     ]]>
+</insert>
+
+	<insert id="savaCheckScore"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+	    <![CDATA[
+	    INSERT INTO proc_check_score (id,recordId,origItemName,origItemCode,score,createDate,opinion,
+	    imgOne,imgTwo,imgThree,imgFour,imgFive,selectItem,unSelectItem,staticScore,checkMethod,isKeyPro) 
+	    VALUES(#{scoreid},#{recordid}, #{origItemName},#{origItemCode}, #{score}, #{scorecreateDate},
+	     #{opinion}, #{imgOne}, #{imgTwo}, #{imgThree}, #{imgFour}, #{imgFive} , #{selectItem} , #{unSelectItem}, 
+	     #{staticScore} ,#{checkMethod},#{isKeyPro}    ) 
+	     ]]>
+	</insert>
+
+	<update id="updateCheckScore"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		<![CDATA[ update proc_check_score set
+		score  = #{score},
+		opinion = #{opinion}, 
+		imgOne  = #{imgOne}, 
+		imgTwo  = #{imgTwo}, 
+		imgThree = #{imgThree}, 
+		imgFour  = #{imgFour}, 
+		imgFive  = #{imgFive},
+		selectItem  = #{selectItem},
+		unSelectItem  = #{unSelectItem},
+		createDate = #{scorecreateDate}
+		where id = #{scoreid} ]]>
+	</update>
+
+	<update id="updateCheckRecord"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		<![CDATA[ update proc_check_record set
+		userNo  = #{userNo},
+		checkDate = #{checkDate} 
+		where id =#{recordid}]]>
+	</update>
+
+
+	<update id="updateCheckRecordAll"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		<![CDATA[ update proc_check_record set
+		userNo  = #{userNo},
+		submitNub  = 1,
+		checkDate = #{checkDate} 
+		where addressCode=#{addressCode} and isSubmit = 'N' and submitNub=0 ]]>
+	</update>
+
+	<update id="updateCheckTask"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity">
+		<![CDATA[ update proc_check_task set branch_ischeck = 2,update_date = #{checkDate} 
+		   where dept_code=#{addressCode}  and issubmit_pc='N' and branch_ischeck=1 ]]>
+	</update>
+
+
+	<select id="getProcCheckRecordId"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		resultType="String">
+		SELECT id FROM proc_check_record WHERE navCode = #{navCode} and
+		addressCode = #{addressCode} and isSubmit = 'N' and submitNub= #{submitNub} limit
+		0,1
+	</select>
+
+
+	<select id="getProcCheckScoreId"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		resultType="String">
+		SELECT id FROM proc_check_score WHERE origItemCode = #{origItemCode} and
+		recordId = #{recordid} limit 0,1
+	</select>
+
+
+
+	<select id="getProcCheckRecordAll"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcCheckScoreEntity"
+		resultMap="getRecordMap">
+		 <![CDATA[
+		     SELECT * FROM proc_check_record WHERE 
+		    addressCode=#{addressCode} and isSubmit = 'N' and submitNub = 0 ]]>
+	</select>
+
+
+
+
+	<select id="getProcCheckScoreAll" parameterType="List"
+		resultMap="getScoreMap">
+		SELECT * FROM proc_check_score WHERE recordId in
+		<foreach collection="list" item="item" index="index" open="("
+			close=")" separator=",">         	             
+        <![CDATA[  #{item.recordid} ]]>
+		</foreach>
+
+	</select>
+
+
+
+
+	<insert id="savaProcCheckRecordAll" parameterType="List">
+		INSERT INTO proc_check_record
+		(id,navName,navCode,address,userNo,checkDate,submitNub,addressCode )
+		VALUES
+		<foreach collection="list" item="item" index="index"
+			separator=","> 
+	                
+        <![CDATA[ 
+        (#{item.recordid},#{item.navName},#{item.navCode},#{item.address},#{item.userNo},#{item.checkDate},
+        #{item.submitNub},#{item.addressCode})  ]]>
+		</foreach>
+	</insert>
+
+
+
+	<insert id="savaProcCheckScoreAll" parameterType="List">
+	 <![CDATA[	INSERT INTO proc_check_score
+		(id,recordId,origItemName,origItemCode,score,createDate,opinion,
+		imgOne,imgTwo,imgThree,imgFour,imgFive,selectItem,unSelectItem,staticScore,checkMethod,isKeyPro)
+		VALUES
+	     (#{scoreid},#{checkrecordId}, #{origItemName},#{origItemCode}, #{score}, #{scorecreateDate},
+	     #{opinion}, #{imgOne}, #{imgTwo}, #{imgThree}, #{imgFour}, #{imgFive} ,
+	      #{selectItem} , #{unSelectItem}, 
+	     #{staticScore} ,#{checkMethod},#{isKeyPro} )  ]]>
+		
+	</insert>
+	     
+	
+</mapper>

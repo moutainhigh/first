@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.deppon.dpm.module.anps.server.dao.impl.NoticeGroupDao">
+ 
+     <resultMap id="groupMap" type="com.deppon.dpm.module.anps.shared.domain.NoticeGroupEntity">
+        <result property="id" column="id"/>
+		<result property="groupId" column="groupId"/>
+		<result property="groupName" column="groupName"/>
+		<result property="groupOwner" column="groupOwner"/>
+		<result property="memberCode" column="memberCode"/>
+		<result property="memberName" column="memberName"/>
+		<result property="memberType" column="memberType" />
+		<result property="positionDep" column="positionDep" />
+		<result property="codeType" column="codeType" />
+		<result property="number" column="number" />
+		<result property="createTime" column="createTime" />
+		<result property="updateTime" column="updateTime" />
+		<result property="groupOrder" column="groupOrder" />
+		<result property="totalNumber" column="totalnum" />
+	</resultMap>
+	
+	<!-- 新建群组 -->
+	<insert id="insertGroupInfo" parameterType="java.util.List">
+	    insert into notice_group_message
+	    (groupId,groupName,groupOwner,memberCode,memberName,memberType,positionDep,codeType,number,createTime,updateTime,groupOrder)
+	    values
+	    <foreach collection="list" item="item" index="index" separator=",">
+	    (
+	    #{item.groupId},
+	    #{item.groupName}, 
+	    #{item.groupOwner},
+	    #{item.memberCode}, 
+	    #{item.memberName}, 
+	    #{item.memberType}, 
+	    #{item.positionDep},
+	    #{item.codeType},
+	    #{item.number}, 
+	    NOW(), 
+	    NOW(), 
+	    #{item.groupOrder}
+	    )
+	    </foreach>
+	</insert>
+	
+	<!-- 插入群组成员 -->
+	<insert id="insertGroupMember" parameterType="java.util.List">
+	   insert into notice_group_message 
+	   (groupId,groupName,groupOwner,memberCode,memberName,memberType,positionDep,codeType,number,createTime,updateTime,groupOrder)
+	   values
+	   <foreach collection="list" item="item" index="index" separator=",">
+	   (
+	    #{item.groupId},
+	    #{item.groupName}, 
+	    #{item.groupOwner},
+	    #{item.memberCode}, 
+	    #{item.memberName}, 
+	    #{item.memberType}, 
+	    #{item.positionDep},
+	    #{item.codeType},
+	    #{item.number}, 
+	    NOW(), 
+	    NOW(), 
+	    #{item.groupOrder}
+	   )   
+	   </foreach>
+	</insert>
+	
+	<!-- 获取群组列表 -->
+	<select id="getAllGroup" parameterType="String" resultMap="groupMap">
+	   select id,groupid,groupname,groupowner,sum(number) totalnum from
+	   notice_group_message
+	   where groupowner= #{userid}
+	   group by groupid
+	   order by createtime
+	</select>
+	
+	<!-- 获取群组成员 -->
+	<select id="getGroupMember" parameterType="String" resultMap="groupMap">
+	   SELECT * FROM notice_group_message
+       WHERE groupId = #{groupId}
+	</select>
+	
+	<!-- 获取员工部门 -->
+	<select id="getEmpOrgname" parameterType="String" resultType="String">
+	   select org.orgname from om_organization org
+       inner join om_employee emp ON org.orgid = emp.orgid
+       where emp.empcode = #{empCode}
+	</select>
+	
+	<!-- 群组重命名 -->
+	<update id="updateGroupName" parameterType="map">
+	   UPDATE notice_group_message 
+	   <set>
+	       <if test="groupName != null and groupName != ''">
+	        groupName = #{groupName},
+	      </if>
+	   </set>
+       WHERE groupId = #{groupId}
+	</update>
+	
+	<!-- 删除群组 -->
+	<delete id="deleteGroup" parameterType="String">
+	   DELETE FROM notice_group_message 
+	   WHERE groupId = #{groupId}
+	</delete>
+	
+	<!-- 删除群组成员 -->
+	<delete id="deleteGroupMember" parameterType="map">
+	   DELETE FROM notice_group_message 
+       WHERE groupId = #{groupId} 
+       AND memberType = #{memberType}
+       AND memberCode = #{memberCode}
+       <choose>
+		<when test="positionDep != null">
+			AND positionDep = #{positionDep}
+		</when>
+		<otherwise>
+		    AND positionDep IS NULL	
+       </otherwise>
+     </choose>
+	</delete>
+	
+	<!-- 查询是否有重复群组名 -->
+	<select id="getGroupNameCount" parameterType="map" resultType="Integer">
+	  SELECT COUNT(*) FROM notice_group_message 
+	  WHERE groupName = #{groupName} AND groupOwner = #{groupOwner}
+	</select>
+	
+	<!-- 查询群组成员重复数 -->
+	<select id="getMemberCount" parameterType="map" resultType="Integer">
+	  SELECT COUNT(*) FROM notice_group_message WHERE groupId = #{groupId} 
+	  AND memberCode = #{memberCode}
+	  AND memberName = #{memberName}
+	  AND memberType= #{memberType}
+	  <choose>
+		<when test="positionDep != null">
+			AND positionDep = #{positionDep}
+			AND codeType = #{codeType}
+		</when>
+		<otherwise>
+		    AND positionDep IS NULL
+			AND codeType IS NULL		
+       </otherwise>
+     </choose>
+	</select>
+ </mapper>

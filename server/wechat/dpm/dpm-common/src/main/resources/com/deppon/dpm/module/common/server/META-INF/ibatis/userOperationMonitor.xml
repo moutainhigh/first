@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.UserOperationMonitorDao">
+	
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.UserOperationMonitorEntity">
+		INSERT INTO user_operation_monitor (
+			id,
+			user_id,
+			operation,
+			os_type,
+			app_version,
+			device_token,
+			phone_model,
+			os_version,
+			phone_mac,
+			create_time
+		)
+		VALUES
+			(
+				NULL,
+				#{userId},
+				#{operation},
+				#{osType},
+				#{appVersion},
+				#{deviceToken},
+				#{phoneModel},
+				#{osVersion},
+				#{phoneMac},
+				now()
+			)
+	</insert>
+	
+	<select id="queryByUserIdAndTime" parameterType="com.deppon.dpm.module.common.shared.domain.UserOperationMonitorEntity" 
+		resultType="com.deppon.dpm.module.common.shared.domain.UserOperationMonitorEntity">
+		SELECT user_id userId,operation,os_type osType,app_version appVersion,device_token deviceToken,
+				phone_model phoneModel,os_version osVersion,phone_mac phoneMac,create_time createTime
+		 from user_operation_monitor
+		<where>
+			1 = 1 and user_id = #{userId}
+			<if test="startTime != null">
+				and create_time &gt;= #{startTime} 
+			</if>
+			<if test="endTime != null">
+				and create_time &lt;= #{endTime} 
+			</if>
+		</where>
+		order by create_time DESC
+	</select>
+	
+	<select id="queryUserOperationMonitorType" resultType="com.deppon.dpm.module.common.shared.domain.UserOperationMonitorTypeEntity">
+		SELECT id,name from user_operation_monitor_type
+	</select>
+	
+	<select id="queryCount" parameterType="com.deppon.dpm.module.common.shared.domain.UserOperationMonitorEntity" resultType="long">
+		SELECT count(*) from user_operation_monitor
+		<where>
+			1 = 1 and user_id = #{userId}
+			<if test="startTime != null">
+				and create_time &gt;= #{startTime} 
+			</if>
+			<if test="endTime != null">
+				and create_time &lt;= #{endTime} 
+			</if>
+		</where>
+	</select>
+</mapper>

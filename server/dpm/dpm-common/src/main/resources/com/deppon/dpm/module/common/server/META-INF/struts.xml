@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="dpm-common" namespace="/dpm-common" extends="foss-default">
+		<!-- 模块主页面 -->
+		<action name="index">
+			<result name="success">index.jsp</result>
+		</action>
+	</package>
+	
+	<package name="breakdown" namespace="/breakdown" extends="json-default">
+		<action name="handleInfo" class="com.deppon.dpm.module.common.server.action.BreakDownAction" 
+			method="handleBreakDownInfo"></action>
+	</package>
+</struts>

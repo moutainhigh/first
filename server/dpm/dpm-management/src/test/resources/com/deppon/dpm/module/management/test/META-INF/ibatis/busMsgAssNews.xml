@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.busMsgAssNews" >
+	<!-- 获取消息 -->
+	<select id="getGustyMessage" 
+	    resultType="com.deppon.dpm.module.management.shared.domain.BusMessageEntity">
+			<![CDATA[select  * from bus_message where DATE_SUB(CURDATE(), INTERVAL 30 DAY)<= date(createDate) order by createDate desc]]> 
+    </select>
+	
+	 <!-- 插入消息表数据 -->
+	<insert id="saveGustyMessage" parameterType="com.deppon.dpm.module.management.shared.domain.BusMessageEntity">
+	    <![CDATA[
+	    INSERT INTO bus_message (userNo,content,createDate,createBy,delMark) 
+	    VALUES(
+	    #{userNo,jdbcType=VARCHAR},
+	    #{content,jdbcType=VARCHAR},
+	    now(),
+	    #{createBy,jdbcType=VARCHAR},
+	    #{delMark,jdbcType=INTEGER}) 
+	    ]]> 
+	</insert>
+	<!--查询点击量表-->
+	<select id="findHits" 
+	    resultType="com.deppon.dpm.module.management.shared.domain.BusOpenLineEntity">
+			<![CDATA[
+			select * from bus_open_line  
+			where siteId=#{siteId,jdbcType=INTEGER}
+			and userNo=#{userNo,jdbcType=VARCHAR}
+                     ]]> 
+    </select>
+	
+	 <!-- 插入点击量表 -->
+	<insert id="saveHits" parameterType="com.deppon.dpm.module.management.shared.domain.BusOpenLineEntity">
+	    <![CDATA[
+	      insert  into bus_open_line(siteId,userNo,hits,createDate,createBy)  
+	      values( 
+	      #{siteId,jdbcType=INTEGER},
+	      #{userNo,jdbcType=VARCHAR},
+	      1,now(),
+	      #{userNo,jdbcType=VARCHAR})
+	    ]]> 
+	</insert>
+	
+	<!--更新点击量-->
+	<update id="updateHits" parameterType="com.deppon.dpm.module.management.shared.domain.BusOpenLineEntity">
+	   <![CDATA[
+	     update bus_open_line set hits=hits+1,createDate=now() 
+	     where 
+	     siteId=#{siteId,jdbcType=INTEGER} 
+	     and 
+	     userNo=#{userNo,jdbcType=VARCHAR}
+	    ]]> 
+	</update>
+	
+	<!-- 插入站点表 -->
+	<insert id="saveSite" parameterType="com.deppon.dpm.module.management.shared.domain.BusNewsSiteEntity">
+	    <![CDATA[
+        insert  into  bus_news_site(siteName,userNo,isAct,createDate)  
+        values(#{siteName,jdbcType=VARCHAR},
+		       #{userNo,jdbcType=VARCHAR},
+		       0,
+		       now())
+	     ]]> 
+	</insert>
+	
+	<!-- 获取站点Id -->
+	<select id="getSiteId" 
+	    resultType="com.deppon.dpm.module.management.shared.domain.BusNewsSiteEntity">
+			<![CDATA[
+			select id from bus_news_site 
+			where 
+			siteName=#{siteName,jdbcType=VARCHAR} 
+			and  
+			userNo=#{userNo,jdbcType=VARCHAR}
+			]]> 
+    </select>
+	
+	<!--去重复站点-->
+	<select id="getRepeSiteId" 
+	    resultType="com.deppon.dpm.module.management.shared.domain.BusNewsSiteEntity">
+			<![CDATA[
+			select *from bus_news_site bns 
+			where bns.siteName=#{siteName,jdbcType=VARCHAR} 
+			or (bns.userNo=#{userNo,jdbcType=VARCHAR} and bns.createDate>#{createDate})
+			]]> 
+    </select>
+	
+	 <!-- 首次新增站点插入开线建议表 -->
+	<insert id="saveSiteHits" parameterType="com.deppon.dpm.module.management.shared.domain.BusOpenLineEntity">
+	    <![CDATA[
+	      insert  into bus_open_line(siteId,userNo,hits,createDate,createBy)  
+	      values( 
+	      #{siteId,jdbcType=INTEGER},
+	      #{userNo,jdbcType=VARCHAR},
+	      #{hits,jdbcType=VARCHAR},
+	      #{createDate},
+	      #{createBy,jdbcType=VARCHAR})
+	    ]]> 
+	</insert>
+	
+	<!--保存开线建议表后获取Id-->
+	<select id="getSiteHits" 
+	    resultType="com.deppon.dpm.module.management.shared.domain.BusOpenLineEntity">
+			<![CDATA[
+			select * from bus_open_line  
+			where siteId=#{siteId,jdbcType=VARCHAR}
+			and userNo=#{userNo,jdbcType=VARCHAR}
+			
+            ]]> 
+    </select>
+    
+     <!-- 首次新增站点插入开线建议表 -->
+	<insert id="saveCentre" parameterType="com.deppon.dpm.module.management.shared.domain.BusCentreAdviceEntity">
+	    <![CDATA[
+	      
+         insert into bus_centre_advice(userNo,centreId,createDate,centreMark) 
+         values(#{userNo,jdbcType=VARCHAR},
+         #{centreId,jdbcType=INTEGER},
+         #{createDate},
+         #{centreMark,jdbcType=INTEGER}); 
+	      
+	    ]]> 
+	</insert>
+	<!-- 删除评价回复 -->
+	<delete id="deleteReplyMsg" parameterType="int" >		
+       delete from bus_evaluation_manage where id=#{id,jdbcType=INTEGER}
+	</delete>
+	<!-- 删除建议回复 -->
+	<delete id="deleteReplySugg" parameterType="int" >		
+       delete from bus_evaluation_advice where id=#{id,jdbcType=INTEGER}
+	</delete>
+	
+     <!-- 保存回复评价表 -->
+	<insert id="saveEvaluateManage" parameterType="com.deppon.dpm.module.management.shared.domain.BusEvaluationManageEntity">
+	    <![CDATA[
+	      insert into bus_evaluation_manage(retId,userNo,replyContent,createDate,createBy) 
+	      values(#{retId,jdbcType=INTEGER},
+	      #{userNo,jdbcType=VARCHAR},
+	      #{replyContent,jdbcType=VARCHAR},
+	      #{createDate},
+	      #{createBy,jdbcType=VARCHAR})
+	      
+	    ]]> 
+	 </insert>
+	   <!-- 保存回复建议表 -->
+	<insert id="saveEvaluateAdvice" parameterType="com.deppon.dpm.module.management.shared.domain.BusEvaluationAdviceEntity">
+	    <![CDATA[
+	      
+        insert into bus_evaluation_advice(openId,userNo,replyContent,createDate,createBy)
+        values(#{openId,jdbcType=INTEGER},
+        #{userNo,jdbcType=VARCHAR},
+        #{replyContent,jdbcType=VARCHAR},
+        #{createDate},
+        #{createBy,jdbcType=VARCHAR})
+	      
+	    ]]> 
+	 </insert>
+	 
+	<!--获取回复评价表Id-->
+	<select id="getEvaManage" 
+	    resultType="com.deppon.dpm.module.management.shared.domain.BusEvaluationManageEntity">
+			<![CDATA[				
+			select max(id) id from bus_evaluation_manage 
+			where retId=#{retId,jdbcType=INTEGER} 
+			and userNo=#{userNo,jdbcType=VARCHAR}
+			and replyContent=#{replyContent,jdbcType=VARCHAR}
+            ]]> 
+    </select>
+   
+   
+	<!--获取回复建议表Id-->
+	<select id="getEvaAdvice" 
+	    resultType="com.deppon.dpm.module.management.shared.domain.BusEvaluationAdviceEntity">
+			<![CDATA[				
+			select max(id) id from bus_evaluation_advice 
+			where openId=#{openId,jdbcType=INTEGER} 
+			and userNo=#{userNo,jdbcType=VARCHAR} 
+			and replyContent=#{replyContent,jdbcType=VARCHAR}
+            ]]> 
+    </select>
+</mapper>

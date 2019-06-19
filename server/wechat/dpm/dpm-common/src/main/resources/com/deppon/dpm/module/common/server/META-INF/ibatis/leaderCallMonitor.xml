@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.LeaderCallMonitorDao">
+	
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.LeaderCallMonitorEntity">
+		INSERT INTO data_monitor_leader_call (
+			 id ,
+			 leader_user_id ,
+			 target_user_id ,
+			 call_type ,
+			 create_time 
+		)
+		VALUES
+			(
+				NULL,
+				#{leaderUserId},
+				#{targetUserId},
+				#{callType},
+				#{createTime}
+			)
+	</insert>
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.VersionUpdateControlDao" >
+	<resultMap id="versionUpdateControlEntity"
+		type="com.deppon.dpm.module.common.shared.domain.VersionUpdateControlEntity">
+		<result property="id" column="id" javaType="Integer"
+			jdbcType="INTEGER" />
+		<result property="fileName" column="file_name" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="filePath" column="file_path" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="loadStatus" column="load_status" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="configType" column="config_type" javaType="String"
+		jdbcType="VARCHAR" />
+		<result property="updateTime" column="update_time"/>
+		<result property="createTime" column="create_time"/>
+	</resultMap>
+	
+	<select id="list" resultMap="versionUpdateControlEntity">
+		select * from app_update_control 
+	</select>
+	
+	<select id="queryByType" parameterType="string" resultMap="versionUpdateControlEntity">
+		select * from app_update_control where config_type = #{configType}
+	</select>
+	
+	<select id="queryById" parameterType="int" resultMap="versionUpdateControlEntity">
+		select * from app_update_control where id = #{id}
+	</select>
+	
+	<delete id="delById" parameterType="int">
+		DELETE FROM app_update_control WHERE id = #{id}
+	</delete>
+	
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.VersionUpdateControlEntity">
+		INSERT INTO app_update_control (
+			id,
+			file_name,
+			file_path,
+			load_status,
+			config_type,
+			update_time,
+			create_time
+		)
+		VALUES
+			(
+				NULL,
+				#{fileName},
+				#{filePath},
+				#{loadStatus},
+				#{configType},
+				#{updateTime},
+				#{createTime}
+			);
+	</insert>
+	
+	<update id="update" parameterType="com.deppon.dpm.module.common.shared.domain.VersionUpdateControlEntity">
+		update app_update_control
+		<set>
+			<if test="fileName != null and fileName != ''">
+				file_name = #{fileName},
+			</if>
+			<if test="loadStatus != null and loadStatus != ''">
+				load_status = #{loadStatus},
+			</if>
+			<if test="configType != null and configType != ''">
+				config_type = #{configType},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper>

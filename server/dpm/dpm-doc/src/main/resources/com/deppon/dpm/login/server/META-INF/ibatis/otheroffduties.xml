@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.doc.server.domain.OtherOffDutiesEntity">
+	<resultMap id="otherentityList" type="com.deppon.dpm.doc.server.entity.OtherOffDutiesEntity">
+		<result column="id" property="id" />
+		<result column="userId" property="userId" />
+		<result column="userName" property="userName" />
+		<result column="dept" property="dept" />
+		<result column="recordtime" property="recordtime" />
+		<result column="userPic" property="userPic" />
+		<result column="orderId" property="orderId" />
+		<result column="taxidate" property="taxidate" />
+		<result column="fromName" property="fromName" />
+		<result column="toName" property="toName" />
+		<result column="amount" property="amount" />
+		<result column="recordpic" property="recordpic" />
+		<result column="recordstate" property="recordstate" />
+		<result column="comment" property="comment" />
+		<result column="carremark" property="carremark" />
+		<result column="remark" property="remark" />
+		<result column="def1" property="def1" />
+		<result column="def2" property="def2" />
+		<result column="def3" property="def3" />
+		<result column="def4" property="def4" />
+		<result column="def5" property="def5" />
+		<result column="leadernum" property="leadernum" />
+	</resultMap>
+	<!--表名-->
+	<sql id="table_name">
+		DIDI_ORTHERDUTIES
+	</sql>
+	
+	<!-- 条件 -->
+	<sql id="other_condition">
+		<if test="id != null"> and id = #{id}</if>
+		<if test="userId != null"> and userId = #{userId,jdbcType=VARCHAR}</if>
+		<if test="userName != null"> and userName = #{userName,jdbcType=VARCHAR}</if>
+		<if test="dept != null"> and dept = #{dept,jdbcType=VARCHAR}</if>
+		<if test="recordtime != null"> and recordtime = #{recordtime,jdbcType=VARCHAR}</if>
+		<if test="userPic != null"> and userPic = #{userPic,jdbcType=VARCHAR}</if>
+		<if test="orderId != null"> and orderId = #{orderId,jdbcType=VARCHAR}</if>
+		<if test="taxidate != null"> and taxidate = #{taxidate,jdbcType=VARCHAR}</if>
+		<if test="fromName != null"> and fromName = #{fromName,jdbcType=VARCHAR}</if>
+		<if test="toName != null"> and toName = #{toName,jdbcType=VARCHAR}</if>
+		<if test="amount != null"> and amount = #{amount,jdbcType=VARCHAR}</if>
+		<if test="recordpic != null"> and recordpic = #{recordpic,jdbcType=VARCHAR}</if>
+		<if test="recordstate != null  and recordstate != '' and recordstate != 'null'"> and recordstate = #{recordstate,jdbcType=VARCHAR}</if>
+		<if test="comment != null"> and comment = #{comment,jdbcType=VARCHAR}</if>
+		<if test="carremark != null">and carremark = #{carremark,jdbcType=VARCHAR} </if>
+		<if test="remark != null">and remark = #{remark,jdbcType=VARCHAR} </if>
+		<if test="def1 != null">and def1 = #{def1,jdbcType=VARCHAR} </if>
+		<if test="def2 != null">and def2 = #{def2,jdbcType=VARCHAR} </if>
+		<if test="def3 != null">and def3 = #{def3,jdbcType=VARCHAR} </if>
+		<if test="def4 != null">and def4 = #{def4,jdbcType=VARCHAR} </if>
+		<if test="def5 != null">and def5 = #{def5,jdbcType=VARCHAR} </if>
+		<if test="leadernum != null">and leadernum = #{leadernum,jdbcType=VARCHAR} </if>
+	</sql>
+	<sql id="columns">
+		id, userId, userName, dept, recordtime, userPic, orderId, taxidate, fromName, toName, amount, recordpic, recordstate, comment, carremark , remark, 
+		def1, def2, def3, def4, def5, leadernum
+	</sql>
+	
+	<!-- 新增其他公务数据 -->
+	<insert id="insertmethod" parameterType="com.deppon.dpm.doc.server.entity.OtherOffDutiesEntity">
+		insert into <include refid="table_name" /> ( <include refid="columns" /> )
+		values(
+		#{id, jdbcType=VARCHAR}, 
+		#{userId, jdbcType=VARCHAR}, 
+		#{userName, jdbcType=VARCHAR}, 
+		#{dept, jdbcType=VARCHAR}, 
+		#{recordtime, jdbcType=VARCHAR},
+		 #{userPic, jdbcType=VARCHAR}, 
+		 #{orderId, jdbcType=VARCHAR}, 
+		 #{taxidate, jdbcType=VARCHAR}, 
+		 #{fromName, jdbcType=VARCHAR}, 
+		 #{toName, jdbcType=VARCHAR}, 
+		 #{amount, jdbcType=VARCHAR}, 
+		 #{recordpic, jdbcType=VARCHAR}, 
+		 #{recordstate, jdbcType=VARCHAR},
+		 #{comment, jdbcType=VARCHAR}, 
+		 #{carremark, jdbcType=VARCHAR}, 
+		 #{remark, jdbcType=VARCHAR}, 
+		 #{def1, jdbcType=VARCHAR}, 
+		 #{def2, jdbcType=VARCHAR}, 
+		 #{def3, jdbcType=VARCHAR}, 
+		 #{def4, jdbcType=VARCHAR}, 
+		 #{def5, jdbcType=VARCHAR},  
+		 #{leadernum, jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 用户根据条件查询审核结果(因公因私) -->
+	<select id="userquerymethod" parameterType="java.util.Map" resultMap="otherentityList">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		and userId = #{userId, jdbcType=VARCHAR} and recordstate = #{recordstate, jdbcType=VARCHAR} 
+		order by recordtime desc 
+		LIMIT  <![CDATA[${beginNum}]]>,<![CDATA[${aa}]]>
+	</select>
+	<!-- 其他公务员工全部数据-->
+	<select id="auditedquerymethod" parameterType="java.util.Map" resultMap="otherentityList">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		and userId = #{userId, jdbcType=VARCHAR} 
+		order by recordtime desc
+	</select>
+	
+	<!-- 用户审核结果-->
+	<select id="empqueryresult" parameterType="java.util.Map" resultMap="otherentityList">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		and userId = #{userId, jdbcType=VARCHAR} and recordstate in ('1','2') 
+		order by recordtime desc 
+		LIMIT  <![CDATA[${beginNum}]]>,<![CDATA[${aa}]]> 
+	</select>
+	
+	<!-- 部门管理组群查询审核结果（管理族群筛选） -->
+	<select id="leaderquerymethod" parameterType="java.util.Map" resultMap="otherentityList">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		and leadernum = #{userId, jdbcType=VARCHAR} and recordstate in ('1','2') 
+		order by recordtime desc 
+		LIMIT  <![CDATA[${beginNum}]]>,<![CDATA[${aa}]]> 
+	</select>
+	
+	<!-- 我审核页签所有数据 -->
+	<select id="leaderqueryresult" parameterType="java.util.Map" resultMap="otherentityList">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		and leadernum = #{userId, jdbcType=VARCHAR} 
+		order by recordtime desc 
+	</select>
+	
+	<select id="allauditeddatascreen" parameterType="java.util.Map" resultMap="otherentityList">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		and leadernum = #{userId, jdbcType=VARCHAR} and recordstate = #{recordstate, jdbcType=VARCHAR} 
+		and userId = #{subordinate, jdbcType=VARCHAR} 
+		order by recordtime desc 
+	</select>
+	
+	<select id="auditeddatascreen" parameterType="java.util.Map" resultMap="otherentityList">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		and leadernum = #{userId, jdbcType=VARCHAR} and recordstate = #{recordstate, jdbcType=VARCHAR} 
+		and userId = #{subordinate, jdbcType=VARCHAR} 
+		order by recordtime desc 
+		LIMIT  <![CDATA[${beginNum}]]>,<![CDATA[${aa}]]> 
+	</select>
+
+	
+	<!-- 其他公务管理族群点击我审核，默认带出‘待我审核’数据 -->
+	<select id="auditedminmethod" parameterType="java.util.Map" resultMap="otherentityList">
+		select <include refid="columns"/>
+		from <include refid="table_name"/> where 1=1
+		and leadernum = #{userId, jdbcType=VARCHAR} and recordstate = #{recordstate, jdbcType=VARCHAR}
+		order by recordtime desc
+		LIMIT  <![CDATA[${beginNum}]]>,<![CDATA[${aa}]]> 
+	</select>
+	
+	<!--  其他公务管理族群点击我审核更新-->
+	<update id="auditedupdatemethod" parameterType="java.util.Map" >
+	   UPDATE <include refid="table_name" />  SET
+	        recordstate = #{recordstate,jdbcType=VARCHAR} 
+       WHERE id =  #{id,jdbcType=VARCHAR} 
+	</update>
+	
+	<!--  转办-->
+	<update id="transferMethod" parameterType="java.util.Map" >
+	   UPDATE <include refid="table_name" />  SET
+	        leadernum = #{leadernum,jdbcType=VARCHAR} , def3 = #{leadernumName,jdbcType=VARCHAR}
+       WHERE userId =  #{userId,jdbcType=VARCHAR}  and recordState in (0,3)
+	</update>
+	
+	<!--  定时任务-->
+	<select id="queryBydate" parameterType="java.lang.String" resultMap="otherentityList">
+	   select * from <include refid="table_name"/> where 1=1 and recordtime like #{date,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 更新上个月错误状态 -->
+	<update id="updateRecordState">  
+	  UPDATE <include refid="table_name" />  SET
+	        recordState = '1'
+       WHERE recordState = '0' 
+       and PERIOD_DIFF( date_format( now( ) , '%Y%m' ) , date_format( recordtime , '%Y%m' ) ) =1 
+	</update>
+	<!--  查询该用户所有数据（待审核和带我审核）-->
+	<select id="allList" parameterType="java.lang.String" resultMap="otherentityList">
+	   select * from <include refid="table_name"/> where userId = #{userId, jdbcType=VARCHAR} and recordstate in ('0','3') 
+		UNION ALL
+       select * from <include refid="table_name"/> where leadernum = #{userId, jdbcType=VARCHAR} and recordstate in ('0','3')
+
+	</select>
+	
+	<!-- 查询某个领导超过三天未审批的疑似异常数量 -->
+	<select id="getNoApproval1" parameterType="java.lang.String" resultType="Integer">
+	   SELECT count(*) FROM didi_abnormal 
+       WHERE leadernum = #{userId}
+       AND recordstate IN (0,3)
+       AND DATE_SUB(CURDATE(), INTERVAL 3 DAY) >= taxidate
+	</select>
+	
+	<!-- 查询某个领导超过三天未审批的其他公务数量 -->
+	<select id="getNoApproval2" parameterType="java.lang.String" resultType="Integer">
+	   SELECT count(*) FROM didi_ortherduties 
+       WHERE leadernum = #{userId}
+       AND recordstate = 0
+       AND DATE_SUB(CURDATE(), INTERVAL 3 DAY) >= taxidate
+	</select>
+	
+	<!-- 查询某个领导未审批的疑似异常数量 -->
+	<select id="getNoApproval01" parameterType="java.lang.String" resultType="Integer">
+	   SELECT count(*) FROM didi_abnormal 
+       WHERE leadernum = #{userId}
+       AND recordstate IN (0,3)
+	</select>
+	
+	<!-- 查询某个领导未审批的其他公务数量 -->
+	<select id="getNoApproval02" parameterType="java.lang.String" resultType="Integer">
+	   SELECT count(*) FROM didi_ortherduties 
+       WHERE leadernum = #{userId}
+       AND recordstate = 0
+	</select>
+</mapper>

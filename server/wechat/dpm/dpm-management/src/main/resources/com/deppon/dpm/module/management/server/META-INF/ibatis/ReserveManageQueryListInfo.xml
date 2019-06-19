@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.dpm.module.management.server.dao.busmanager.ReserveManageQueryListInfoDao">
+	
+	<!--查询羽毛球或瑜伽室信息-->
+	<select id="querySiteLeisureList"
+		resultType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity">
+			<![CDATA[
+			   select rp.id,rp.siteMark,rp.siteName,rp.areaCode,rp.areaName,rp.roomCode,rp.roomName, DATE_FORMAT(rd.startTime, '%H:%i') startTimeStr,DATE_FORMAT(rd.endTime, '%H:%i') endTimeStr,rp.orderNum  
+				   from reserve_manage_playroom rp 
+				   left JOIN (SELECT * from reserve_manage_date  
+				                   where DATE_FORMAT(startTime, '%Y-%m-%d')=
+				                   DATE_FORMAT(#{startTime}, '%Y-%m-%d') and status=0)  rd 
+				       on(rp.id=rd.PlayroomId) 
+				   where 
+				       rp.siteMark=#{siteMark} 
+				       and rp.areaCode=#{areaCode}
+				       
+				   order by rp.orderNum 
+			   
+			]]>
+	</select>
+	<!--查询羽毛球或瑜伽室信息-->
+	<select id="querySiteInfo"
+		resultType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity"
+		parameterType="java.lang.Integer">
+			<![CDATA[
+                select DISTINCT a.siteMark,a.siteName,a.areaCode,a.areaName
+					from reserve_manage_playroom a where a.siteMark=#{siteMark}
+			]]>
+	</select>
+	<!--查询羽毛球或瑜伽室信息-->
+	<select id="querySiteDateList"
+		resultType="com.deppon.dpm.module.management.shared.domain.ReserveRecordEntity"
+		parameterType="java.lang.Integer">
+			<![CDATA[
+               SELECT rd.id,rp.siteMark,rp.siteName,rp.areaCode,rp.areaName,rp.roomCode,rp.roomName,rd.userName,
+               rd.userphone,          
+               DATE_FORMAT(rd.startTime, '%Y-%m-%d %H:%i:%s') startTimeStr,
+               DATE_FORMAT(rd.endTime, '%Y-%m-%d %H:%i:%s') endTimeStr,
+               rd.updateTime,
+               rd.status
+                   from reserve_manage_playroom rp,reserve_manage_date rd 
+                   where rp.id=#{id}
+                     and rp.id = rd.PlayroomId
+                     and 
+                     DATE_FORMAT(startTime, '%Y-%m-%d') = DATE_FORMAT(#{startTime}, '%Y-%m-%d')     
+                     and rd.status in (0,2)
+                     order by startTimeStr
+               
+			]]>
+	</select>
+
+    <!--查询管理员信息-->
+	<select id="queryAdmin"
+		resultType="com.deppon.dpm.module.management.shared.domain.ReserveAdminEntity">
+			<![CDATA[
+                select *  from reserve_manage_permission order by createTime desc
+			]]>
+	</select>
+	<!--保存管理员信息 -->
+	<insert id="saveAdminInfo" parameterType="com.deppon.dpm.module.management.shared.domain.ReserveAdminEntity">
+	    insert into reserve_manage_permission(id,userNo,userName,depName,phone,createTime,createUserNo,updateTime,updateUserNo,delMark)   
+                   values(#{id},
+                          #{userNo},
+                          #{userName},
+                          #{depName},
+                          #{phone},
+                           NOW(),
+                          #{createUserNo},
+                           NOW(),
+                          #{createUserNo},
+                           0)
+	</insert>
+	
+	<!--delete管理员信息 -->
+	<delete id="deleteAdminInfo" parameterType="java.lang.Integer">
+	     delete from reserve_manage_permission where id=#{id}
+	</delete>
+	 <!--查询管理员信息-->
+	<select id="checkSuperAdmin"
+		resultType="java.lang.Integer">
+			<![CDATA[
+               select count(*) from om_employee oe,om_organization oo 
+                  where oe.ORGID=oo.ORGID 
+                    and oo.orgcode='W01080101' 
+                    and oe.empcode=#{userNo}
+			]]>
+	</select>
+	 <!--去除重复管理员信息-->
+	<select id="queryAdminInfo"
+		resultType="java.lang.Integer">
+			<![CDATA[
+            select count(*) from reserve_manage_permission a 
+               where  a.userNo=#{userNo}
+			]]>
+	</select>
+	
+</mapper>
+	

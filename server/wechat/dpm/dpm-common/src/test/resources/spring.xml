@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+			default-autowire="byName" default-lazy-init="true">
+			
+	 <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+   		<!--  使用locations属性定义多个配置文件 -->
+        <property name="locations">
+             <list>
+                 <value>classpath*:config.properties</value>
+             </list>
+    	</property>
+    </bean>	
+    
+    <!-- 整合jedis satrt-->
+	<!-- jedis连接池配置信息 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${redis.maxTotal}"></property>
+		<property name="maxIdle" value="${redis.maxIdle}"></property>
+		<property name="maxWaitMillis" value="${redis.maxWaitMillis}"></property>
+		<property name="testOnBorrow" value="${redis.testOnBorrow}"></property>
+		<property name="testOnReturn" value="${redis.testOnReturn}"></property>
+	</bean>
+	<!-- 定义集群连接池 -->
+	<bean id="jedisPool" class="redis.clients.jedis.ShardedJedisPool">
+		<!-- 连接池的配置 -->
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<!-- 集群信息 -->
+		<constructor-arg index="1">
+			<list>
+				<!-- 第一个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip1}" />
+					<constructor-arg index="1" value="${redis.port1}" />
+					<constructor-arg index="2" value="node1" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第二个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip2}" />
+					<constructor-arg index="1" value="${redis.port2}" />
+					<constructor-arg index="2" value="node2" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第三个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip3}" />
+					<constructor-arg index="1" value="${redis.port3}" />
+					<constructor-arg index="2" value="node3" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第四个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip4}" />
+					<constructor-arg index="1" value="${redis.port4}" />
+					<constructor-arg index="2" value="node4" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第五个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip5}" />
+					<constructor-arg index="1" value="${redis.port5}" />
+					<constructor-arg index="2" value="node5" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+				<!-- 第六个节点 -->
+				<bean class="redis.clients.jedis.JedisShardInfo">
+					<constructor-arg index="0" value="${redis.ip6}" />
+					<constructor-arg index="1" value="${redis.port6}" />
+					<constructor-arg index="2" value="node6" />
+					<property name="password" value="${redis.pass}" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="redisService" class="com.deppon.dpm.module.common.server.service.impl.RedisService">
+		<property name="jedisPool" ref="jedisPool" />
+	</bean>
+	<!-- 整合jedis end-->
+	
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.68.118:3306/app" />
+		<property name="username" value="mysql1" />
+		<property name="password" value="mysql1" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- <property name="configLocation" value="com/deppon/dpm/module/announce/test/META-INF/ibatis.xml" /> -->
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/ibatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="monitorCountInfoService" class="com.deppon.dpm.module.common.server.service.impl.MonitorCountInfoService">
+		<property name="monitorCountInfoDao" ref="monitorCountInfoDao"></property>
+	</bean>
+	
+	<bean id="monitorCountInfoDao" class="com.deppon.dpm.module.common.server.dao.impl.MonitorCountInfoDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="loginInfoService" class="com.deppon.dpm.module.common.server.service.impl.LoginInfoService">
+		<property name="loginInfoDao" ref="loginInfoDao"></property>
+		<property name="template" ref="jdbcTemplate"></property>
+	</bean>
+	
+	<bean id="loginInfoDao" class="com.deppon.dpm.module.common.server.dao.impl.LoginInfoDao"> 
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="editWelcomePageService" class="com.deppon.dpm.module.common.server.service.impl.EditWelcomePageService">
+		<property name="photoAddressService" ref="photoAddressService"></property>
+		<property name="editWelcomePageDao" ref="editWelcomePageDao"></property>
+		<property name="webUrl" value="${dmp.announce.webUrl}"></property>
+		<property name="template" ref="jdbcTemplate"></property>
+	</bean>
+	
+	<bean id="photoAddressService" class="com.deppon.dpm.module.common.server.service.impl.PhotoAddressService">
+		<property name="headPortraitAddress" value="${tongxunlu.head.portrait}"></property>
+		<property name="taskPhotoAddress" value="${task.photo}"></property>
+		<property name="feedBackAddress" value="${feedback.picture.dir}"></property>
+		<property name="welcomeAddress" value="${welcome.page}"></property>
+		<property name="serverHostPort" value="${serverHostPort}"></property>
+	</bean>
+	
+	<bean id="editWelcomePageDao" class="com.deppon.dpm.module.common.server.dao.impl.EditWelcomePageDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="awardService" class="com.deppon.dpm.module.common.server.service.impl.AwardService">
+		<property name="awardDao" ref="awardDao"></property>
+		<property name="template" ref="jdbcTemplate"></property>
+	</bean>
+	
+	<bean id="awardDao" class="com.deppon.dpm.module.common.server.dao.impl.AwardDao">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+	</bean>
+	
+	<bean id="h5ApplyFileCompareService" class="com.deppon.dpm.module.common.server.service.impl.H5ApplyFileCompareService">
+		<property name="template" ref="jdbcTemplate"></property>
+	</bean>
+	
+	<bean id="breakDownService" class="com.deppon.dpm.module.common.server.service.impl.BreakDownService">
+		<property name="breakDownDao" ref="breakDownDao"></property>
+	</bean>
+	
+	<bean id="breakDownDao" class="com.deppon.dpm.module.common.server.dao.impl.BreakDownDao">
+	</bean>
+	
+	<bean id="uUMSRoleService" class="com.deppon.dpm.module.common.server.service.impl.UUMSRoleServiceImpl">
+		<property name="roleUrl" value="${roleurl}"/>
+	</bean>
+	
+	<bean id="dataMonitorForTongjiService" class="com.deppon.dpm.module.common.server.service.impl.DataMonitorForTongjiServiceImpl">
+		<property name="dataMonitorForTongjiDao" ref="dataMonitorForTongjiDao" />
+	</bean>
+	<bean id="dataMonitorForTongjiDao" class="com.deppon.dpm.module.common.server.dao.impl.DataMonitorForTongjiDaoImpl"/>
+
+	<bean id="nazaInvokeMonitorService" class="com.deppon.dpm.module.common.server.service.impl.NazaInvokeMonitorServiceImpl">
+		<property name="nazaInvokeMonitorDao" ref="nazaInvokeMonitorDao"/>
+	</bean>
+	<bean id="nazaInvokeMonitorDao" class="com.deppon.dpm.module.common.server.dao.impl.NazaInvokeMonitorDaoImpl"/>
+	
+	<!-- 版本更新权限控制 -->
+	<bean id="versionUpdateControlService" class="com.deppon.dpm.module.common.server.service.impl.VersionUpdateControlService">
+		<property name="serverHost" value="${serverHostPort}"/>
+		<property name="versionUpdateControlDao" ref="versionUpdateControlDao"/>
+	</bean>
+	<bean id="versionUpdateControlDao" class="com.deppon.dpm.module.common.server.dao.impl.VersionUpdateControlDao">
+	</bean>
+	
+	<!-- 用户绑定mac信息 -->
+	<bean id="empBindMacService" class="com.deppon.dpm.module.common.server.service.impl.EmpBindMacService">
+		<property name="empBindMacDao" ref="empBindMacDao"/>
+	</bean>
+	<bean id="empBindMacDao" class="com.deppon.dpm.module.common.server.dao.impl.EmpBindMacDao" />
+
+	<!-- 手势密码管理 -->
+	<bean id="gestureService" class="com.deppon.dpm.module.common.server.service.impl.GestureService">
+		<property name="gestureDao" ref="gestureDao"/>
+	</bean>
+	<bean id="gestureDao" class="com.deppon.dpm.module.common.server.dao.impl.GestureDao" />
+	
+	<!-- 短信开关管理 -->
+	<bean id="smsService" class="com.deppon.dpm.module.common.server.service.impl.SmsService">
+		<property name="smsDao" ref="smsDao"/>
+	</bean>
+	<bean id="smsDao" class="com.deppon.dpm.module.common.server.dao.impl.SmsDao"/>
+	
+	<!-- 工程管理部门 -->
+	<bean id="projectManageDeptService" class="com.deppon.dpm.module.common.server.service.impl.ProjectManageDeptService">
+		<property name="projectManageDeptDao" ref="projectManageDeptDao"/>
+	</bean>
+	<bean id="projectManageDeptDao" class="com.deppon.dpm.module.common.server.dao.impl.ProjectManageDeptDao"/>
+</beans>

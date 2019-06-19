@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.busSite">
+	<resultMap id="busSiteResult" type="com.deppon.dpm.module.management.shared.domain.BusSiteInfo">		
+		<result property="id" column="id" jdbcType="INTEGER"/>
+		<result property="siteName" column="site_name" jdbcType="VARCHAR"/>
+		<result property="address" column="address" jdbcType="VARCHAR"/>
+		<result property="remark" column="remark" jdbcType="VARCHAR"/>
+		<result property="isAct" column="is_act" jdbcType="INTEGER"/>
+		<result property="lineName" column="line_name" jdbcType="VARCHAR"/>
+		<result property="userName" column="user_name" jdbcType="VARCHAR"/>
+		<result property="tel" column="tel" jdbcType="VARCHAR"/>
+	</resultMap>
+	<!-- 根据主键ID查询 -->
+	<select id="selectBusSiteByID" parameterType="String" resultType="com.deppon.dpm.module.management.shared.domain.BusSiteInfo">
+		select *from bus_site_info b where b.id=#{id,jdbcType=INTEGER}
+	</select>
+	<!-- 查询所有站点集合 -->	
+	<select id="selectAllBusSite"  resultMap="busSiteResult">
+		select bsi.id,bsi.site_name,bsi.address,bsi.remark,bsi.is_act,bsi.line_name,bsi.user_name,bsi.tel from bus_site_info bsi
+	</select>
+	<!-- 保存站点维护信息 -->
+	<update id="updateBusSite" parameterType="com.deppon.dpm.module.management.shared.domain.BusSiteInfo">
+		update bus_site_info b set 
+		b.site_name=#{siteName,jdbcType=VARCHAR},
+		b.address=#{address,jdbcType=VARCHAR},
+		b.line_name=#{lineName,jdbcType=VARCHAR},
+		b.user_name=#{userName,jdbcType=VARCHAR},
+		b.tel=#{tel,jdbcType=VARCHAR} where b.id=#{id,jdbcType=INTEGER}
+	</update>	
+	<!-- 根据线路ID删除线路信息 -->
+	<delete id="deleteBusLine" parameterType="int" >
+		delete from bus_line_info where id=#{id,jdbcType=INTEGER}
+	</delete>
+	<!-- 根据线路ID删除线路的所有站点 -->
+	<delete id="deleteBusSiteOfLine" parameterType="int">
+		delete from bus_line_of_site where line_id=#{id,jdbcType=INTEGER}
+	</delete>
+	<!-- 根据下班时间获取线路站点信息 -->
+	<select id="selectSiteOfLineByTime" parameterType="Date" resultType="com.deppon.dpm.module.management.shared.domain.BusMessageView">
+		select *from bus_one_message_view bs where bs.startDate=#{startDate,jdbcType=TIME}
+	</select>
+	<!-- 根据工号判断当前员工是不是班车管理员 -->
+	<select id="checkIsAdmin" parameterType="String" resultType="java.lang.Integer">
+	SELECT COUNT(oe.empname) from om_employee oe,om_organization om 
+	where oe.empcode=#{managerId} and oe.EMPSTATUS='on' and oe.ORGID=om.ORGID and om.orgcode='W01110302'
+	</select>
+	<!-- 班车服务-数据监控 -->
+	<insert id="busServiceWatch"
+		parameterType="com.deppon.dpm.module.common.shared.domain.MonitorCountInfoEntity">
+		INSERT INTO
+			COLLECT_COUNTINFO(USERID,START_TIME,END_TIME,TYPE)
+		values(#{userId,jdbcType=VARCHAR},#{startTime,jdbcType=TIMESTAMP}
+			,#{endTime,jdbcType=TIMESTAMP},#{type,jdbcType=INTEGER})
+	</insert>
+</mapper>

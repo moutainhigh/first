@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.DataMonitorForTongji" >
+	<select id="queryByCondition" parameterType="com.deppon.dpm.module.common.shared.domain.DataMonitorForTongjiEntity"
+		resultType="com.deppon.dpm.module.common.shared.domain.DataMonitorForTongjiEntity">
+		<include refid="commonSql" />
+		<if test="joblevel != null and joblevel != ''">
+			<if test="joblevel == '09'">
+				and b.JOBLEVEL = #{joblevel}
+				and a.emp_code  &lt;&gt; '018345'
+			</if>
+			<if test="joblevel == '10'">
+				and b.JOBLEVEL in (#{joblevel},'C','D')
+				union
+				<include refid="commonSql" />
+				and a.emp_code = '018345'
+			</if>
+		</if>
+		order by empCode
+	</select>
+	
+	<sql id="commonSql">
+		SELECT
+			b.empcode empCode,b.empname empName,c.monitor_name moduleName ,a.access_time accessTime
+		FROM
+			data_monitor a
+		INNER JOIN om_employee b ON a.emp_code = b.empcode
+		INNER JOIN data_monitor_name c ON a.monitor_type = c.monitor_type
+		WHERE b.EMPSTATUS = 'on' AND c.isEntry = '1'
+		<if test="startTime != null">
+			and a.access_time &gt;= #{startTime}
+		</if>
+		<if test="endTime != null">
+			and a.access_time &lt;= #{endTime}
+		</if>
+	</sql>
+</mapper>

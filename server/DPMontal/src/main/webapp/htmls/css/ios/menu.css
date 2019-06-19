@@ -1,0 +1,33 @@
+@charset "utf-8";
+/* ios menu style */
+
+div#menu { background:#fff; font-size:32px; width:100%; min-height:960px; overflow:hidden;}
+#div1 { width:100%; min-width:640px; height:91px; text-align:center; line-height:91px; font-size:28px; overflow:hidden; background:url(../../images/ios_topbar.jpg) repeat-x; position:relative;}
+#div1 a.return { display:block; width:101px; height:60px; background:url(../../images/ios_return.png) no-repeat; position:absolute; top:15px; left:25px;}
+#div1 .logo { width:144px; height:50px; background:url(../../images/ios_top_logo.png) no-repeat; position:absolute; top:15px; right:25px;}
+#div2 { width:620px; margin:25px auto 0;}
+#div2 .list { display:none;}
+#div2 ul { width:100%; overflow:hidden; position:relative;}
+#div2 ul li.iosTips { 
+	display:inline-block; width:auto; height:36px; line-height:36px; font-size:30px; color:#fff; position:absolute; top:0; left:120px; margin:0; float:none; padding:0 10px; z-index:999;
+	-webkit-border-radius:25px; -moz-border-radius:25px; -ms-border-radius:25px; -o-border-radius:25px;
+	border:4px solid #fff;
+	-moz-box-shadow: 0 3px 2px rgba(0,0,0,.8);
+	-webkit-box-shadow: 0 3px 2px rgba(0,0,0,.8);
+	box-shadow: 0 3px 2px rgba(0,0,0,.8);
+	background:-webkit-linear-gradient(#f8b3b7 , #c50103);
+	background:-moz-linear-gradient(#f8b3b7 , #c50103);
+	background:-ms-linear-gradient(#f8b3b7 , #c50103);
+	background:-o-linear-gradient(#f8b3b7 , #c50103);
+	background:linear-gradient(#f8b3b7 , #c50103);
+	background-images:none;
+}
+#div2 ul li { width:126px; height:170px; text-align:center; background:url(../../images/ios_icon_bg.png) no-repeat 0 top; margin:20px 40px 30px; float:left; position:relative;}
+#div2 ul li a{ display:block; width:126px; height:126px;}
+#div2 ul li p { display:block; width:126px; text-align:center; line-height:28px; color:#373c64; position:absolute; bottom:2px; font-size:24px;}
+#div2 ul li.ico1 a { background:url(../../images/ios_icon1.png) no-repeat center center;}
+#div2 ul li.ico2 a { background:url(../../images/ios_icon2.png) no-repeat center center;}
+#div2 ul li.ico3 a { background:url(../../images/ios_icon3.png) no-repeat center center;}
+#div2 ul li.ico4 a { background:url(../../images/ios_icon4.png) no-repeat center center;}
+#div2 ul li.ico5 a { background:url(../../images/ios_icon5.png) no-repeat center center;}
+#div3.ad { width:100%;}

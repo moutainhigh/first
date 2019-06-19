@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.announce.shared.domain.AnnounceEntity" >
+	<resultMap id="BaseResultMap" type="com.deppon.dpm.module.announce.shared.domain.AnnounceEntity" >
+	    <result column="ID" property="id" jdbcType="VARCHAR" />
+	    <result column="OA_ID" property="oaId" jdbcType="VARCHAR"/>
+	    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+	    <result column="TITLE" property="title" jdbcType="VARCHAR" />
+	    <result column="PUBLISH_TIME" property="publishTime" jdbcType="TIMESTAMP" />
+	    <result column="PUB_TIME_STR" property="pubTimeStr" jdbcType="VARCHAR" />
+	    <result column="CONTENT" property="content" jdbcType="VARCHAR" />
+	    <result column="COLLECTION_NUM" property="collectionNum" jdbcType="DECIMAL" />
+	    <result column="READ_NUM" property="readNum" jdbcType="DECIMAL" />
+	    <result column="PRAISE_NUM" property="praiseNum" jdbcType="DECIMAL" />
+	    <result column="ATTACHMENT_PATH" property="attachmentPath" jdbcType="VARCHAR" />
+	    <result column="CREATE_USER_CODE" property="createUserCode" jdbcType="VARCHAR" />
+	    <result column="CREATE_USER_NAME" property="createUserName" jdbcType="VARCHAR" />
+	    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+	    <result column="MODIFY_USER_CODE" property="modifyUserCode" jdbcType="VARCHAR" />
+	    <result column="MODIFY_USER_NAME" property="modifyUserName" jdbcType="VARCHAR" />
+	    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+	    <result column="SRCOLL_IMAGE_PATH" property="srcollImagPath" jdbcType="VARCHAR" />
+	    <result column="CON_IMG_NAME" property="conImgName" jdbcType="VARCHAR" />
+	    <result column="SCROLL_IMG_NAME" property="scrollImgName" jdbcType="VARCHAR" />
+	    <result column="APP_CON_PATH" property="appConImgPath" jdbcType="VARCHAR" />
+	    <result column="APP_SCROLL_PATH" property="appScrollImgPath" jdbcType="VARCHAR" />
+  	</resultMap>
+  	<insert id="insert" parameterType="com.deppon.dpm.module.announce.shared.domain.AnnounceEntity" >
+    INSERT INTO T_APP_ANNOUNCE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="oaId != null" >
+        OA_ID,
+      </if>
+      <if test="type != null" >
+        TYPE,
+      </if>
+      <if test="title != null" >
+        TITLE,
+      </if>
+      <if test="publishTime != null" >
+        PUBLISH_TIME,
+      </if>
+      <if test="content != null" >
+        CONTENT,
+      </if>
+      <if test="collectionNum != null" >
+        COLLECTION_NUM,
+      </if>
+      <if test="readNum != null" >
+        READ_NUM,
+      </if>
+      <if test="praiseNum != null" >
+        PRAISE_NUM,
+      </if>
+      <if test="attachmentPath != null" >
+        ATTACHMENT_PATH,
+      </if>
+      <if test="createUserCode != null" >
+        CREATE_USER_CODE,
+      </if>
+      <if test="createUserName != null" >
+        CREATE_USER_NAME,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="modifyUserCode != null" >
+        MODIFY_USER_CODE,
+      </if>
+      <if test="modifyUserName != null" >
+        MODIFY_USER_NAME,
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME,
+      </if>
+      <if test="srcollImagPath != null" >
+        SRCOLL_IMAGE_PATH,
+      </if>      
+      <if test="conImgName != null" >
+        CON_IMG_NAME,
+      </if>
+      <if test="scrollImgName != null" >
+        SCROLL_IMG_NAME,
+      </if>
+      <if test="appConImgPath != null" >
+        APP_CON_PATH,
+      </if>
+      <if test="appScrollImgPath != null" >
+        APP_SCROLL_PATH,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="oaId != null" >
+        #{oaId,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="publishTime != null" >
+        #{publishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionNum != null" >
+        #{collectionNum,jdbcType=DECIMAL},
+      </if>
+      <if test="readNum != null" >
+        #{readNum,jdbcType=DECIMAL},
+      </if>
+      <if test="praiseNum != null" >
+        #{praiseNum,jdbcType=DECIMAL},
+      </if>
+      <if test="attachmentPath != null" >
+        #{attachmentPath,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserCode != null" >
+        #{createUserCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserName != null" >
+        #{createUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyUserCode != null" >
+        #{modifyUserCode,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyUserName != null" >
+        #{modifyUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="srcollImagPath != null" >
+        #{srcollImagPath,jdbcType=VARCHAR},
+      </if>
+      <if test="conImgName != null" >
+        #{conImgName,jdbcType=VARCHAR},
+      </if>
+      <if test="scrollImgName != null" >
+        #{scrollImgName,jdbcType=VARCHAR},
+      </if>
+       <if test="appConImgPath != null" >
+        #{appConImgPath,jdbcType=VARCHAR},
+      </if>
+      <if test="appScrollImgPath != null" >
+        #{appScrollImgPath,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <sql id="SELECT_BASE_LIST">
+		ID, OA_ID, TYPE, TITLE, 
+      PUBLISH_TIME,DATE_FORMAT(PUBLISH_TIME,'%Y-%m-%d') AS PUB_TIME_STR,CONTENT, COLLECTION_NUM, 
+      READ_NUM, PRAISE_NUM, ATTACHMENT_PATH, 
+      CREATE_USER_CODE, CREATE_USER_NAME, CREATE_TIME, 
+      MODIFY_USER_CODE, MODIFY_USER_NAME, MODIFY_TIME,SRCOLL_IMAGE_PATH,CON_IMG_NAME,SCROLL_IMG_NAME,
+      APP_CON_PATH,APP_SCROLL_PATH
+  </sql>
+
+  	<select id="queryCommonAll" parameterType="com.deppon.dpm.module.announce.shared.dto.AnnounceDto"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="SELECT_BASE_LIST" />
+		FROM T_APP_ANNOUNCE
+		<where>
+		    1=1
+			<if test="startTime !=null and endTime != null">
+	      		<![CDATA[
+					AND PUBLISH_TIME >= #{startTime,jdbcType=TIMESTAMP}
+					AND PUBLISH_TIME < #{endTime,jdbcType=TIMESTAMP}
+				]]>
+			</if>
+			<if test="type != null and type != ''">
+				<choose>
+					<when test="type == 'BREACH_PRINCIPLE'">
+						AND DATE_FORMAT(CREATE_TIME,'%Y-%m') >= DATE_FORMAT(DATE_SUB(curdate(), INTERVAL 3 MONTH),'%Y-%m') 
+						AND TYPE = 'BREACH_PRINCIPLE'
+					</when>
+					<otherwise>
+						AND TYPE = #{type,jdbcType=VARCHAR}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="id !=null and id != ''">
+	      		AND ID = #{id,jdbcType=VARCHAR}
+			</if>
+			<if test="detailType != null and detailType != ''">
+				AND TITLE LIKE '%${detailType}%'
+			</if>
+		</where>
+		ORDER BY PUBLISH_TIME DESC
+	</select>
+	
+	<select id="queryOneByOaId" parameterType="String"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="SELECT_BASE_LIST" />
+		FROM T_APP_ANNOUNCE
+		WHERE OA_ID =  #{oaId,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="queryCommonCount" parameterType="com.deppon.dpm.module.announce.shared.dto.AnnounceDto" resultType="Long">
+		SELECT COUNT(1)
+		FROM T_APP_ANNOUNCE
+		<where>
+		    1=1
+			<if test="startTime !=null and endTime != null">
+	      		<![CDATA[
+					AND CREATE_TIME >= #{startTime,jdbcType=TIMESTAMP}
+					AND CREATE_TIME < #{endTime,jdbcType=TIMESTAMP}
+				]]>
+			</if>
+			<if test="type !=null and type != ''">
+	      		AND TYPE = #{type,jdbcType=VARCHAR}
+			</if>
+			<if test="id !=null and id != ''">
+	      		AND ID = #{id,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryNormalNews" parameterType="com.deppon.dpm.module.announce.shared.dto.AnnounceDto"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="SELECT_BASE_LIST" />
+		FROM T_APP_ANNOUNCE
+		WHERE TYPE = 'NEWS'
+	    <if test="announceList != null and announceList.size() > 0" >	
+    		AND ID NOT IN
+	    	<foreach item="item" index="index" collection="announceList" open="(" separator="," close=")">
+		    	#{item} 
+			</foreach>  	 
+		</if> 
+		<![CDATA[
+			AND CREATE_TIME >= #{startTime,jdbcType=TIMESTAMP}
+			AND CREATE_TIME < #{endTime,jdbcType=TIMESTAMP}
+		]]>
+		ORDER BY CREATE_TIME DESC
+	</select>
+	
+	<select id="queryScrollNews" resultMap="BaseResultMap">
+		SELECT
+		<include refid="SELECT_BASE_LIST" />
+		FROM T_APP_ANNOUNCE
+		WHERE TYPE = 'NEWS'
+		AND SRCOLL_IMAGE_PATH IS NOT NULL
+		ORDER BY CREATE_TIME DESC
+		LIMIT 0,5
+	</select>
+	
+	<update id="update" parameterType="com.deppon.dpm.module.announce.shared.domain.AnnounceEntity" >
+	    UPDATE T_APP_ANNOUNCE
+	    <set >
+	      <if test="id != null" >
+	        ID = #{id,jdbcType=VARCHAR},
+	      </if>
+	      <if test="oaId != null" >
+	        OA_ID = #{oaId,jdbcType=VARCHAR},
+	      </if>
+	      <if test="type != null" >
+	        TYPE = #{type,jdbcType=VARCHAR},
+	      </if>
+	      <if test="title != null" >
+	        TITLE = #{title,jdbcType=VARCHAR},
+	      </if>
+	      <if test="publishTime != null" >
+	        PUBLISH_TIME = #{publishTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="content != null" >
+	        CONTENT = #{content,jdbcType=VARCHAR},
+	      </if>
+	      <if test="collectionNum != null" >
+	        COLLECTION_NUM = #{collectionNum,jdbcType=DECIMAL},
+	      </if>
+	      <if test="readNum != null" >
+	        READ_NUM = #{readNum,jdbcType=DECIMAL},
+	      </if>
+	      <if test="praiseNum != null" >
+	        PRAISE_NUM = #{praiseNum,jdbcType=DECIMAL},
+	      </if>
+	      <if test="attachmentPath != null" >
+	        ATTACHMENT_PATH = #{attachmentPath,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createUserCode != null" >
+	        CREATE_USER_CODE = #{createUserCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createUserName != null" >
+	        CREATE_USER_NAME = #{createUserName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="createTime != null" >
+	        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="modifyUserCode != null" >
+	        MODIFY_USER_CODE = #{modifyUserCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modifyUserName != null" >
+	        MODIFY_USER_NAME = #{modifyUserName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="modifyTime != null" >
+	        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="srcollImagPath != null" >
+	        SRCOLL_IMAGE_PATH = #{srcollImagPath,jdbcType=VARCHAR},
+	      </if>
+	      <if test="conImgName != null" >
+	        CON_IMG_NAME = #{conImgName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="scrollImgName != null" >
+	        SCROLL_IMG_NAME = #{scrollImgName,jdbcType=VARCHAR},
+	      </if>
+	      <if test="appConImgPath != null" >
+	        APP_CON_PATH = #{appConImgPath,jdbcType=VARCHAR},
+	      </if>
+	      <if test="appScrollImgPath != null" >
+	        APP_SCROLL_PATH = #{appScrollImgPath,jdbcType=VARCHAR},
+	      </if>
+	    </set>
+	    WHERE ID = #{id,jdbcType=VARCHAR}
+  </update>
+  
+  <delete id="delete" parameterType="String" >
+  	 DELETE FROM T_APP_ANNOUNCE
+  	 	WHERE ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <select id="getSearchResult" parameterType="map" resultMap="BaseResultMap">
+  	SELECT OA_ID,TITLE,CONTENT,TYPE,CREATE_TIME,ID   
+  	FROM T_APP_ANNOUNCE WHERE TITLE 
+  	LIKE #{title} or CONTENT LIKE #{content} 
+  	ORDER BY CREATE_TIME DESC 
+  	LIMIT #{start},#{limit} 
+  </select>
+  
+  <select id="getNormalQuestion" resultType="com.deppon.dpm.module.announce.shared.domain.NormalQuestionEntity">
+ 	SELECT title, content, questionType, createTime FROM OM_NORMAL_QUESTION ORDER BY createTime
+  </select>
+  
+  <select id="getNormalQuestionHandle" resultType="com.deppon.dpm.module.announce.shared.domain.NormalQuestionHandleEntity">
+ 	SELECT IFNULL(qt.empName,'') empName, 
+    IFNULL(qt.empCode,'') empCode, IFNULL(qt.Content,'') Content, IFNULL(et.pictPath,'') pictPath, IFNULL(mt.GENDER,'') gender
+    FROM OM_NORMAL_QUESTION_HANDLE qt 
+    LEFT JOIN om_employee mt ON qt.empCode=mt.empcode
+    LEFT JOIN EMP_PIC et ON mt.empcode=et.empCode
+    ORDER BY empCode desc
+  </select>
+  
+  <!-- 获取通告类型 -->
+  <select id="getAnnounceTypes" resultType="string">
+  	SELECT DISTINCT TYPE FROM t_app_announce;
+  </select>
+  <!-- 根据类型获取通告列表 -->
+  <select id="getAnnouncesByType" parameterType="string" resultMap="BaseResultMap">
+  	SELECT
+		<include refid="SELECT_BASE_LIST" />
+		FROM T_APP_ANNOUNCE
+		WHERE TYPE = #{type}
+		AND (ATTACHMENT_PATH LIKE 'http://192.168.68.117:8080%' 
+		OR SRCOLL_IMAGE_PATH LIKE 'http://192.168.68.117:8080%'  
+		OR APP_CON_PATH LIKE '/upload/%'  
+		OR APP_SCROLL_PATH LIKE '/upload/%')
+  </select>
+  <!-- 批量更新通告 -->
+  <update id="updateBatch4Path" parameterType="java.util.List">
+	    <foreach collection="list" item="announce" separator=";">
+	    	UPDATE T_APP_ANNOUNCE SET 
+		        ATTACHMENT_PATH = #{announce.attachmentPath,jdbcType=VARCHAR},
+		        SRCOLL_IMAGE_PATH = #{announce.srcollImagPath,jdbcType=VARCHAR},
+		        APP_CON_PATH = #{announce.appConImgPath,jdbcType=VARCHAR},
+		        APP_SCROLL_PATH = #{announce.appScrollImgPath,jdbcType=VARCHAR}
+		    WHERE ID = #{announce.id,jdbcType=VARCHAR}
+	    </foreach>
+  </update>
+  
+</mapper>

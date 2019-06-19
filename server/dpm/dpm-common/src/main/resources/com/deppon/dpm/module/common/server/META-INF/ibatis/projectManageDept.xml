@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.common.server.dao.impl.ProjectManageDeptDao">
+	<select id="list" resultType="com.deppon.dpm.module.common.shared.domain.ProjectManageDeptEntity">
+		SELECT * FROM proc_auth_dept
+	</select>
+	
+	<delete id="delete" parameterType="list">
+		DELETE FROM proc_auth_dept WHERE orgcode in
+		<foreach collection="array" item="orgcode" open="(" separator="," close=")">
+			#{orgcode}
+		</foreach>
+	</delete>
+	
+	<insert id="save" parameterType="com.deppon.dpm.module.common.shared.domain.ProjectManageDeptEntity">
+		INSERT INTO proc_auth_dept (orgcode, orgname) VALUES (#{orgcode}, #{orgname});
+	</insert>
+	
+	<select id="queryCount" resultType="long">
+		select count(*) from proc_auth_dept
+	</select>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.sendParcelSendDao">
+
+	<resultMap
+		type="com.deppon.dpm.module.management.shared.domain.SendParcelSendEntity"
+		id="getSendParcelSendAll">
+		<result property="id" column="id" />
+		<result property="sendCompany" column="sendCompany" />
+		<result property="sendPhone" column="sendPhone" />
+		<result property="sendName" column="sendName" />
+		<result property="photoCode" column="photoCode" />
+	</resultMap>
+
+
+	<!-- 插入 -->
+	<insert id="savaSendParcelSend"
+		parameterType="com.deppon.dpm.module.management.shared.domain.SendParcelSendEntity">
+	    <![CDATA[
+	    INSERT INTO send_parcel_send (sendCompany,sendPhone,sendName,photoCode) 
+	    VALUES(#{sendCompany},#{sendPhone}, #{sendName},#{photoCode}) 
+	     ]]>
+	</insert>
+
+
+	<update id="updateSendParcelSend"  parameterType="com.deppon.dpm.module.management.shared.domain.SendParcelSendEntity">
+		<![CDATA[ update send_parcel_send SET sendCompany=#{sendCompany},sendPhone=#{sendPhone},
+		sendName=#{sendName},photoCode=#{photoCode}   WHERE id=#{id}  ]]>
+	</update>
+
+              
+	<select id="getSendParcelSend"  resultMap="getSendParcelSendAll">
+	        select id,sendCompany,sendPhone,sendName,photoCode from send_parcel_send
+	</select>
+
+    <delete id="deleteSendParcelSend" parameterType="int">
+        
+      <![CDATA[ DELETE from send_parcel_send where id = #{id}]]>
+    </delete>
+</mapper>

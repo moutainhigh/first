@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procMaintainMessage">
+	
+	<select id="getMaintain" parameterType="String" resultType="com.deppon.dpm.module.management.shared.domain.ProcMaintainEntity">
+		SELECT * from proc_maintain_info WHERE id=#{_parameter} 
+	</select>
+	
+	<update id="updateBillById" parameterType="java.util.Map">
+		update proc_maintain_info set bill=#{bill} where id=#{id}
+	</update>
+	
+	<update id="updateApprovalMarkById" parameterType="java.lang.String" >
+		update proc_maintain_info set approvalMark=0 where id=#{id}
+	</update>
+	
+	<insert id="saveMainInfo" parameterType="com.deppon.dpm.module.management.shared.domain.ProcMaintainEntity">
+		INSERT into proc_maintain_info(userNo,proName,proCode,department,approvalMark,applyReason,createDate,updateDate,bill,
+			imgOne,imgTwo,imgThree,imgFour,imgFive,fisNOtMonitor)
+			VALUES(#{userNo,jdbcType=VARCHAR}
+			,#{proName,jdbcType=VARCHAR}
+			,#{proCode,jdbcType=VARCHAR}
+			,#{department,jdbcType=VARCHAR}
+			,#{approvalMark,jdbcType=INTEGER}
+			,#{applyReason,jdbcType=VARCHAR}
+			,#{createDate}
+			,#{updateDate}
+			,#{bill}
+			,#{imgOne,jdbcType=VARCHAR}
+			,#{imgTwo,jdbcType=VARCHAR}
+			,#{imgThree,jdbcType=VARCHAR}
+			,#{imgFour,jdbcType=VARCHAR}
+			,#{imgFive,jdbcType=VARCHAR}
+			,#{fisNOtMonitor,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+</mapper>

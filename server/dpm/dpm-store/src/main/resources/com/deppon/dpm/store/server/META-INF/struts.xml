@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<package name="dpm-store" namespace="/dpm-store" extends="foss-default">
+		<interceptors>
+			<interceptor name="checkUrlInterceptor"
+				class="com.deppon.dpm.login.server.interceptor.CheckUrlInterceptor" />
+			<interceptor name="myinterceptor"
+				class="com.deppon.dpm.tongxunlu.server.action.MyInterceptor"></interceptor>
+		</interceptors>
+		 <action name="task_*" class="storeTaskAction" method="{1}">	
+		 	<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action> 
+		<action name="query_*" class="queryTaskInfoAction" method="{1}" >	
+		 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		<!-- 榜单Action -->
+		<action name="list_*" class="storeListAction" method="{1}">	
+		 <interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action>
+		
+		<!-- 任务详情-->
+		<action name="InspectionModule_*" class="InspectionModuleAction" method="{1}">
+		 	<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action> 
+		<!-- 考核评价 -->
+		<action name="CheckEvaluate_*" class="CheckEvaluateAction" method="{1}">
+		 	<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action> 
+		<!-- 任务管理 -->
+		<action name="TaskManage_*" class="TaskManageAction" method="{1}">
+		 	<interceptor-ref name="defaultStack" />
+			<interceptor-ref name="checkUrlInterceptor" />
+			<interceptor-ref name="myinterceptor" />
+			<result name="error" type="json"></result>
+			<result name="success" type="json"></result>
+		</action> 
+	</package>
+</struts>

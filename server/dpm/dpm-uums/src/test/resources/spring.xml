@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			http://www.springframework.org/schema/jee 
+			http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+			http://www.springframework.org/schema/tx 
+			http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+			http://www.springframework.org/schema/aop 
+			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+			default-autowire="byName" default-lazy-init="true">
+			
+	 <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+   		<!--  使用locations属性定义多个配置文件 -->
+        <property name="locations">
+             <list>
+                 <value>classpath*:wro.properties</value>
+                 <value>classpath*:config.properties</value>
+             </list>
+    	</property>
+    </bean>	
+	
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.68.118:3306/app" />
+		<property name="username" value="mysql1" />
+		<property name="password" value="mysql1" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+	</bean>
+
+	<!-- 数据连接管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 事务注解支持 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- myBatis文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- <property name="configLocation" value="com/deppon/dpm/module/announce/test/META-INF/ibatis.xml" /> -->
+		<property name="mapperLocations"
+			value="classpath*:com/deppon/**/META-INF/ibatis/*.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="resourceDao" class="com.deppon.dpm.uums.server.dao.impl.ResourceDao" scope="prototype" >
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="roleDao" class="com.deppon.dpm.uums.server.dao.impl.RoleDao" scope="prototype" >
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="logDao" class="com.deppon.dpm.uums.server.dao.impl.LogDao" scope="prototype" >
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="roleResourceDao" class="com.deppon.dpm.uums.server.dao.impl.RoleResourceDao"  scope="prototype" />
+	<bean id="resourceService" class="com.deppon.dpm.uums.server.service.impl.ResourceService" scope="prototype" >
+	    <property name="resourceDao" ref="resourceDao"></property>
+	</bean>
+	<bean id="logService" class="com.deppon.dpm.uums.server.service.impl.LogService"  scope="prototype" />
+	<bean id="roleService" class="com.deppon.dpm.uums.server.service.impl.RoleService" scope="prototype" >
+	     <property name="roleDao" ref="roleDao"></property>
+	</bean>
+	<bean id="roleResourceService" class="com.deppon.dpm.uums.server.service.impl.RoleResourceService" scope="prototype" />
+	
+	<bean id="versionDao" class="com.deppon.dpm.uums.server.dao.impl.VersionDao" scope="prototype" >
+	    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+	</bean>
+	<bean id="versionService" class="com.deppon.dpm.uums.server.service.impl.VersionService" scope="prototype" >
+	     <property name="versionDao" ref="versionDao"></property>
+	</bean>
+	
+	<bean id="jmsSyncRoleInfoProcessor" class="com.deppon.dpm.uums.server.service.impl.JmsSyncRoleInfoProcessor">
+	</bean>
+	
+</beans>

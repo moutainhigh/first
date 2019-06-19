@@ -1,0 +1,43 @@
+<ion-view title="期刊" >
+    <ion-nav-buttons side="left">
+        <button class="depponback button-icon icon ion-ios7-arrow-left button back-button first-page" ng-click="back()"></button>
+    </ion-nav-buttons>
+<ion-content class="newsImage" style="width:100%">
+    <div style="text-align:center;">
+        <ion-refresher
+            pulling-text="下拉刷新..."
+            on-refresh="doRefresh(1)">
+    	</ion-refresher>
+        <ion-slide-box class="silde-qikan" show-pager="false" on-slide-changed="slideChange($index)">
+           <ion-slide ng-repeat="item in news">
+              <div class="box" >
+                   <a href="#/news/{{item.periodicalId}}/{{userid}}/{{password}}">
+               			<div class="inner">{{item.periodicalNo}}</div>
+             			<div class="inner2">
+             			     <ion-scroll zooming="true" direction="xy" style="width: 100%; height:  100%; " >
+            					<img class="news-image2"  alt="{{item.periodicalNo}}" src="images/default.png" ng-src="{{item.picture}}"/>
+               				 </ion-scroll>
+                		</div>
+               		</a> 
+              </div>
+           </ion-slide>
+    	</ion-slide-box>
+    </div>
+       <!--  <ion-list>
+             <div class="col col50" ng-repeat="item in news">
+            		<a href="#/news/{{item.periodicalId}}">
+                    <img class="news-image" ng-src="{{item.picture}}" >
+                    <h4>{{item.periodicalNo}}</h4>
+                    <span style="font-size:5px;">出刊日期：{{item.publicationDate}}</span></div>
+             	</a>
+             </div>
+        </ion-list>  
+        <ion-infinite-scroll
+            ng-if="moreDataCanBeLoaded"
+            on-infinite="loadMore()"
+            icon="ion-loading-c"
+            distance="1%">
+    	</ion-infinite-scroll>-->
+        <div class="center">{{nullNews==true?"没有更多内容":""}}</div>
+    </ion-content>
+</ion-view>

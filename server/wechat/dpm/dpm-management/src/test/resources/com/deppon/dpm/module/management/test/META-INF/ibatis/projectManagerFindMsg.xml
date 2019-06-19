@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.deppon.dpm.module.management.server.dao.busmanager.projectManagerFindMsgDao">
+	<!-- 获取消息 -->
+	<select id="getHistoryInfo"
+		resultType="com.deppon.dpm.module.management.shared.domain.BaseQualityPollingEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProjectManagerFindMsgEntity">
+			<![CDATA[
+			    select so.id as fscoreId,so.scopeId as proId,so.scope as hisFscore from proc_user_score so,proc_user_address ad 
+			    where ad.id = so.userAddressid 
+			    and ad.proAdress = #{proAdress,jdbcType=VARCHAR} 
+			    and ad.userNo = #{userNo,jdbcType=VARCHAR} 
+			    and ad.proType = #{areaId,jdbcType=VARCHAR} 
+			    and ad.isSubmit='N'
+			    
+			]]>
+	</select>
+
+	<!-- 查询图片地址 -->
+	<select id="getIocInfo"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProIocBeanEntity">
+			<![CDATA[
+			   select * from procioccord
+			    
+			]]>
+	</select>
+    <!--统计0分的个数-->
+	<select id="getProcCount" parameterType="String"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcCountEntity">
+			<![CDATA[ 
+			SELECT a.scopeid,count(a.scopeid) as countScopeId from proc_user_score a where a.userAddressid in(
+			select c.id from ( select * from proc_user_address f ORDER BY f.createDate desc) c
+			where DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <=
+			date(c.createDate)
+			and c.proType=#{mark}
+			GROUP BY c.proAdress
+			)
+			and a.scope = 0
+			GROUP BY a.scopeid
+			
+		]]>
+	</select>
+	<!-- 得到检查的门店总数 -->
+	<select id="getCountStore" resultType="java.lang.Integer">
+		<![CDATA[ 
+		select COUNT(*) as countStore
+		FROM (
+		
+		select DISTINCT(a.proAdress) pro from proc_user_address a
+		where DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <=
+		date(a.createDate)) b
+		]]>
+
+	</select>
+	<!-- 得到检查的门店总分数 -->
+	<select id="getTotalScore" resultType="java.lang.Integer"
+	    parameterType="com.deppon.dpm.module.management.shared.domain.ProjectManagerFindMsgEntity"
+	    >
+		<![CDATA[ 
+		select SUM(a.scope) toscope
+		from proc_user_score a,proc_user_address b 
+		where a.userAddressid = b.id 
+		and b.proAdress= #{proAdress,jdbcType=VARCHAR} 
+		and b.userNo=#{userNo,jdbcType=VARCHAR} 
+		and b.isSubmit='N'
+		]]>
+
+	</select>
+	<!-- 得到检查的门店0分数量 -->
+	<select id="getAdrZeroScore" resultType="java.lang.Integer"
+	    parameterType="com.deppon.dpm.module.management.shared.domain.ProjectManagerFindMsgEntity"
+	    >
+		<![CDATA[ 
+		select COUNT(*) zeroScore
+		from proc_user_score a,proc_user_address b 
+		where a.userAddressid = b.id 
+        and a.scope='0' 
+		and b.proAdress=#{proAdress,jdbcType=VARCHAR}   
+		and b.userNo=#{userNo,jdbcType=VARCHAR}
+		and b.isSubmit='N'
+		]]>
+
+	</select>
+	<!--提交校验 -->
+	<select id="getCountProId" resultType="java.lang.Integer"
+	    parameterType="com.deppon.dpm.module.management.shared.domain.ProjectManagerFindMsgEntity"
+	    >
+		<![CDATA[ 
+		select COUNT(*) tatol
+		from proc_user_score a,proc_user_address b 
+		where a.userAddressid = b.id 
+		and b.proAdress=#{proAdress,jdbcType=VARCHAR}   
+		and b.userNo=#{userNo,jdbcType=VARCHAR}
+		and b.isSubmit='N' 
+		]]>
+ 
+	</select>
+	
+	<!--提交到PC端查询所有的记录-->
+	<select id="getHisScoreOrZero"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProjectManagerFindMsgEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProjectManagerFindMsgEntity">
+		<![CDATA[ 
+		SELECT ua.userNo,ua.proAdress,ua.proType fcheckAreaCode,ua.proName fcheckArea,us.scopeid fcheckProjectCode,us.scopeName fcheckProject,us.scope hisFscore,sm.deductSproject fscoreStandard,sm.damageReason ,sm.serviceItems frepairMatter,sm.photo,sm.photo2,sm.photo3,sm.photo4,sm.photo5 
+		FROM proc_user_address ua join proc_user_score us on(ua.id = us.userAddressid) 
+		LEFT JOIN proc_score_message sm   on( us.id = sm.userScoreid)
+		where ua.proAdress = #{proAdress,jdbcType=VARCHAR} 
+		and  ua.userNo = #{userNo,jdbcType=VARCHAR}
+		and ua.isSubmit='N' 
+		]]>
+	</select>
+    <!--获取员工信息-->
+	<select id="getEmpInfo"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProjectManagerFindMsgEntity"
+		parameterType="java.lang.Integer">
+		<![CDATA[ 
+		     SELECT a.orgid,a.empcode userNo,a.empname,b.ORGNAME 
+		     FROM om_employee a,om_organization b 
+		     where a.ORGID = b.ORGID 
+		     and a.empcode = #{userNo,jdbcType=VARCHAR};
+		]]>
+	</select>
+	
+	<!--历史提交记录查询-->
+	<select id="hisSubmit"
+		resultType="com.deppon.dpm.module.management.shared.domain.ProcHistorySubmitEntity"
+		parameterType="com.deppon.dpm.module.management.shared.domain.ProcHistorySubmitEntity">
+		<![CDATA[ 
+		     select isSubmit from proc_history_submit 
+		     where userNo=#{userNo,jdbcType=VARCHAR} 
+		     and storeName=#{storeName,jdbcType=VARCHAR} 
+		     and DATE_SUB(CURDATE(), INTERVAL 30 DAY) < date(createDate) order by createDate desc
+		]]>
+	</select>
+	<!-- 保存历史提交记录 -->
+	<insert id="saveHisSubmit" parameterType="com.deppon.dpm.module.management.shared.domain.ProcHistorySubmitEntity">
+	    <![CDATA[
+	       INSERT into proc_history_submit(userNo,storeName,createDate,isSubmit) 
+	       values(
+	       #{userNo,jdbcType=VARCHAR},
+	       #{storeName,jdbcType=VARCHAR},
+	       now(),
+	       'Y')
+	    ]]> 
+	</insert>
+	<!--更新提交数据-->
+	<update id="updateHisSubmit" parameterType="com.deppon.dpm.module.management.shared.domain.ProcHistorySubmitEntity">
+	   <![CDATA[
+	     update proc_user_address set isSubmit='Y' 
+	     where proAdress=#{storeName,jdbcType=VARCHAR} 
+	     and userNo=#{userNo,jdbcType=VARCHAR}
+	     
+	    ]]> 
+	</update>
+</mapper>

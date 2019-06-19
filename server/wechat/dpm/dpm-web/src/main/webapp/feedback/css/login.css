@@ -1,0 +1,116 @@
+@CHARSET "UTF-8";
+
+body, input, select, button {
+  font: 12px "Microsoft YaHei", Verdana, arial, sans-serif;
+  line-height: 22px
+}
+body{
+	background-color:#f5f5f5;
+}
+h1 {
+  color: #828282;
+  font-size: 3.125em;
+  line-height:3.125rem;
+  font-weight: 300;
+  padding: 4.0rem 0 1.875rem 0;
+  text-align: center;
+}
+
+.login-box {
+  width: 310px;
+  background-color: #fff;
+  padding: 20px 20px 20px 25px;
+  line-height: 40px;
+  font-size: 14px;
+  color: #828282;
+  margin: auto;
+  border-radius: 2px;
+  position: relative;
+  border: 1px solid #e6e6e6;
+}
+
+.inp-login {
+  border: none;
+  outline: none;
+  width: 268px;
+  line-height: 1rem;
+  border-bottom: 1px solid #d2d2d2;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  padding: 15px 0px 5px;
+  border-radius:0;
+}
+.login-username, .login-password{
+  position:relative
+}
+.inp-login{
+  padding-left: 35px;
+}
+.login-username i, .login-password i{
+  position:absolute;
+  display:block;
+  width:25px;
+  height:40px;
+}
+.login-username i{
+    background: url("../image/111.png") no-repeat;
+    background-size: 1.125rem;
+    background-position: 0px 14px;
+}
+.login-username:hover i, .login-username:active i, .login-username:focus i{
+    background: url("../image/1111.png") no-repeat;
+    background-size: 1.125rem;
+    background-position: 0px 14px;
+}
+.login-password i{
+	background: url("../image/222.png") no-repeat;
+	background-size: 1rem;
+    background-position: 1px 14px;
+}
+.login-password:hover i, .login-password:active i, .login-password:focus i{
+	background: url("../image/2222.png") no-repeat;
+	background-size: 1rem;
+    background-position: 1px 14px;
+}
+.inp-login:hover, .inp-login:active, .inp-login:focus {
+  border: none;
+  border-bottom: 1px solid #3278e6;
+}
+.login-sub{
+  margin: 0.625em auto 0;
+  text-align: center;
+}
+<!--
+@media screen and (max-width:720px) {
+.login-box{
+  width: 85%;
+  max-width:310px;
+}
+-->
+.inp-login{
+  width: 90%;
+}
+}
+.sub-default{
+	border: 1px solid #d2d2d2;
+    vertical-align: middle;
+    outline: none;
+}
+.sub-default:focus {
+   -webkit-box-shadow: inset 0 1px 5px rgba(0,0,0,0.15);
+   -moz-box-shadow: inset 0 1px 5px rgba(0,0,0,0.15);
+   box-shadow: inset 0 1px 5px rgba(0,0,0,0.15);
+}
+.sub{
+  padding: 0px 10px;
+  width: 353px;
+  height: 55px;
+  line-height: 36px;
+  font-size: 20px;
+  font-family:sans-serif,黑体;
+  color:#ffffff;
+  background-color:#ff8C00;
+}
+.sub:hover{
+	background-color: #ffa500;
+}

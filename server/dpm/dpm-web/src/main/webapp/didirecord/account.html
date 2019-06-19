@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>对账</title>
+    <link rel="icon" href="https://ca.deppon.com/cubc/image/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./js/layui/css/layui.css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css"  media="all">
+    <link rel="stylesheet" href="/dpm/appdetail/lib/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+
+<body>
+
+    <!-- 菜单栏 -->
+	<div class="header">
+		<div class="w990">
+			<div class="head-nav">
+				<ul>
+					<li><a href="/dpm/feedback/pages/report1.html?" id="menu-send">意见反馈</a></li>
+					<li><a href="/dpm/appdetail/pages/appDetailList.jsp?">应用详情</a></li>
+                    <li><a href="" id="menu-track">德邦欢行 <i class="fa fa-angle-down fa-lg"></i></a>
+                        <ul>
+                            <li><a href="/dpm/didirecord/record.html?">欢行备案</a></li>
+                            <li><a href="/dpm/didirecord/upPhone.html?">欢行手机号</a></li>
+                            <li><a href="/dpm/didirecord/account.html?">欢行报账</a></li>
+                            <li><a href="/dpm/didirecord/approver.html?">修改审批人</a></li>
+                            <li><a href="/dpm/didirecord/message_push.html?">提示推送</a></li>
+                            <li><a href="/dpm/feedback/pages/report3.html?">开启/关闭验证</a></li>
+                        </ul>
+                    </li>
+				</ul>
+			</div>
+			<a href="/dpm/feedback/pages/login.html" class="btn-default btn-loginout">注销</a>
+		</div>
+	</div>
+
+
+    <div class="">
+        <blockquote class="layui-elem-quote layui-text">
+            导入文件
+        </blockquote>
+        <div class="pdl20">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">日期选择</label>
+                        <div class="layui-input-block" style="width: 100px;">
+                            <input type="text" name="date" id="date" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline btn-upload">
+                        <button type="button" class="layui-btn layui-btn-normal  " id="">
+                            <i class="layui-icon"></i>选择文件
+                            <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="filt" id="files">
+                        </button>
+                    </div>
+                    <div class="layui-inline fileerrorTip fileNameBox"></div>
+                    <div class="layui-inline showFileName fileNameBox"></div>
+                    <div class="layui-inline">
+                        <!-- <button type="button" class="layui-btn" id="upload2">开始导入</button> -->
+                        <button class="layui-btn" lay-submit="" lay-filter="demo1">开始导入</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <blockquote class="layui-elem-quote layui-text">
+            查询
+        </blockquote>
+        <div class="pdl20">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">日期选择</label>
+                        <div class="layui-input-block" style="width: 100px;">
+                            <input type="text" name="date1" id="date1" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="query">查询</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="queryResultBox">
+            <blockquote class="layui-elem-quote layui-text">
+                查询结果
+            </blockquote>
+            <div class="queryResultTable">
+                <div class="pdl20">
+                    <table id="demo" lay-filter="tableTool"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="operationLayer">
+        <form class="layui-form layui-table" action="" lay-filter="example">
+            <div class="layui-form-item mgt20">
+                <label class="layui-form-label">原数据</label>
+                <div class="layui-input-block recordstateBox">
+                    <input disabled="disabled" type="text" name="totalPrice" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <input type="hidden" name="id">
+                </div>
+            </div>
+            <div class="layui-form-item mgt20">
+                <label class="layui-form-label">修改为</label>
+                <div class="layui-input-block recordstateBox">
+                    <input type="text" name="amount" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <li class="item">
+                <div class="layui-form-item layui-col-xs5 layui-col-md-offset4" style="text-align: center;">
+                    <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="editDate">修改</button>
+                </div>
+            </li>
+        </form>
+    </ul>
+</body>
+<script src="./js/layui/layui.js"></script>
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-del" lay-event="del">删除</a>
+</script>
+<script src="./js/account.js"></script>
+</html>

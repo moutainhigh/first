@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.deppon.dpm.doc.server.dao.pcRecordDao">
+	<resultMap id="pcRecordResult" type="com.deppon.dpm.doc.server.vo.DiDiRecordVO">
+		<result column="userId" property="userId" />
+		<result column="userName" property="userName" />
+		<result column="dept" property="dept" />
+		<result column="recordtime" property="recordtime" />
+		<result column="recordtype" property="recordtype" />
+		<result column="taxidate" property="taxidate" />
+		<result column="fromName" property="fromName" />
+		<result column="toName" property="toName" />
+		<result column="amount" property="amount" />
+		<result column="recordpic" property="recordpic" />
+		<result column="recordstate" property="recordstate" />
+		<result column="comment" property="comment" />
+		<result column="id" property="id" />
+		<result column="carremark" property="carremark" />	
+		<result column="remark" property="remark" />	
+		<result column="userPic" property="userPic" />		
+	</resultMap>
+
+	<!--表名-->
+	<sql id="table_name">
+		DIDI_RECORD
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="columns">
+		userId, userName, dept, recordtime, recordtype, taxidate, fromName, toName, amount, recordpic, recordstate, comment, id 
+		,carremark ,remark , userPic
+	</sql>
+
+
+	<!-- 条件 -->
+	<sql id="pcRecored_condition">
+		<if test="id != null  and id != ''  "> and id = #{id}</if>
+		<if test="userId != null and userId != ''  "> and userId = #{userId,jdbcType=VARCHAR}</if>
+		<if test="userName != null and userName != ''  "> and userName = #{userName,jdbcType=VARCHAR}</if>
+		<if test="dept != null and dept != '' "> and dept = #{dept,jdbcType=VARCHAR}</if>
+		<if test="recordtime != null and recordtime != ''  "> and recordtime = #{recordtime,jdbcType=VARCHAR}</if>
+		<if test="recordtype != null and recordtype != ''  "> and recordtype = #{recordtype,jdbcType=VARCHAR}</if>
+		<if test="taxidate != null  and taxidate != '' "> and taxidate = #{taxidate,jdbcType=VARCHAR}</if>
+		<if test="fromName != null and fromName != ''  "> and fromName = #{fromName,jdbcType=VARCHAR}</if>
+		<if test="toName != null  and toName != ''  "> and toName = #{toName,jdbcType=VARCHAR}</if>
+		<if test="amount != null  and amount != ''  "> and amount = #{amount,jdbcType=VARCHAR}</if>
+		<if test="recordpic != null  and recordpic != ''  "> and recordpic = #{recordpic,jdbcType=VARCHAR}</if>
+		<if test="recordstate != null  and recordstate != '' "> and recordstate = #{recordstate,jdbcType=VARCHAR}</if>
+		<if test="comment != null  and comment != ''  "> and comment = #{comment,jdbcType=VARCHAR}</if>
+		<if test="starttime != null  and starttime != ''  ">and recordtime &gt;= #{starttime,jdbcType=VARCHAR} </if>
+		<if test="endtime != null  and endtime != ''  ">and recordtime &lt;= #{endtime,jdbcType=VARCHAR} </if>
+	</sql>
+
+
+
+
+
+	<!-- 根据条件查询备案的全部List -->
+	<select id="queryRecord" parameterType="java.util.Map" resultMap="pcRecordResult">
+		select <include refid="columns" /> 
+		from <include refid="table_name" />
+		where 1=1
+		<include refid="pcRecored_condition" /> 
+		order by recordstate asc,recordtime desc
+	</select>
+	
+	<!-- 无条件直接查询全部 -->
+	<select id="queryAllDidiRecord"  parameterType="java.util.Map" resultMap="pcRecordResult">
+		select <include refid="columns" /> 
+		from <include refid="table_name" />
+		order by recordstate asc,recordtime desc
+	</select>
+	
+	<!-- 根据条件和起始位置进行分页查询 -->
+	<select id="queryRecordByCondition"  parameterType="java.util.Map" resultMap="pcRecordResult">
+		select <include refid="columns" />
+		from <include refid="table_name" /> where 1=1
+		<include refid="pcRecored_condition"/>
+		order by recordstate asc,recordtime desc
+		LIMIT  <![CDATA[${requestbeginNum}]]>,<![CDATA[${limit}]]>
+	</select>
+	
+	<!-- 删除userId为null或者为空的 -->
+	<delete id="deleteByUserId">
+		delete from <include refid="table_name" /> where userId = '' or userId is null
+	</delete>
+</mapper>

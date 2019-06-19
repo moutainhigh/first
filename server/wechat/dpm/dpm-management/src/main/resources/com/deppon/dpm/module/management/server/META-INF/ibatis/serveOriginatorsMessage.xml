@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <!-- wyn -->
+<mapper namespace="com.deppon.dpm.module.management.server.dao.serveMessage">
+	
+	
+	<!-- 保存参与者信息 -->
+	<insert id="insertPartInfo" parameterType="com.deppon.dpm.module.management.shared.domain.ServeParticipantsInfoEntity">
+		INSERT INTO serve_participants_info (origid,partNo,partName,partTel,remark,createTime,partState) 
+				VALUES (
+				#{origId},
+				#{partNO},
+				#{partName},
+				#{partTel},
+				#{remark},
+				now(),
+				0
+				)
+	</insert>
+	
+	<!--修改参与报名信息-->
+	<update id="updatePartInfo" parameterType="com.deppon.dpm.module.management.shared.domain.ServeParticipantsInfoEntity">
+		UPDATE serve_participants_info as si set si.partName=#{partName} ,si.partTel=#{partTel},si.remark=#{remark},si.updateTime=NOW(),
+		si.updateNO=#{partNO},si.partState=#{partState},si.msgRemind=0  
+        where si.partNO=#{partNO}  and si.origId=#{origId}
+	</update>
+	
+	<!-- 保存拼车信息 -->
+	<insert id="insertOriginatorInfo" parameterType="com.deppon.dpm.module.management.shared.domain.ServeOriginatorsInfoEntity">
+		INSERT INTO serve_originators_info (
+			origNO,origName,origTel,origTitle,origImg,startPlace,midPlace,endPlace,limitNum,startTime,createTime,updateTime,
+      		origType,origState,carType,payType,payMoney,
+			startProvinceCode,startProvinceName,startCityCode,startCityName,
+			endProvinceCode,endProvinceName,endCityCode,endCityName
+			) 
+			VALUES (
+      		#{origNo},#{origName},#{origTel},#{origTitle},#{origImg},#{startPlace},#{midPlace},#{endPlace},#{limitNum},#{startTime},now(),
+     		 now(),#{origType},0,#{carType},#{payType},#{payMoney},
+			#{startProvinceCode},#{startProvinceName},#{startCityCode},#{startCityName},
+			#{endProvinceCode},#{endProvinceName},#{endCityCode},#{endCityName}
+			)
+	</insert>
+	
+	<!-- 校验拼车是否重复 -->
+	<select id="checkOrigRepeat" parameterType="com.deppon.dpm.module.management.shared.domain.ServeParticipantsInfoEntity" resultType="java.lang.Integer">
+		SELECT COUNT(*) from serve_originators_info as so where so.origNO=#{origNo} and DATE_FORMAT(so.startTime,'%Y-%m-%d %H:%i')=DATE_FORMAT(#{startTime},'%Y-%m-%d %H:%i')    
+        and  so.startPlace like concat('%',#{startPlace},'%')  and so.endPlace like concat('%',#{endPlace},'%')  
+	</select>
+	
+	<!-- 校验参与是否重复 -->
+	<select id="checkPartRepeat" parameterType="com.deppon.dpm.module.management.shared.domain.ServeParticipantsInfoEntity" resultType="java.lang.Integer">
+		SELECT COUNT(*) from serve_participants_info as si where si.origId=#{origId}  and si.partNO=#{partNO}
+	</select>
+	
+	
+	<select id="getOrigInfoById"  parameterType="java.util.Map" 
+		resultType="com.deppon.dpm.module.management.shared.domain.ServeOriginatorsInfoEntity">
+		select * from serve_originators_info where id=#{id} and origState=0
+	</select>
+</mapper>

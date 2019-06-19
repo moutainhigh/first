@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC 
+	"-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procScoreMessage" >
+    
+    <!-- 查询所有评分详细信息 -->
+	<select id="getProcScoreMessage" parameterType="String" resultType="com.deppon.dpm.module.management.shared.domain.ProcScoreMessageEntity">
+	    SELECT * FROM proc_score_message WHERE userScoreid = #{userScoreid,jdbcType=VARCHAR}
+	</select> 
+	
+	<!-- 得到功能栏代码值-->
+	<select id="getProType" parameterType="com.deppon.dpm.module.management.shared.domain.ProcUserScoreAndAddressEntity"
+	     resultType="com.deppon.dpm.module.management.shared.domain.ProcUserScoreAndAddressEntity">
+	    SELECT a.`proType`,a.`proName`
+			FROM proc_user_address a ,proc_user_score b 
+			WHERE a.`id` = b.`userAddressid` AND b.`scope`=0 AND userNo = #{userNo,jdbcType=VARCHAR} 
+			AND proAdress = #{proAdress,jdbcType=VARCHAR} AND a.isSubmit = 'N' GROUP BY a.`proName` 
+	</select>
+	
+	<!-- 得到所有的0分项信息 -->
+	<select id="getProcUserScoreAndAddress" parameterType="com.deppon.dpm.module.management.shared.domain.ProcUserScoreAndAddressEntity"
+	     resultType="com.deppon.dpm.module.management.shared.domain.ProcUserScoreAndAddressEntity">
+	    SELECT a.`proType`,a.`proName`,b.`id`,b.`userAddressid`,b.`scopeid`,b.`scope`,b.`reMark`,b.`scopeName` 
+			FROM proc_user_address a ,proc_user_score b 
+			WHERE a.`id` = b.`userAddressid` AND b.`scope`=0 AND userNo = #{userNo,jdbcType=VARCHAR} 
+			AND proAdress = #{proAdress,jdbcType=VARCHAR} AND a.`proType`=#{proType,jdbcType=VARCHAR}
+			AND a.isSubmit = 'N'
+	</select>
+	
+	<!-- 得到检查的门店总数 -->
+	<select id="getCountStore" resultType="int">
+	    <![CDATA[
+	   SELECT COUNT(*) AS countStore
+		FROM (
+		SELECT DISTINCT(a.proAdress) pro FROM proc_user_address a
+		WHERE DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <=
+		DATE(a.createDate)) b
+		]]>
+	</select>
+	
+	<!-- 得到这一项门店不合格总数 -->
+	<select id="getCountScopeId" resultType="int" parameterType="com.deppon.dpm.module.management.shared.domain.ProcUserScoreAndAddressEntity">
+	  <!--   <![CDATA[		
+		SELECT COUNT(a.scopeid) AS countScopeId FROM proc_user_score a WHERE a.userAddressid IN(
+		SELECT c.id FROM ( SELECT * FROM proc_user_address f ORDER BY f.createDate DESC) c
+		WHERE DATE_SUB(CURDATE(), INTERVAL 1 MONTH) <=
+		DATE(c.createDate)
+		AND c.proType = #{proType,jdbcType=VARCHAR}
+		GROUP BY c.proAdress
+		)
+		AND a.scope = 0
+		AND a.`scopeid`=#{scopeid,jdbcType=VARCHAR}
+		GROUP BY a.scopeid
+		]]> -->
+		
+	select count(*) from  proc_user_score a, proc_user_address b where
+   	a.userAddressid = b.id and scope = 0 
+ 	and b.proType = #{proType,jdbcType=VARCHAR}
+ 	and a.scopeid = #{scopeid,jdbcType=VARCHAR}
+	and b.isSubmit = 'N'
+	</select>
+</mapper>

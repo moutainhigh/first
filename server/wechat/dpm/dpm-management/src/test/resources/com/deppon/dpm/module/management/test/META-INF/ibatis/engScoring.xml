@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deppon.dpm.module.management.server.dao.procScoringDao">
+   <!-- 插入 -->
+	<insert id="savaScoring" parameterType="com.deppon.dpm.module.management.shared.domain.ProcScoringEntity">
+	    <![CDATA[
+	    INSERT INTO proc_user_score (id,userAddressid,scopeid,scope,createDate,scopeName) 
+	    VALUES(#{id},#{userAddressid}, #{scopeid},#{scope}, #{createDate}, #{scopeName}) 
+	     ]]> 
+	 </insert>
+	
+	<insert id="savauserAddress" parameterType="com.deppon.dpm.module.management.shared.domain.ProcAddressEntity">
+	    <![CDATA[
+	    INSERT INTO proc_user_address (id,userNo,proAdress,proType,createDate,proName) 
+	    VALUES(#{id},#{userNo}, #{proAdress},#{proType},#{createDate},#{proName}) 
+	    ]]> 
+	 </insert>
+	 
+	 <insert id="savaMessage" parameterType="com.deppon.dpm.module.management.shared.domain.ProcMessageEntity">
+	    <![CDATA[
+	    INSERT INTO proc_score_message (id,userScoreid,photo,photo2,photo3,photo4,photo5,damageReason,deductSProject,serviceItems)
+	     VALUES( #{id}, #{userScoreid},
+	     #{photo}, #{photo2},  #{photo3}, 
+		#{photo4}, #{photo5},#{damageReason},
+		#{deductSProject}, #{serviceItems})
+	    ]]> 
+	 </insert>
+	 
+	 
+	 <!-- 查询 -->
+	  <select id="getAddressid" parameterType="com.deppon.dpm.module.management.shared.domain.ProcAddressEntity"  resultType="String">
+		 <![CDATA[
+		 select id from proc_user_address
+		 where userNo = #{userNo} and proAdress = #{proAdress}
+		 and isSubmit = 'N' and proType = #{proType} limit 0,1
+		  ]]>
+	   </select>
+	    
+	  
+	  <select id="getScoringid" parameterType="com.deppon.dpm.module.management.shared.domain.ProcScoringEntity"  resultType="String">
+		 <![CDATA[
+		 select id from proc_user_score
+		 where userAddressid = #{userAddressid} and scopeid = #{scopeid} limit 0,1
+		  ]]>
+	   </select>
+	   
+	   
+	   <select id="getMessageid" parameterType="String"  resultType="String">
+		 <![CDATA[
+		 select id from proc_score_message
+		 where userScoreid = #{userScoreid}
+		  ]]>
+	   </select>
+
+	 <!-- 修改 -->
+	  <update id="updateuserAddress" parameterType="com.deppon.dpm.module.management.shared.domain.ProcAddressEntity">
+		 <![CDATA[ update proc_user_address set 
+		createDate = #{createDate}
+		where id = #{id} ]]>
+	 </update>
+	 
+	   <update id="updateScoring" parameterType="com.deppon.dpm.module.management.shared.domain.ProcScoringEntity">
+		<![CDATA[ update proc_user_score set 
+		scope     = #{scope}, 
+		createDate  = #{createDate}
+		where id = #{id}  ]]>
+	 </update>
+	 
+	    <update id="updateMessage" parameterType="com.deppon.dpm.module.management.shared.domain.ProcMessageEntity">
+		<![CDATA[ update proc_score_message set 
+		photo    = #{photo}, 
+		photo2   = #{photo2}, 
+		photo3   = #{photo3}, 
+		photo4   = #{photo4}, 
+		photo5   = #{photo5},
+		damageReason  = #{damageReason},
+		deductSProject = #{deductSProject},
+		serviceItems  = #{serviceItems}
+		where id = #{id} ]]>
+	 </update>
+	 
+	    
+      <insert id="savaWatchDept" parameterType="com.deppon.dpm.module.management.shared.domain.ProcWatchDeptEntity">
+	    <![CDATA[
+	    INSERT INTO proc_watch_dept (id,dept_code,dept_name,update_date) 
+	    VALUES(#{deptid},#{deptcode}, #{deptname},#{updatedate}) 
+	     ]]> 
+	 </insert>
+	 
+      <select id="getWatchDept" parameterType="String" resultType="String">
+		 <![CDATA[
+		 select MAX(update_date) from proc_watch_dept
+		 where dept_code = #{deptcode}
+		  ]]>
+	    </select>
+     
+       <insert id="savaWatchProject" parameterType="List">
+	     INSERT INTO proc_watch_project (id,update_date,pro_code,pro_name,pro_num,pro_count) 
+	     VALUES 
+	    <foreach collection="list" item="item" index="index" separator="," >  	        
+        <![CDATA[ (#{item.watchid},#{item.updatedate},#{item.procode},#{item.proname},#{item.pronum},#{item.procount})  ]]> 
+        </foreach>  
+	   </insert>
+	   
+        <delete id="deleteWatchProject" parameterType="List">  
+          delete from proc_watch_project where pro_code in
+       <foreach collection="list" index="index" item="item" open="(" separator="," close=")">   
+        #{item.procode}   
+    </foreach>  
+</delete> 
+   
+</mapper>
